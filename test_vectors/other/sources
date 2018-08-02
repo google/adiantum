@@ -1,0 +1,5 @@
+salsa20.txt: http://www.ecrypt.eu.org/stream/svn/viewcvs.cgi/*checkout*/ecrypt/trunk/submissions/salsa20/full/verified.test-vectors?rev=210
+xsalsa20.txt: https://tahoe-lafs.org/trac/pycryptopp/export/cb0e7f960839f1b2e465ef4d553e7741b7ef35ec/git/src/pycryptopp/testvectors/xsalsa20.txt
+chacha_testvectors.txt: https://github.com/secworks/chacha_testvectors/blob/a56fff0314d1507b69e1302477941d93c10be5bf/src/chacha_testvectors.txt
+poly1305.json: copied from the Poly1305 paper https://cr.yp.to/papers.html#poly1305
+aes: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES

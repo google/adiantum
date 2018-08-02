@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+#
+# Copyright 2018 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import argparse
+import os
+import pathlib
+import subprocess
+import sys
+
+wd = pathlib.Path(__file__).parent
+sys.path.append(str(wd / "python"))
+
+import fetchhash
+import formattv
+
+def writechanged(path, content):
+    if (not path.exists()) or path.read_bytes() != content:
+        path.write_bytes(content)
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--iacr', action='store_true')
+    args = parser.parse_args()
+    work = wd / "work"
+    work.mkdir(parents = True, exist_ok = True)
+    fetch = work / "fetch"
+    fetch.mkdir(parents = True, exist_ok = True)
+
+    if args.iacr:
+        iacrtrans = work / "iacrtrans"
+        if not iacrtrans.is_dir():
+            fetchhash.fetch_file(fetch / "iacr_tosc.zip",
+                "https://tosc.iacr.org/public/journals/6/iacr_tosc.zip",
+                "dac48968ba4259261b06028eda1a880c3a8f411f7cac62060b308a7acb68a71f")
+            uz = fetch / "iacrtrans"
+            if uz.exists():
+                subprocess.run(["rm", "-rf", str(uz)], check=True)
+            subprocess.run(["unzip", "iacr_tosc.zip"], cwd=fetch, check=True)
+            uz.rename(iacrtrans)
+
+    latexrun = work / "latexrun"
+    if not latexrun.is_file():
+        fl = fetch / "latexrun"
+        fetchhash.fetch_file(fl,
+            "https://raw.githubusercontent.com/aclements/latexrun/38ff6ec2815654513c91f64bdf2a5760c85da26e/latexrun",
+            "2f144fc6257da7d47475165d2599ecb779d48ca25eb88c5bca4fbc9468a34782")
+        fl.chmod(0o755)
+        fl.rename(latexrun)
+
+    tvs = work / "test_vectors.tex"
+    if not tvs.is_file():
+        ttvs = tvs.with_name("tmp_" + tvs.name)
+        jf = wd.resolve().parent / "test_vectors" / "ours" / "HPolyC"
+        jf /= "HPolyC_XChaCha12_32_AES256.json"
+        formattv.write_tvs(jf, ttvs)
+        ttvs.rename(tvs)
+
+    rp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=wd, check=True,
+        stdout=subprocess.PIPE)
+    gitstate = rp.stdout.strip()
+    di = subprocess.run(["git", "diff-index", "--quiet", "HEAD", "--"], cwd=wd)
+    if di.returncode != 0:
+        gitstate += b"+"
+    gitstate += b"\n"
+    writechanged(work / "git.tex", gitstate)
+
+    extrainputs = []
+    latex = "lualatex"
+    output = "hpolyc.pdf"
+    toggle = rb"\togglefalse{iacr}"
+    if args.iacr:
+        extrainputs.append(str(iacrtrans))
+        latex = "xelatex"
+        output = "hpolyc-iacr.pdf"
+        toggle = rb"\toggletrue{iacr}"
+
+    writechanged(work / "toggle.tex", toggle)
+    env = dict(os.environ)
+    env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
+    subprocess.run([str(latexrun),
+            "-o", output,
+            "-O", str(work / "latex.out"),
+            "--latex-cmd", latex,
+            "--bibtex-cmd", "biber",
+            "hpolyc.tex"],
+        cwd=wd, check=True, env=env)
+
+if __name__ == "__main__":
+    main()

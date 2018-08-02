@@ -1,0 +1,3386 @@
+[
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 0 of key",
+        "input": {
+            "key_hex": "0100000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "c5d30a7ce1ec119378c84f487d775a8542f13ece238a9455e8229e888de85bbd29eb63d0a17a5b999b52da22be4023eb07620a54f6fa6ad8737b71eb0464dac0"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "10f656e6d1fd55053e50c4875c9930a33f6d0263bd14dfd6ab8c70521c19338b2308b95cf8d0bb7d202d2102780ea3528f1cb48560f76b20f382b942500fceac"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "0638908e520842a5785ad55c97da8d66398dfca72a8c22a7387da3eec3dd88955ef338aea344cb61c7193addf656ddb9d9aefd5110273e7cb6b14b25d6a89489"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "9caabefe2289772094201bdcb4d559aeb70d3899a6876653f51f262cc6633c1725c0792f2ea1ba2f37e045977b8a74f707aadc48b4179618cfb2d5642780f38d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "d7b70f5affb3325f6f21c7262f62415ca25244e4f76b4690126bbc86953886716c933f16ebf25c3a338532d6502590548455c371da874ee6a43a7e836b52f2f8"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 34 of key",
+        "input": {
+            "key_hex": "0000000004000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "2c14bb96ba8ea3488c2d3cdb0951ac0bf95fd69df604b812496244ee8dfe417b4ddf059078e79bddf6746201ba5e8760fba7d0f4f7b0d60456f5838a2d68fb34"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1a4ecbf2a5ec0789b666f504e71dd41fd652f8d46e9bcfb014a0bce41449807cbd0fe9357e245589cae26488d8aee1632f5e2fcf58e6bf2a1eeb5ce7b3f25614"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "0eff06957a1a54978daf83a00878ecb3d4df7da10821ac30caa9e91bfa80282248968a77190526b0d36563bd36256853aff1438017639cca5dc7bdc92829fea2"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "2899b4ba85c674b8cc136b129b922c0dcca178e32fabe360929a991defbca59fb6c45c319605cecd664db58198708f722cb3193b8a0e3b8060571f26ba4ca542"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "98fffdd73c525a8dddf46980b9df5ae9f3eefee63591ae09b369f25cbcceb8eb2c6cde11dc8377f77cadebe9c26dc9b67f90150637a44c87aa3bdc5d079e4938"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 136 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000010000000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "eb49db26ea113abb68b7744ba89f1cf3fb1395398dcbd5970420f3cfbeef390073ae209981f349f354f6d3e8f2ad87f90121a0c19ab7109d2c2d87c42c2cd55a"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "b987bc7eff44e67f27210cfb506615811dd5a260e72290b28c9479f057cacbead12b4505817ff0de1323c9a127e7939ed795e9b1e225dc772d3c6760ff327871"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "035c6a7b06d331f9f6dc55ec9d126f573fb81b0ee2bddeec9b58a91d18833fa07615d23e54e86b40e783a4829b3aaa9f8d1b7c14f54b4c03ae94dc058b7a499f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "97a76cf37fbb9e47b19ad854d37b4b921f23b33d5d27de2313e7259a6c8200f1f84de1fb16f9cbe64971de6f64b2779f24fe8d0d050bf2f422871aeae165bcd0"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "bb2bc8e7caf5d2e77577bd7e0ed6ae8ff9c1437594ae77f74fada2e93f7dbf6fbdb14e7673c619dc847b7b043f67ac095a0f22b8bcccd154cbd9ba081d72f152"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 142 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000400000000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "7f1635f304162e58e4e8dd7da84e7d5952e6e13a38d2bd188e8e9bc0237e9a78595062eedf39ef6d00f5f7dba94517663996ff1186cb1321645053752c6df73b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "d36a014aaadf9d6ab56d96d2e93277d74d647c25a5209e0c68297837a88238a8a8a9bc55093a3b9b518c90e9260afe77542abe09d1e76cfd4ab814e637aa71eb"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "bf44fec5b95698c8881f7ef98b51adef1f550deeaa0677676434c4ee0e112c7865fbf6ccc561ac9a1957cbecc392eb16ae5d41aba83800c39aebed8b86c4340c"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "93265cb5f88bf0d942ed807ec8725e543e3fd1eb5810286a08579e2c648ff1f98c3f285a2a9a918120d4a5cf9fc97287bcbb623f7b0ad830d2256434bf9863ec"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "679d234b202b4a3cc110d33f50d01c4492b2c62dffae6bfc9684407e31bebb55d835696342b16516908a34ac0972a78ffacdaac53470279205bac3b15ea7b94c"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 158 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000040000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "1863a712af23668d250b0bbaae6ee65e21da12cf0ef296cbf33e9e7f7382d12d28bbbc005a9d193102b868bbe27da268eda5cb174c6cfc7759b927d23ba2ec31"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "16ccf0ff07261ebcddab81527c42520c98dbd68ecad56198f8057992b536d60e13dc708180da1a6e297510136ad4debde346f50a4705eab0ccbee64fea2bbaa7"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "b7dce3735afe9cbbf811f9c5c84b5a1bb49700fd9cef51dabb41b88b4c26edb97bd9e48a861f7af6c0b4a1b7255a4e9a9a843bdf6f8135fa435e8175de0d0ce8"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "f98902ada63d5bf809c35974f75f45cc2ff07ae1a3b0bd3e89371b09cf33464d6bf9c7cfc316568a7ba7a3103ea03f61d46c97a1aeda3331490d7c39c2b728e8"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "0818dbd89fc9037fec35c7e0266319167e167f52709370b9acfc961bb1f0b32cd4ac4bf3dfa6e455b3e8438c0053ee294f1ef16040e7e0372a085657785108fa"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 167 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000800000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "dd79d29d8b7a962103d02b2f307008d2037a7776bbb65961ae38bacd248c247de8e32fd63d93888e7809e46d9e28345f74376a24d330d2c0542bb8d9930c708d"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "e08ddd24b7d888abdcb2dde98dd0a81ad758e23fcdb1ceca6b6bc4c610048cb57cd3706412e8389ca7ab74b4189105322d3b93ef90d7e612dfe409ed5d65cf92"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "33591ab3778130bfcf947a5ef784a921ca6d39aac840d2f076a0157d36f1d5a892023328395e65c0a8e989a9e926789478913e658952713ed65e37d4b29d1459"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "0f716a79d1313f9d3fb1e19cdb00fa791386bf429ad1994859f0195fbc1f51d4381452442bf41ff47f2eec41e4fa2a547fd1f159fd88f55d193064bd9294f54a"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "b794da49f05e53ab2c14962b8cf9b6b7531374be5cf87c8faa9dc678fb6794875013c04aa49a691cf1ff3f5eb52c9b5a99f154b081e79db19d65ceb007db863e"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 185 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000020000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "dcba3f80b6cb6fd53d86679b04378077f026cd9334349822a03371e695e203f52f430aa04c36cca06aade1f011091f88d86f13e0d2bf55ddd33ed9a486ea35ae"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "53280cf758464dc6839229d0644e8b13591ad51beced4944fb421fef3109d04cd466656287a6b4919cf8b2063f5b0b81c6ebfc0838cdb7299d8d6978db93562b"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "a44681d622eba2fd0af908b7eb8cbefd72edaf87894708a23a217e4691c6ada3c43ff0b5acc327d7e3861e18bfeadb043c1785099e96d01739bd0c532496fd21"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "da56ef209d4f5499cda1df7c206d7fa93cbdbf2fb238994e1cbef53ea0b5f578dfeae05701369cd7bbc680556656da73e68feb513afed947293680c0e193c488"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "0b0462ec92c121904e0ae3c2d69e3320ea1434b7c498a723a918843a4dfeb796305bf193cc1d08e84b15ce1f19fa91c38f9a83a5ed1bb4c88517c900a9f63a5a"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 187 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000080000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "4db374aca73298866adf085498e9f407ab5406c81f9e7ca2b742286339757c001025e83061eda4ffad3e873d535cd88075ad663f09a8661c77fabda0929068ee"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "88449f751e93b3be7246989ce9b189935bae3d516097118ac606ecbe6565da1d80782eeeb3202b1e88aae65e69b125ccabe6a0366edb5f84c3b617576af2ebe7"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "08772d43e5653bb9135c8444d0903626b0185832b26fb3443238b3ceee1bd2abbefdf7bcf6fecfa49a6ee5120559359e7d5bb08684bb4bd349c18090e023086b"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "3475e1f9462f2a72342e4ab86cc80e9955b4427991797793206d4218c231370e2d18f815dabbd5dac4376b0dea7266426d1aea75e2a0d086e3ea0eb442e9ca6d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "61ab24a5c7da27dff1926585a3d1e9c62d53d0744a010a6815cdcbd85ce648b15eb83e0fa42bfbd0469fadb117d24c987038be101fa8115835a4c92a1ba7a7e1"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 222 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000004000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "c130ebe371f66b56020314e22c5fc9f962e4d839f5238b71653c047a7176b48df62d2dee8bb5fc88770027964f6e14726a9b80448341f0b837a8f38f5658994b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "871ff12c5cffd4c26faea76b89141e298fad7f2978dadbb090ba2a5e6e37396c2a9acca1cbb5f3baed654a00efa90ec76dd2bb69ce38f26c20ebfe863680d2f9"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "1a5d99b4942fdbdff442e995c4eb8492287c446a603796d7cf93f9f6ef6a6248105774828f1d21e0f17d08eb8dc230f27c36a5b5c1b35de0bf71fb840542b847"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "64472b29054cba23076a56546074f5f4ed8f4eee26e85747182d6ffbdaae6d5ad00759557e04d2019daca55c217f063c7d2d83c106521f47b17325e7804cf03e"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "9c2ab4cc9902861ddc0da7a4102ac86d82f847bd34b17bc3af3f080facb2487a1856f3fc4c328f66cf98c3356e1a14e0551afc2a1e8925afcd1580660906465f"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 240 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000100",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "2225a6f763d82e3a3bad05d9079b61bd302bf0fbff861c0de2c335fd881fd14e87b6ba5bbcfe06e37d6dc952858bb77086e3cad19662c91c4cb727c4f469f324"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "eb1b57c05c1b3024eda9610ca0580e7afcc0dc2622a532c39414372d3df2a34fdfd6276d3dc590b3e49bf1aa0ec00f38574db829702e95fab3edd9f1acaa06b2"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "9f00d0f7256698de70d8d06c2b5faf9bd495bfaaffe35f0c5342f519cfa16be7a11f712e38fedc2d03edc9b63ea2d7752c76824ddca88df2531017644c6bae48"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "c5dc9e59e2e4feda526fab88f503867002da2b6a674a708b709fc7afe2fd5a68bb259ebde0b5d2bd15f0ded9f480e7a77bcc1f3495523ec4d6556f8e3f0176b4"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "73cf762c0ae49dbf8da67af35ef6b69391d48ccefe7313cc30c2e5322723cdbefa0898ed7f9d8e7cad2e50e77bd1388da63c16cdf09bf2114bafa7ea135e6ce4"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 247 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000008000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "da914f221da86fb176b19805c2a871ef64e8811cb7ca03f6589c4ff442db135c8425b5d81b370e69bb440727be8853cea6ecda716a474109af9c8f031222f8b4"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "655e365d912ce35ec7d79e229891f52c44c8a5617b7844e774b9f69be3ad8642c7fe8dd8a661cb3b41afd1cab12a29e44235fa8db6df21cd9f7f52dd7057821b"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "385d4ac94fb2681453643c1003913100ebdaaa9471f28f3a59e38e20a7ff96dac8dd992a13be0d26276dba9f61fb7b2e75d465ec35d7064a507b9685f078aca8"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "6fd5c7c8404e27e4a1ad0cc5e70d82c2ab1deea1ee0824ad4e9f1b422421bd64533c7de86779fc2e36e541065ce73d5f4e36609f58d75e5fec03c00ce5f9c82f"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "bce7a50d269558e3b6e437d5cf705bcb0b25c357a8c9927040f3c866d3f669b83f515b7a7a9318379ee2bc02534ce93eae7aedd121ad1551af9585b04c3ef07a"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 255 of key",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000080",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "2c6d2c157a6023a0e85894df97da8c333017115b97b13fbe2a43058fbcba87b44a2df18b65701f85632699a91274f390ae98eb090251c580e483cee10390451b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "f56252c804c26bcec8acefc6e76a758ce7211c89b034fc7acd4b908b6106950ccdd34a5d7084467129485ad8b0f167adfae59aa682b2f34eb43811dadf7cc0d6"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "04ca1ec4d310bdf466b563cfb1bb3641b7de08646df7d4bdde0550350a887b12cacf42e61b563e16ed88cf689c39ecadbc664aa4033466eb5fbee3f9e458a623"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "ba17bff78c87cfcff2d2b581c14e98bb9d5366da1e5b6f751b1deb60ccc7d0b35b69f513f389e655750f505800aabc7a859227c7ae867d262d837c7d39988a16"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "21fd935b7515e404f45b7a5bd6bc5af8700df6799bb879d4cde28b092b6dacbeda2212a0ed25bfd4e9a3179b6b1a2fa7eae6797d94470e08915dbd337d588d93"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 0 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0100000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "ef3fdfd6c61578fbf5cf35bd3dd33b8009631634d21e42ac33960bd138e50d32111e4caf237ee53ca8ad6426194a88545ddc497a0b466e7d6bbdb0041b2f586b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "5305e5e44aff19b235936144675efbe4409eb7e8e5f1430f5f5836aeb49bb5328b017c4b9dc11f8a03863fa803dc71d5726b2b6b31aa32708afe5af1d6b69058"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "4307235a5eb062c63688669c20929a39c13b2e1e6f3bde0369feaa415df7c330847ea90f4b1b59e3d62db7ff28b517d94c255c9f59fa2c7a1479e177a2a47516"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "780df82bd10d5fa1aaa6e55269632ce8a554c28171928ef423b0a29aefa0e39dc2712829fd39cd70797e4599907d6a3df87336513c0e11fe0e800743f26f06cc"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "d133eb8646c63a6deb2896592914584b1b23fe68e9ff461373f99200262a89926f94313227ba782470f36252aa5fa29cb8da5ea7589d3e3d8429afab3192bca9"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 3 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0800000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "a541da5c275e58821d42a276a59bdebd00cbafce5abfc69fec9e389be3f305ddfd1d2ef30e7e006efab8777fa9cf811ec21812898903deed3888edcd061b4b2d"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "64eabe79922b127fc2be602a2cc524836c4630711337487bd39c8a9458308f5c712c6641c8c0c2038651fefd67650b795ec51cbe7f5bd8c98cb79ad90f6cb3f6"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "167bc0cf4d87ce9bb8ca4ce9460057e6aa7373c20ba52839cfb22901e2731f12a584e93055cc24ffabd2f7e737b23f24af2459197fb364149fdbfea0844191b9"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "60d22d9b37eae98c5c5980abc69d3ddb33b98d6fa8f31b74189fb0a60869a5f4bdec299ed7ea6a09d1208392945341e6728fc265dc7c6cc5f5fbf3cc8d66d279"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "21c619b9245e83ce074de1cd281e46234eda6b52af31f6d7b763194fdb8833c4e6bfb9e6353843525c7ff25383e4e7fff7f52c474595e409cc147aad47beaa22"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 13 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0020000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "5161c4b80da54050d315343ffbc729968474f2bf122396540bb9791a02cb98a6b7fdbea50b0d1b3b4c63d304dda45fa081d98588f427e78504a64d3e36d1ae83"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "2a2ed56c6b1bf7f9c0aec060207ff9a2aec7fb87179ee6e54801d79d466467562ddc8b16433765c1f12e747970f0b1635e78b18d6d96473eb20ac4a85fb9f8c6"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "012d2d99ffdb14b49b12e05e1d9b6e5ef262a05bcba77fa40cb487f6af518441d70947acb5332ad926f9f2db2f341488e0526aa8185d0515e02b36822910cf8e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "72b9d7b7209d421484be94ee897fcdd9d89516b4e29a6c977d1c73544f3681c3e8645505594d5e656777a454b9b5b603172acef711961382b5e3999c33eb885d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "bd42592343a7ec8689e98632295c494d95de8e442eea775d34408e7ecf514e8ed47b67c5c8fa0180bf3368626e23c782e6e29f837e5ab90a87ec6ff3666cc818"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 14 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0040000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "60f38b546287c9a7cb62c8fe537db38b222d4d0c8d441a9a3f0884c2226f02be3982bac6c55f0182a9e146713827323bdb977610844490dbf1c15e505d04e393"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1ade2f644929eb15e0be1d83dec77f9050ec92f9b68c994a49ab27c1504b5abc3a50e156316776a4c148cd24945d702cb5625b68ee5c6433fa620246e392b1ec"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "486dd80d86cef1a240db88516cbd98b30816bdb8e4d6d643c856cbbaf756aff5c93d8fb6355f53cdad89f75ad8c93cb239a4e977f12422775ee27faf9f64290f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "d53ece0e643eb1c1b16b7ce1d3955b45a503a1be7f26ee84d96f581e8263a4e6b05b2ada42e5f3b12367d4c7ab77ceb92a043c7a1dc8bde11ae961b076c194d5"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e7337f68e3269fc7e8e6930b9634bcbc38308ef1f4bebfe3af03ac501269194b1aca3d19eccd861ac59028c4db9b518a71cfa8c9b1914213f9d3dcf7bba7ddc9"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 24 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000100000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "06a65d31216cdb37487c019d72df0a5b647420ba9ee0267abfdf83343b4f943f3789af00df0f2e751641f67a86949d3256f07971686fa66bc65949f610340303"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "16539a982a46de17066570ca0a1fab8026963f3e7a3ca887bb65dd5e077b34e056da321330c90cd7bae41fa6914f729fd95c627da6c2bc87ae6411943bbc6c23"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "469dcaf0b4348694f3a256af8b0bbd83199f8a53b8652eeb4bb535cf84e8d0bf9f1ad1b34db04ffa1d032fab5160b26603a35fb02563e23e784b835157d5a85e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "11b8faf7592e80e30954eb714d9ff6d5b150b8a51874927f1c9a44eed1f3d22acdd4eab780cb392c37cd949b38a835802ac6661ebb589ae250a6d01ef8a26aa5"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "aacb307c1523457acb5faf2d510b02adfd57472274a3df5bc1bd863f69e70368a36ba8baf0cc77353131e283f92b57f031d4988d6dd9c7f0cd56bf005aad3333"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 26 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000400000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "780493a64707192e740576b7d54d44245001dfd980160afc5c86c54be098103620f9b817a5cff0ce7a231d5e75cc4ae980043134e2bf158b7fc73215ad84387a"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "3c8de9ced06e50b161217ae0a713feda62f36e909c9aab24f5597c89900ced4d36bd1d56d77f50c8a39e63c46b3b020f1b5ed453eefffb9e81fb3d37ae4cab2b"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "108a9294027080f0fee5406fc8e1da603a10744c735f300c09b6dcaebe3e15ab2380631dcf2bf7324b2f7ded6d667f19901ba24bc8f1766c07cf050c551d323b"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "679f6f98e0dfe8a883b5e3fdbbbde6fabfa9e69958b18a42282478a729cec9cda0d030ad8d2b86934122b5a4c2bd52b288a6a98fb479d3402a295ff19b1b09f6"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "eab064535306407c71d628f9d9d17c60dd638682907b99b298e43af1d29ffe2fe5a170b6d5f5b1c6010af5473ef9cae7a7ab38243bcc2a89d0d50875d9b42693"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 30 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000004000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "40dacfc149e4e2718edba7f6caf2565a1970ea617c5a7057b5303d543e8998f70a2cce64a13ff74291d89a98b9622b59885f1354894d4b67a44e046c03d8968f"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "872950efc5b5347284611244922132dc4112577f673f4f7f18bcd29c64408de7fa86d9ee6c68606f709918c8bd5cfa991d786267462288876a3b7a184a3f9c54"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "9d1a439b0c5bc161c77d8d6e0498103ca477c21464ac7b56370ce87599fe5da63c796b2c5ae5969cc38b84bc81aeb931d05a52a6e1b12053be0ca1deedcec722"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "40370825420194ff683cb4ea486323a603a177a7f6d5f492e4784b304c5a74aa31d22eb850e81a2adf0ac11adc87ea9c8e2e1ee3070d854e250c3cb3bd7aaa0a"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "38c6f918623d17ce4334fb88b7725e91e4bd43b4e778dd964f75a963d0b99d6e5c30e027064037af0159b4737caa245f75f8629bff6735100ea84b52a7de38de"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 36 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000010000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "7944ffc3ecba29441b90dfdf03a42ab41cffea7db3e16474a419b5f099759611a0fac60f4ce2d1006c77561f7eb3e227d24f6d3ce860db03f8c101ee57f8a422"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "19c706ba431ac4de2d6ab0bbec917c83a533ecf287ddfccee519191f12faa5a7d3a65080e0f3686dd2daab5d40fe8e670ec8d9495291025e9163d56d7a84cc0d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "6819d39c4f5b7c0607570511cb5b2ec6ebfcb0850ba5cd7efd2ee6e87744d911e97da70531ba5a93da8a6b0b3b1f476c287caf24cac890381b44fffe3edc37c7"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "c56d30049633cec75adc4e79f18771140d8c8a2af55e6b1a0c6d74977a61f04bc42b944084d78297bd1caa230a0eaa16de9e076f776f6303ba698d6d4ac9d93c"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e4f347147efea7a4bc34053750b5375cbbfe3103b99519d6a0101871aae9c9111d999f2e826ec3eaab7bc915629dfc10bc479568ede9bfcdd8b9c3c661633755"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 39 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000080000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "47b21d849219f3e3780f4339e3221360d54caca3ad13e9ee12f50317168cb1533da46395b8c9f271f830afae4d18230831da0023d7a8016bea03d6c0861ea2fd"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "fe23b2f366cb17af78d20a6737d55a2a2cab3701fd0481afd095360568d82307c1ee50cb10fc48846b7b5cd1840158b566b3f81dfccb55734a3665f545d7193c"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "e2da20916ff0583a94d09051b6f94e5663efcb028574a7e1989ce3c188895ceda42192868f92b4c5c862ab2671fe220d637fd05dece36c1159f2a68427bbf30f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "a3e266082e8516f69f2db68386c8e81d08e3faffe6bef20f328f2f16656422928582c1e35ca4d47954a5c5c54a464c44ee81181bd9040badb42637b67e38cf13"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "4ba01778e76c8b83cd98ffee8d1acfa856928431848c2d1f76c82c3c639b08816540aa7892e5b918a43a2f0e5b32d56225e3e8ea803bbd5e87cc5678f2a820c3"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 41 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000020000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "aa3458a3b8478a22569b1999c97ec897a82364b4c56c9d2ddc87fea51e6f7b3fd6b5216700a10e2134cc1e6c2efd053ee6725506172106191ca6db3a742f6c7f"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "44f710e547431d47c9927cf47536ecf1b967cafd30fe4b635cb01eedd9c56c3c99455de9784d08794ff38d4ef319526759631c83d1d38473bd1491f9898d4dfd"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "62a91c40b623a3742dbc0a65b3080eae68b520971c586d00636c99b608caf69cf9c344fd0352f9083ed211717036e2db53ef4fbb2a934ce038d6b5b6795816b4"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "e17076912b7f72f81348315d2fcf3d5a53be84647c80693f49e48c8ccde057dac4d2753047ed3167c3bfcb44643a5e4fc61e087b7875d47cb573e18de2bed05d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "838e120720206de64ec131c557bd07f97ee1e59a3d9cc9372453dc0fa8323de0781099fd17c6ef862c8a5adcf77de1616a4b04d6fd1a39b02713de3e60fc2a61"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 51 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000000800"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "c479988541924378c119286a217c7d17914c3a67ee0c0717bd10825c958df2f48415a142268a25f77437045653c6dcd08c0fd292eb05d70090c59231e2b65790"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "94283b26a350438100838d6128a9613c262fa0aa3fb93e730e4b0d41bdf1701dbe46345dfa49671f7aac3cf1d5ae1348c7640cda190bbd5c214cddb208e2ca6b"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ad5fe3afe7b446521ebce2a409968523bcae9c715e0aaead86b93e725541f0ddbbf9d9a0d1280026f756a5bc01f82fab301b7b0d89b1004ea718ccc7ba2f4bd4"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "7a08b0080ef776a224c3ecaf0e7cf6bfaaf8ca570d43996a5d0811173a3b8b5895a23aa4d0eee81eb9dab2dd90e5fc6f774a19b1fbbc1ac652183ba51dcfdbd7"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "8faa11b84a94217f34fb37ab16df1160e77f8ad13255b1823ad62f3b9ce657fe7b6ce33d24c556dae9692fb4da566399a2895e5cc6ff42920e132a1720232706"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Set bit 63 of nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000000080"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "213a358a4865b310b0ef6b3fc1b8c2b31be1cffac4a904cfb166884aa00a5e95812ab8efdfe6f9d222f33b25d29e030c3371982e02bd99f742e25492501b36ee"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "54093a37f29f2ff637a6d8f5b88dad8bd222e84ef2daef62cc619bb28328190a671083283fee7bcdc4a7cd9ae6dbda64a45413a77d4d676583bc7bd65390719d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "6a802eca834d3bdd5b8b403046ced80d4fa55061e801e59d5ef29edebceba14646435fc255c5e95b3abe4f3ef5e04608bf962a51ac8305106be49437d746a12e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "c09f98e8a4635e13decfea0ab35b20df981ebebf041229a2451fd15721a6e2bdb439f53a177a591601b2f26ed35d361f401eee29d18b94a319f583c970c3a93b"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "c3ac68f80185c3b8ff702fd8dc26fa986cf0efbbb703031da20c6bd6809104f8812dd289c955eef61eaf36ee3091492913aefd950297b32310caf93008636d52"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x00 for key",
+        "input": {
+            "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "39fd2b7dd9c5196a8dbd0377b8dc4a498a35d86fbcde6accb2cc7d4cd8ea24922b23cce7a26023ab3f0eef693ac87f64258235eab1f7a32dc22762a0485b410c"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "18b84231ade6a6d113615c61af434e27f8b1f3f5e1ad5b5cecf8fc122a35755c7208086dd1ee3c5d9d815824640e003c9ba0f65ede5d59ce0d2a4a7f31955acd"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "786ca09bddbf8c62f795dbf69abdea77c5822a27ff3c1bdcf1870a846c4192a91abf01365d32b0aed1f67dc6ff0d88ea1290301a4348bec6e90cb61969c20c0f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "ee398609c51c0335edb0420a510e0357074d82000746cd0a1d1d0cb6adb5be983a92d1f1e0633f99ceb62ee8cb63072d3495914fe22799404e369c5744782a1b"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "aa983c055047bdabe81148663363efa4e3a34732f10e597013aef3b70e6dd6a85b710e22f026de808bcaaf7b673874f2922b7f0f2e6555d357bc6c0f45bb1267"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x22 for key",
+        "input": {
+            "key_hex": "22232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f4041",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "b3a48498d1d2eeba8c672dc8b7a768a74af31da85d8f087af7866c17f1e92424e1bbb3ded701ca5b251ce16637ca000e007d44837766caaea427e3ed50eed6ff"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "eacf3f5dc758fc32bac95c77108ffb25c2036e2c664f674478831765a369110de1a6a97a8ab7dd28408025895689b13268d5cd1cced8cb33188eafb9986be23c"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "61d565d87bf7193097b23e51ade683cd2b15f98b2fcfc723bf1342e6ef8bf41e249f5be01e0a3c01fe0ebf0ddc2a7ed741c39cd029890e76c7881dacde3f7b0a"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "069dc97100a65086879f88ea8c91f237f902a63e91671e9ab96dfa403bfb5babc2d3de3928f4d2fe2441ef92fe4c0590ad6e31ce27d855375a2cd9915bba4db1"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "c05189d06066e74628626e47acff944708fc3656948da4a4c79873369f0b41585bd42a877a115010f91c58b893f8c96c30d864d02bc421b4a45e19580c8e2a18"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x88 for key",
+        "input": {
+            "key_hex": "88898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "ff6827851cec20f0c16f5de163b31c13ca91d1fd0609b4caa915af6ab774c4d33c504da415c6acbcf81f7baf1b39377a07248ef26a7cdfd0a6e15a72da555ef0"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "80b01ad710bad73fa429df53bd501c5c6755a90fe72bab5624e04ed62d68f0f426492cf43ca9d8b4ea404ffd78e50d901c3f09863412b6789de486ee7ae6ae17"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "abd00c2d7b4c2bae0b1a80922ec2944ed57426328a8defa78574de3c1af09b89ef66cba890a1982e06bda8a6cf6b8c16e1671017136ea67a27265cb1e05fb178"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "b48b7054d41011d1b624b9b243da5f561862bfbb2136695564afa92b73498b5ead7f70beb735526497deedc8057bb7e0c22145c1325e8b54b9fa56517e582a25"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "4cdfd99d6963ee3bb007d54bb8b9dcec4a2cd33755aaa5047525427fa903d4f7274db61ff20fd8b231dbf6aa82d2c17db42fca3e1c308be0736582ddfed76d3f"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x8e for key",
+        "input": {
+            "key_hex": "8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacad",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "a364bf28e4993b2e968bcf683621404c9d0f0cb5461f9e87806d4aa9d0fa9d10cba9192367f26c42c711061b8ab30af3e504096b8f65b35055deec5e2b4ee506"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "0ee467548d7d048089cdd124da7a33ba0e27208fe056c81fefe108f95bb30971293ac6a845c7b553b8fba0b2f2afcafed9ec56b740e0f1c6c5ab183a21a69938"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "d54637018a90481533cad7b95145483c26d6fcd0feb7c6d14417ee31d3f3423d3dd5f49435fefb50766605b5c90c81855714cf148500d4c0e94fe264fa1c7da0"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "a4014309a2c39f3269309b37865f3e55e8a7aa0abfef74e34843e5afea7fcf43d98e5b54d240ddbb1ec6806878a4e14fec98fdfd598601889e87810e477201b0"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "a29d17b5c5494c49d1ec26c007ea6b45c13aaba01e6fd9eb1149de5424e89a8d416d2a56e0f115f768c455c25909cb3001837d9fd5369d684c7db0ca599b6791"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x9e for key",
+        "input": {
+            "key_hex": "9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbd",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "0aadee3acda50ca1d2d8f3d93cff6eb84351f15eec2d64711951bc08efad47e1df75be86934890b5805ccf0201266aa8093bf0b77a29bf35c3a7d126e58f5ecc"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "00a112060a0dbb4911713be27ce5d80f5b9600c3407b0790b9242a449b0f5d2ee4c682b5fb448cc08ffa832f34ad850b5c94da4ee01c07c9d44d259ee3d27141"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "d637c160e0f1953f7d365992afc8f35eeba7ec507cb1fd0d9982325da0579862aea989e158cadfbaf5397fe04f08a63fe53772040b641cb3ed386dd76bb50d82"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "86b077294c1d38e0c3bb4f193f430f6e2166049ed70d6692481b31bf2bf899784c9253ca90001ff60d1bcf9cfb634e70af62f54167af9587e6b658da8c983256"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e7390c7a1184ede7a718de5b4c9d833b52d30f88f8ea2df07e673cf37dfe13f1a268f0cd5fca9b8a872ce18576e2950948d2be81bcef5b237f8caee19857b23d"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xa7 for key",
+        "input": {
+            "key_hex": "a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "839824a56aff8f564af2de9418372bb8be7c1d8656c8d87abfa967edd1b60b207fedf29a4e7f4577eb909e2d835ece3171635858b308c6319f09410bd42fd694"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "ece3a5348d0e8bc092910b2f1ed083b52089dad9513afffcdc52d238806ba5dd2e3258c22179d13cce349106d39562bb17fc527f151461419602e4ba8bc98a3d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "2f8ba14540d0d308c517f4893d0a9b3daf8b876dd7783d9e6e7a2b3a25e54ad81c1ebfae5e744ea3167b3c4ae1b466a7dc5dc0bd3b48a691803ae025ca19a58d"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "545fa175eb1ad3a2ea8ae863f3d6b8343bfe6d7e43c70228c8c1017dec4b9c52218f17273719b91c19e96d8f9f9d54d54322fb3dc3fcc3d5dc49acc6d3a320db"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "85211edb116d5fcc1f51a616c51cd3f2bf2aa6fe604574d61fdde125e5fbee1077c8b05dc2dd78f46d3fe91f32da2c783fed36dc10c42870dbde27dbfc330ca0"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xb9 for key",
+        "input": {
+            "key_hex": "b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "fdadab204e81de5465338e7b6bb8db1946177fbd926eb0aa43f06308d6d755b8c990575a06aeae0f15a863c91a425b579e0e2d22013fa39c64633a98d7e7a2db"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "32fdd346ebb02e69a183e2367240c4271f2392f72ad60adfab65bc78d44db7691ea46ccf09a957ccda8dc2237aa55f599749e69f8fc5dc2381e3814ead38810d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ad04983585e00f8a54942043480887a95498f38f2bf5cd7b473d1b4d262a9ad8494ce75deb941d52edd0101bef9490e9286e3883e1041ca5f09455716186ef45"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "67ed81ab7813589f6d86dd6072933cb3adf42a9403fa6ca1d9dc56277987f9ccf92ec1690ab203593ffc1abc07caaa4c4c07d0f935464a0f01721809d1affa20"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "84bf22bc80c20df8867c0ff9609d623b9bf19865d24eb267254df073648ff8613c1b9df157971dbdc23b0661f7e562a048a22c75320eb7c8efc06c1b65d7168e"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xbb for key",
+        "input": {
+            "key_hex": "bbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9da",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "6444eb8f73145a37794b8b1e5bf9d2082500eb5308f52e793bb7144a92b0f9c53f13870050bbb568e4d26adf76e429e481d06e4e49e1c60f46590084b02baa18"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "504e22aebd963e4b13deeb65b3c54bc30e30209526191852e9fb088b1fecdd4088cfd1665276aa268b392170628663093ac5352130d17435c96c64c2e93d2af8"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "8ec5c0df74b91e25eb45b92f8a5ee4d2843283399195374876214b60f806c71766fe02dc91f95db1fd9d1160a392ac94c4f457262e12afc7c4adf3bfd43e457e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "084128ec99cc5f0cd513fb033e55455ec9b3cce554d3ce9cebe2df64661632d83d4869d0dcc3c60e31c83070e86f0d2ef23f2aa27a0bea58b20fc311d42ca698"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "160ac454bce032926ebaefebc35be120be3b49a4a4a8a8f68abfe8573862733a1888aedf78b60d1c380146ad4e36ed6e71891bbcf39a31e98e98c2d9d250c0bd"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xde for key",
+        "input": {
+            "key_hex": "dedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfd",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "90ebd04b06f4f9045daef7eacc4435f0501b9c3e500d939b1c996b9972f9584e7e28f460a21b15e87b55192003b406146f7ec594d401f093bfc845289cb1f646"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "e7ce58865cca89e2eaa941f4249ddfabdfe91b195bd396406e1e4cf8a9a3b90b06b16592b68d50ddbc08dbd542dd287f5548452833202f78efa6d41393850528"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "1b959e6f41b9f8d37de51de363be36dbcadfa49755eca574b85de955bdfab2df9eebac73edf09dd589ae5d10e08840b7f2b08a3d7f687a0dcf974e60469722ab"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "505f835cfca58bf6f127d052521aabbce14fb0a7f902a60b7d6a5797d5cf7389614d686bc95e42c4f52d621bda7ae1c1328330b089b5634229c2f910482cfa9d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e84b9d3e8637e911fd3d95b3b56b1153c4826aebdaa726b9527843c025355d79286c9eee5dbd9c4acd568d8b0203362b1fd52299ba57ad3bd7c7d59691bd17da"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xf0 for key",
+        "input": {
+            "key_hex": "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "699f52efb17d7e185a1dac116ea378403ac48f36a7fb1be5051ce4d2312f20ea336dca90a178828303f2c2283c0218946bd9cd4f2c8ee1ae2b48164caa3414ee"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "d5fadab66b92bfb81cee15e29418b61f2ac92f05f66a66fc9de0469787f96f4d9707eac61cb4843e08ab5c3d468f20c3e0737361cbdf03e9dc84e28fcbbcbd4d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "dd54c28dbd9bf046e996578bc72e49e4604b3894374ac60a295d8bc87089b11a640250c932c7171ab8c1a847c738fe54ae01d1f477eaa83af8393bf6fef990b5"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "3d193962ddf0232fa88878a7080eea26178ff20c5c37027d23fb88abd87ed8daf6648f429c60447e33c7e63c166c393b15cdc337f2c44b99457aa1caa6eeb860"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "87c8c27ba8b4f0fc6543edca048bf0a6e2c4248ff13a0b8ee448ea7319cd3f8c052505f9f39956fb92d8111fa12e3abc7587d14e133c49d78f8ddfbe5d614b63"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xf7 for key",
+        "input": {
+            "key_hex": "f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f10111213141516",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "f435b119665a7772747150a590ffa04179f0c4df91f84bcaaf951b6abb2023a4bb71125e78c4a00af252c3905f0482032991908ecef7d3dc0c1f664792aa96c3"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "7e328cd12a91081905b2e53d54e76453e8f2a2da8c72378c44b6a3e40c70e8396a7c53ff92976e17676702afd26c19a79e3627d8451cdb83f40e00fe238cfd54"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "e3c19f280b49e9782724b9cdd90bd4abd96f75ad32c1a85fa0dcb70a622dbdca5bf3dc4a24c07caa812f2b3765dce2d2a8464867e3cdba53c0072d5f2bf4d3b3"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "311a38738e29fe91aded69e7ab94b416771921759d87276ba67c1b4b00f83002e0d987cdc7e4ddab28b63605c94ad19de43c23a9cff8808074ff41744f6ccd4b"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "a29fc1ae3459767b459077d39950945c90b56dfc2fdecf0a8211dc324593d81157f875e1501cbacfcc62690e5de98d1d7915f6f87a53c410ec58f433be0e7e73"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xff for key",
+        "input": {
+            "key_hex": "ff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "29bd51d500b8ca64fa286f27a1f1c6a311bf3eda3331df959e3860244291c38043de5c3e577fbdf2f2686dcf8e898f1b53e4ea5d7952fa4e99b93292adf17fc3"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "99612480b80daa3b1dee47f1a0d5881e18072a5767f8f4c6ff001564b2809d13569f629a034e7f29286a6d41ef5b7cd68fa79743a5a6531a6b0ec8387f750ac3"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "255afc81e4643dc655e03b79ff8dc9eb601f71f77ff9a01d9dc30d6a501e8b76951fadea52bba855973e7cd892863ea8c3f61408ecd9956d3fb1493b31c9c2ef"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "19bf3f7cead6f96da2e48b76b792720111a9e1c875fb86a8050fc4317752ab0b605d25c8345f9bd71780e6a1e5275d1ab651631fa69e7f6ce2d786fa1a340f4f"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "0bacb0fb9fe2f8c193d305fb7c1db2907adfca9609cbf5d9fc938d258ab508c761b7f4ae91a32c5c54b1618a325d7f150cc093196fe5f9df126597154f3b9ff9"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x00 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0001020304050607"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "115d9d5ab172d16aaf3e4eb7631b2828313443f4c8c0787f4b32f33735d42c02c9d34a89bbfadb02c76255a93c69fdaf370ff8f917e80e845357f9db67d1e09b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1736979905a92e6a36be8940ad2484742b0d5053442d8b5902c0ee53840b22d537a43833797e8198eb1826a4c1269707352843ad30309172c22b7a537ef2276d"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "848bbe436902648a00ea30ce623c13a3541576f2ebdac422aa9886801293c7497cbcaa07c13778f21203b2913f4a6fcd448a414807eb992a96a8269171924193"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "4bc4f4cd88e41ce9796faba5904210453668f17bc2af28dda9a3e181a60ed8bc4c0a5884ce0e8208257ae52c33e0ec9fd059b6ca09d35a1782a6ee59ea1d849a"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "c0dd21bad819987d95ad05f6a355d80a8e30b900c11a4df5a190a93b3319fb2bfa2512590b378a914a2cd6879fb6b542849c7e934a20579e689c1ea7d5a82998"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x22 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "2223242526272829"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "4750531a1dcc3c682b14d029ad5712b76742ed1cc289f6d20285f254fbedfbad801d7129a339480d48e36555131cd42716e4e03c46239d954438f467dcb15a71"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "d76f9d647d4c41a63091586a894f34367c2f34e537b69ad53f1cb5a623b57cbe9bf51d6745d8c2e908cf6a05e114b0ef04744097834ad59ad2374b30ebc944ef"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "b78b8843dad371a241466fa148f3b5c5c1b3685bd27061d9154b569c4e4ec5c50b91241632a19dd7ee5c3f1777a556b7f91a85385f80888ee96901bee5fa5488"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "031848febd46acdedeb9fc31249fd8e7c780f39b279d5632de965595d7a44319b7a3ff078b949c34d06f34f99d5c0bb6e8324dbcdc88e68929b9ff3b25b2d012"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e93e4767b269e7bc2556865cc2e2f39152ef0ef7b85b4a52e25cf3c43d50436c8fdb20b369b90dcd7fb615848a89fdefa37bd9de3ae6e125b3ce8f9cd0a89674"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x88 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "88898a8b8c8d8e8f"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "f41074aa06da0e0cb6df8c299294484bc674ebcbfefeeb7f1eb9da1dac5e9b34316d1d59cb9e767dfa8f7e02c49f444d4bb35dbb02bd1c19ed2f148c163a4a55"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1334a1cc54ce3cec444ef4bfd8c1df42a611da65b4dcecf503f6d804e4b5a8678af0960fd960ed9822627fe2c38b42719b4a341c22b33b48172e7b7b6ffa6fbb"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "3f98dbf2ae9337f235d7eea835c4ce62ef7273c99f4232c7bdefa11e5831b93a57c1241da1dea42e3ee8708f2d303868b832e104792924956e48b4fc99b539f2"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "c7a74af693a28d70bc3cdcad4ce379107909628f8fa61efa2ee52eec26cdb42e3839cdbe491521227e491175ffb132ba4c90decae6b02c8ab7ff2af719a435bf"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "731d468053ec41ede0cd134a57e0be47d5998bf331351e14cf4fc0414bbdb9a232be326c44db75c43ff4b92145098fbbf260b048c4201e1fa8895f45900c383e"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x8e for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "8e8f909192939495"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "9b73cb4ab39ac772848c9e7f9fe6879376e0d2e0fbf60dae51a70dcb46c825393de87a9170a5737764eeb7ddeaafb3ab97a5c586151a4777cc7c6eb7cc3f1c1d"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1a1e4cfd53e7962cd407e79c90c93130895bfd3a17619616e56d712b429b548cbc2d8c0593b428f600fa50b3d9f1fa627d62fd36323bbdaa21fcbe265a22f001"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "9a4e4c73f73715858af56a392ebb37cd1e047bd9c50e5254e474809ab1dcededfa27d08d26b584917a6bd002af0e35ed486e945f5a2d184bc5c0584a22e72edf"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "67e4dee897833bb5ab340d14e44e7f0c12b264bcbab2b4fecbce5c18d875f8e251f31dcc1e7dc53ee54c74bf228419c73f0413c45a1a066c882e52eaaf0d5be8"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "8140acb72cb2a15514ee3bc9c2cf65ea2768be21d420bbedb927d8815ef2f7f8003128f8c852343aa2a78cc2c6d066f71028a8ddff0946907c20a88d109b6957"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0x9e for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "9e9fa0a1a2a3a4a5"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "05bdea42546cc3974f28e63f349765996aca23e3c75297af98b240978d74a074a845efbda5bc239a8a87c375a45b4612ccf1cd1f5d6bcbb26fbf2cc144362ac1"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "0d76620bb880b8f335d156268089a1cd4f41f8e7fdbdf6b7e1f05cab9ce0bd5f783d95bac2ea29b4432a904c76906a12a87cfd466710b5bcc8b8174407ce7b55"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "98ffa315866cd2478a75c7905102040f50bb36c89ba4f87e97f0e6c0ba7857aa50f8c252a5c80b5a3c6f436665f715b74ff0ff18a8693c84ccac4304aca0ec27"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "b70c9e0e9100cf39e3c914fc346057977c9ef3a80154d7a5ee2768074edc4e3657170654e8cd34b500df5f1b613f75a37aa30dd6f46ddfe9252c83295fa42a0e"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "8d63297efd3034ae3a1d0d4cf7bc8b5e13d63b50613498e8400d6b38cc005f8f6316ab451cc11b1e8f705ec35ee9071369e456eba3e9fa79bf79e69c8a86b073"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xa7 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "a7a8a9aaabacadae"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "3f6c67ce97950b6f0dc9820f13475b7edfed0cb6beb25f24ca5ceca744e46710e30caf77e114ab762d9c107845e9f12f3e9f84685a125dc05fe206e035459c05"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "3be04cd3c7619fe46e4a9a23432fbc613e2ed158f2834c6084e0dda868a817fb561fe3dc58587a0257286b5da4be3e1541a9e54ecef75b9a9cc8d45571fe79f7"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "5511a501825c4c89a597610f0a7fe420293ab240c4d0d8dff928c8f89b3724bda525cf2e2378231691f15280377469ce75aeea4a6d2799a703f825ec555ecfe8"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "ae133d7b6b0a7c67622f4f2441ef8866031f217c5b779ed3305365de0013f5c2dcc5585be32b140e7958a9850dfcb3a42e2634cf31ff71bca3d1aa4b1219e50f"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "75ad011050b367576973a2fa6ace2967d5e6950762ba3e3846a4b85cc0d5ca9734c04657fa6cb4b6b1e71182d440028e4cefc6477085066b52141b615cf77afb"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xb9 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "b9babbbcbdbebfc0"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "d3e7ae62c039c8b5ab0c5177591651f00b52dedabdc9acea37160d9ca383405a3e1b49438b73d36160913b0c101816164a4f635541a5a00cbe608e4362551851"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "b59fdebd1f98a0d404cb8672570dd4746ba98ec9adf4e819e08ee98153b9645c6bbcd1847e68c78d0acf5d2d8c72a3b1f146cd85d5888c2cb16286b637900c99"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "e7716a2d7c3c2f1b048d3fbb2c74179f45a33a17ea70ec150fcb6eaf866862cf837f210e51c3b63a886f40974fa09991baf6d3306face8bc894de45bc1801301"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "2595ceea362431ec3fb890fc3b5f0a3011d4253405ac81b3cbc2e8ac5bc74e77d3ef4dd3364fe20d4e37230edb41d9c57bce5acc531788ef955ca7f42252daed"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "81c2d18430c3afff650f89636d88eb04342c26933bb4abde57948024013b05bea23479435b3093293267ceda26dd6ab6009873edc8b7314061bc7f5bd9046118"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xbb for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "bbbcbdbebfc0c1c2"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "79c957b25b54248c6c430e07b7c542aa11f2b04d6a173b0c39f8baacb2d803af08a40bf14eb309d1b78e168d296127acd42aeb76732634743a14ee8247d2f140"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "fa435de8fadcc4548754b685f8f2d26cde91d106861e0c69223d58b972a3952f0e8858544cef0848e8cbe33c3cdaaef9a28c91d5292546d726b4231189ca726b"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "8eb33fc2d96ebe10c2e83ee1d7628b56545fafc87e10332533956f43d7399ba8aab820ab4ad2ba30c2f5775d3e4bbab3dabbae1f905a60ae8823ce7a4d52707f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "b9cb65af0c722e531d78d48bfed5410e2149f9dca730ca0b474727e9dfbcbbca6826d1de1e6151e209d74c606981040d24082409400c7645431f96268cdc3af3"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "1210bbb3a0be908c4ae283a790f701e6cb5bc6a84289024c16d7e4fa8a15a35f2432f2676376a7e587c4278e8f3fc38c61b25b33e558593d1a3dfe575a5e6acb"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xde for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "dedfe0e1e2e3e4e5"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "019349c62fc5e4103e60366d989497653adb49706cd5c68c2bc1a8d0c15bfaf10e6af9cb0c66db83d4c5231b199f0a55f4a6304c9bd898b8b88e3ce01fd5aebd"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "32b17445d83dc26f7e2b83780ce6e520c4001457b68490e8751762e15ceed8e011ae823c7012f831afcf989c6740169800822f0b4fc4c9c3d612ad2d26c6a066"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "fef884c4b2fb8b8cec92b59508acd363451fd8bc4117408e67a1f0a5417e2caa8dab9f77e22deba0a6891d5628afc09df7be7bcc05fda284ff1fba2171727b9a"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "adef04d0beedaa1f1a6b90450eb9c5604125e94485eff4243ad7ddd5dfae5b9b8025e170ab5f390cdc9e1b7bf798e17c697a38949d856436b0baa3f24e9d7520"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "985fda19ccce2023e0357684fecdd786113638221897e070fff1b19c5da1c218cc26451d5969a96aa13f53317b0f605731125ebbb819f2d25f75f9b002e2bc29"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xf0 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "f0f1f2f3f4f5f6f7"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "ae35df36ce792a617cfedf84c25300b85bad2ed8150c6bab41882ae73e5094d55923a9b0704908641f5acd9ae9b8eff4f7f87a824403927a64e60fb531051f0d"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "3cc9665c0663ae5fed108484a5ad4a3fc3d04607fafe177978e7ed63f6ffa806c09a8f74bd1c9cc5f6cf2afdb48974ef74c2bad1d66e8e69c2eff1a2612c4a77"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "c4ddf0b9cc0f19641bd4f3937067b1245dc45df2b47a1c41dedcd6d420fee71daf762557919f4483baef73f739153719c4647ea20bf9b8db17382432336f945f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "6758e4878ef83437e2441dd3c13911fd0900abf5d68b4d4f294c978c2e2569263631cbbed0c98667ea06b6e3e9b5ae8f6ce6a66479e7d7094ce29ffac9f00100"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "21de99518d1311a99766c7602c1a6beec93b9791ae04ae16b4c9c5c4e1fe6898c90a03e47eb0bdcb918ad847555cde39b65783ecdceb24c75338e8346360783a"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xf7 for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "f7f8f9fafbfcfdfe"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "5ed8a8fb7197ad80c33b1644c38356f26a338b5d95922147006e402b3122c2d88c966a12387a10795eba1c82077d8ee8fb8518af30779c7661236085fce5a4ea"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "ba0e1a6a1317b5b05068377e1ce9f8109feb6fe0d70d42dbb43b8c9e4f9dded4813f00ddf17a96e5eff0cf9de58b7f23d95ab72c0574bf5e9091d4e11c299109"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "b97127a1095842a4fcc97b8b731f6373e96b94ed125b031ef3b66bd7d5799ea472b446af38280a307e60e5f86cf55fc0ef64a026fb74d04d7268c7892ce8031d"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "17095e6db9ed243ae24ee5c900254bff4bd954c346da3233ae31c90f03a3fb06240a05eae956b6cb137a7bd52a7b5ce55f1ec3d39786793c344c89f287c63e29"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "7782aa15a441afd379d5f99f8e399b01cd8591dab22e743f762cd752caf715ac303b3fea6f3a7befdae4287f8a79ffd545441155acbe794ba2f701cf74b3c85c"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Incrementing bytes from 0xff for nonce",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "ff00010203040506"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "ec58a1d807ed5f30f198a85d0067048dc4b4cdc5b0bbb11feb55d2b4c90562e7e42aff535b252265016aa63cef3b14f80a599c87316d04d0d6f2991a33cae87d"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "a8de704565d58eebec8677ffce5a4ed46439b6682e48a385bf47e3b868a9e14f3ce5253582f38bdd3256e9fe902bb61d836f0eea997893804c96a504f080450f"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "bc5131017ae558219092aa832fb25de82182f42d90908da9c4bb444a38d9a286cd44121293578b60a426d976e430f52b20b3143ea395ddffdba54f8153f6c6a4"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "3c7ba0419c214685c2aa931dd23dfb148bdbfa6b9aad3606bdf4b4acf5860d8c60d595921e41728cd552e93b1d84ef786faaefcec30ec29a4380445dc7b6fbd4"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "27a5fd8c8f8c7c6162339e9121c78207a3b19e68d93d1294fb5eded7c7ad5b726cbdfd5c6fdc96ec81cebf41aa2272ce9d1fe08d9acbb7b6f75656e5c1c0a0d0"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x00 nonce: 0x00",
+        "input": {
+            "key_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nonce_hex": "0000000000000000"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "76b8e0ada0f13d90405d6ae55386bd28bdd219b8a08ded1aa836efcc8b770dc7da41597c5157488d7724e03fb8d84a376a43b8f41518a11cc387b669b2ee6586"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "9f07e7be5551387a98ba977c732d080dcb0f29a048e3656912c6533e32ee7aed29b721769ce64e43d57133b074d839d531ed1f28510afb45ace10a1f4b794d6f"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "aa10f530cb54f5308d72532c98e873fcf9cd674880ba97f2bd8c801a9c85429e0bd3c83721bd40e74c99769d4a43bf774f0ee6fc7a14a9a426386c88930475fe"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "b19fe344a86c63a6746e65b93ab6e52729f8510ff662cd06e8f3c31a481f9223f9a1e969f3dc88a607448e2d4a2922a7b1283603d0539363aa464be55d64e425"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "7e1adf9c2bcc1bfc8c688abd348df5949d78812804eac312740eddd662a2b2f83bb95c0eb74cc251d11f03100536419d4466944365c64f8309ef2151333d17ef"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x46 nonce: 0x18",
+        "input": {
+            "key_hex": "4646464646464646464646464646464646464646464646464646464646464646",
+            "nonce_hex": "1818181818181818"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "c205fbdded7eabf21cd2b39c009dad3f5a3d7108aae26d710669c670fd45c00fccfbfeed782264ba048d6eb69b1414f371f1d033e9c9f4c862e4b376b041a34a"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "3203aa4636fc4fd1d5b64d67a4402381569486b38e1daf3ae7dac768aee72af5263e99a03dffabea20cee27f476a5b38ebda26254c50911576956b7d39bf6d80"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "774fd7415657ee8f37eff41e4dd40557549dfd2b3ce1927d6d8d7bebcaa49c4852c30594e5f5ebdf040f237f93b1e496461d2b6dcec0a59a540c54106c630e87"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "016a75dfa19ebd4942b62b0e98c01df66a01c84ef50357be3beec94622cc618200d36e1a2956e204dc7437c9a7afbbfc5a4ff76201c2fea740c7804357bb2a6d"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "731ec03e033b657af208576a7a6699a9483a2d819fc0c1b250d24f09fc981567c13325f2c3e82b4d7ea4a3238a40e613c5659bb820fbef13c74f6351d7f0f77e"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0xb9 nonce: 0x33",
+        "input": {
+            "key_hex": "b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9",
+            "nonce_hex": "3333333333333333"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "855c892b1714517fa985e40e5484abc15efb8d3af9238ab9358fb291d10ee4bc20bd8f0ccf230be08f642f057e6d3224b676af9eff92108c972f05f7c1c72aee"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1a563072c1b86db97c734f7d68eeef9a293743872a53d9da55c5ae3b65a14092400238d621920809d77d6a7ddc42c65c693b146e670b7a503f0eca27b0ad76f2"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "0b38a06477461aede7785436d627ff696002819c793036a6248b9fc5f2fd55cd972fb8555d7e0d29a081d7914c51dec92acfd6ddc7947c214f1fd156d1fb80c2"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "17809b037483717412c1ce26bff108744e3817ffead2bd1325d3bc6999a48c41954cf71d65db9db94cc9637ebedf625301a2a15011b6b5b675e1cf9a46009c8c"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "c516d29534030e7f5b8349e6fdd556c14f126fbc704dc30e314b8413d42235e9dbff9875238abab341c5441aa34476d750a37746dd0559f81fe8f2e40feac330"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0xe9 nonce: 0x61",
+        "input": {
+            "key_hex": "e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9",
+            "nonce_hex": "6161616161616161"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "e410f2a0431f72b54c1b46ff46ff1dbf2a3b64f2adb6b7cb7c3d65826997dec494518f4dcb126ade8b841995c9ba4d3dc9208c5780216a8ef52e2515b61a6d57"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "ca1b45050353720aabe11a38fffa985ae5d5c10b618add218dcbea4185370c013d7ada01a6e6596f804a30a7f270419ded74763346e958f7fec67c2cc985b9bf"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "3def10a5a7e80980c14739bb92b66e476407b61222cb0448b62db68a54d14b60688c947a36740d674809b26e4cc99c74de87380ae8063c515673dd2a58a3d1c7"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "f1fe38a427b3c3430310f1abdf33f9867e41b63094a0dcd049451e364179336877bf53c38d604c4843791d68abf666ab00b0ee6b08f97c83f28a10c967ff19df"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "6c3797ec69fd0eae1a25646dc34354ea278c402c2f8a958964e7611cb5581326540b69d8fe357fdd27a6c4ea6b7f6ab930f0ac9a2d6a12c09973388fc6d00514"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0xb0 nonce: 0x76",
+        "input": {
+            "key_hex": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0",
+            "nonce_hex": "7676767676767676"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "2158e513d8efc239d949600cdd39160b6d931e0c1a3e5db2c4605ea2960d4d3bcdda62cbd06d9947f95793d6b535e91b43f04557b28ccca2bbf48a79f1b8ee8b"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "2226033851343dbaf37380c4601d6e016c850e4589078150b57f2d52caf314a6ad3464e9f2f4ea782a05fc6e6d596a6b197b494fd135796f1a1e772d4c285cac"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "2caf8107c8926774af891381cf505f797773a14c1a7f3c5b6c35acff3c4b9b99eb4882676a0500d5965ba4239f7f5daa3c87e827b4ed9420409030ee033cba95"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "22dffcbf8dff28fd3a1fd9b1a48923f47032e245d68da272982814f9033da7b97d6df824c39c0844390ea1ee07c0381ceca984f9e92a2a354b4fb310a265c8a4"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "ba8c0f5a252e857afc5c89d4ae5fa3d1cc33b113aa61e77b545cded5c4b32d91887ccc698133e3fe073bd2895e06272c9da276f07bc7e5eab01d317055fb93e1"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x62 nonce: 0x84",
+        "input": {
+            "key_hex": "6262626262626262626262626262626262626262626262626262626262626262",
+            "nonce_hex": "8484848484848484"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "23a8b9cd8ab6996daa977ca0d1f9583a946d36716db5c0caef46f609a17a980ca50e1656a2af4cf68c74f875c13c8171af9cd0bc484c1c6eee47c39ee1be8644"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "1abf8c0a9af8d3014166a3a0e96ba0589331ffdd5fb6157f354f5c35e06eaae2e0a30e42a04c11686950ba302f42724b0af5472db43e6989c72a4a8ce34410bc"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ab79d01a6f05ca86d9f97625a72c44f476c8ff7917da60db1403785b13937b5cd1c881722a6f04086d144d39987742f26832e2eb28642c69653eba5864a2fbda"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "235e50aa1b96bf50d5b47ea523da4867e25191a030750c424f983f51fdc3c68146d80b9c5f9462a5ffb08880ff0346464268e6050499222ced066ada54f9485c"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "3953dfe6bd3c76caba7139970bf695691d96a109490c3baa8f6c5b81d490b6c380d34e8573094658b63e3dd98a72167b4cabf667e9f20e26acb6ac027166894a"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x83 nonce: 0x90",
+        "input": {
+            "key_hex": "8383838383838383838383838383838383838383838383838383838383838383",
+            "nonce_hex": "9090909090909090"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "37c6fdc0021ba03e4b1ee8c470680c94e592576c113d4e34c2864311e53417f9b7b1bf6f4780bf2038ddc8f138de6dc00027e6cd678354d031b88665e37e1134"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "15556697950093a130334ef4304901ee935adcf5e60f64871e2ebdb909d9bf0962480b104cf1ebc4853506590cf979c31b03f1cd0c65ee51a98af095bc7f5aef"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "abf26b3f49bb486d83ccda197cad68d1d107db4b89afe56b0b5f847a69373b1ef7a722003631b6653e39d8fed8c84d21a490a030b12070a4bc9a92f8e5ba7078"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "0f6483eba0d714edeeb2ebb561e443f7c664cce24a3ca3c993eac64b169a1ee90640e82546b11f523689dee3f97cc6d949bf913abdfd319ffc99a3514868ac55"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "b7de0783bb4f75d29014dfe37f994942ea420ec56f67d30e8326d6428511f99b8f0741a7e7e888d096bbba7bdfce0b2a9e73e8315251f6a44097e01e8a733b0c"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x11 nonce: 0xb6",
+        "input": {
+            "key_hex": "1111111111111111111111111111111111111111111111111111111111111111",
+            "nonce_hex": "b6b6b6b6b6b6b6b6"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "7cd5424ce708c011aa3b596bfaabf1e6e8465ad19971f18800736c3128e627152027d2e52ef27af9b8ac157fe1b5f0fda6a0bac755007be51e63021b6d9c78e5"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "fe7263790646ef31275da22ed54c4ca5528dda0b67f450b06324a162cf15a894834ee944cdb475a628109749e4c123d7b2c09395607599c4e0ca0bf6f6202aae"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "fed6e15e4e91048b07909d935bff1895ac47a23edd0702d3dca36a13639cfb2d7a3589b6d9eda0aa369db658c9d00e1aa753be7eae179ca2a34976e76c76dc0d"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "2acfc6c15492631be31a56b7638e24e2853b3ad7e19643423931fa722cab5cf724a60af8a6e6caea08c397b5c59b45df72b405baa67018bcd4b5d9dd1aaf81b1"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "0b1e6cb8349e66a8fad5abdf2fdd1025ba9ddec20654c99ec722f6771982aca7f019921c8d734345b23ffe8d8cc07c8641b5d49e2a87a4be33a8776fd068534a"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x33 nonce: 0xd6",
+        "input": {
+            "key_hex": "3333333333333333333333333333333333333333333333333333333333333333",
+            "nonce_hex": "d6d6d6d6d6d6d6d6"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "06b143f6763a1ae11d0e73363c6818ead549f1364f1ed165609dd2850de2fe5435590cb53cdb82c992ac9cc75e8ebf861ea6be61c4c908db0156b6859496c19f"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "cb9f8fc567ca3d5fe5c14015183f5ae1f3d4c3331f012f82635663c3d99d5773e63f753b6f894736cd0be752774825b427e0ab0ee4aba0e671be5728f924428c"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "6b5e6b1a5a56491f6246c434e923af2a6dd8a9e22a3a3071df52ce0046d96c1ae879d6dbb746d3f82d7310bbd4149ee9f14ace306eb8870a57fd5ea4af64b9c0"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "e2a9df7ad8bdd798c14636108e92327f3abfc07566ba3f1d9fbb4b15cc2f8d940434493b16a01156c2e4c8bb2b17e398e7e59341afa3bf75ef6a6fb534ed8a77"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "f4cc37937213a0658fb67a690f0fed456ef3e0462b749b30e101b98d1673d47ea4859ed65ab396391ad6c568dc53c9f23ee17e24f5774cef1471a53825231e69"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x9f nonce: 0xe4",
+        "input": {
+            "key_hex": "9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f",
+            "nonce_hex": "e4e4e4e4e4e4e4e4"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "928c80f49402f6a2dce9bd0901a923c057911115dacc41b856c340e8ffa8d6f60fc41ac9cff43a58de178c5527d7d1a26edb9b5ac90cc39ec525b42989ed80e4"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "9fe93c7abb1210015a2f735e7c2a6c81984fee9cfa041e59630bcf6687a16ae6de7fcd55b5ed607d4ffbb2bddb4537f5322683c5495db57163dd2e829d035edd"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "296c66254058fe38964b4287471ad751b9e2fdfbe02deaa9c3d3c6f6e7b5051acd3cb55e1d9fa7f25fcadbdadaf2075f3df1d51539e66c113606e04243883bc4"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "8cd5268fc0de7717ba066da9dd7ef49cce7a5afc1e52d4ad3bd1f1d73d0212770de1f9f826f74840a577a0492ffdc7e365db73d5e85d83c5f57f59ddc8e668b1"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "84f70bd5cf371109d7c155f476b4031e22fcce3118f13908413bde9ef13b758122f62356f549f474ca94dbaf95a02e908d875c28a5e5cd1d96d85e716af96929"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0x42 nonce: 0xe9",
+        "input": {
+            "key_hex": "4242424242424242424242424242424242424242424242424242424242424242",
+            "nonce_hex": "e9e9e9e9e9e9e9e9"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "3f9d5a4661c45755f2e3d5f9e9e35b335a250b2bedf0b9dc8027ea65fa880c43fd9f3ef6a7ee68e3bb66d22a1406c16ca62a89d04b4c9bc7738d64b671c4595a"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "3422fcc23cb463b870394c7361d1dd901e2b2dc9487858a38d1fa1b9244df32bdccccbca241e6e4808d16f577f6670e3e8d499ea86948380226211aa40829a1c"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "8aa5f6c18c9c5718e0132851a3af71fe3d68e85bc4d6feb549ac3815cc92aa44fb91e151b1f5b8532b9f876a030f5e7542c3b07d37efcb5a52c46b3badd12f38"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "405ffe1c29ff39510178da11df3aa91d900836c2e98bc5477666130e9814780bd077c31a0b2137686fcbf222dc85a3c2f5f7b26dc8f612fad0db2a3f549f4fde"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "e40f4fe8237823ae42754d549d35a10bb5765873790e947ff70369c5b0fbb727f7bc8c770ecd137e477df8a21a2beba1c1ba5d9b8f08b9bfcbb4e74dc39a3843"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Repeated bytes: key: 0xff nonce: 0xff",
+        "input": {
+            "key_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nonce_hex": "ffffffffffffffff"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "d9bf3f6bce6ed0b54254557767fb57443dd4778911b606055c39cc25e674b8363feabc57fde54f790c52c8ae43240b79d49042b777bfd6cb80e931270b7f50eb"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "5bac2acd86a836c5dc98c116c1217ec31d3a63a9451319f097f3b4d6dab0778719477d24d24b403a12241d7cca064f790f1d51ccaff6b1667d4bbca1958c4306"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "b9c47b013f01f1a411c1d098c843ad4de93670f2ac3f30dc43e0d3e0812581776abc82d1dab5361645e310aaba7fd10451b696aed6770dda7051624ebed763c0"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "59b5a72904837bbcc60861d8a2e32249fa3cb2a69b314bbbe676ded39c41192c73a356731c476ed2545d05e2d605e0529ed5fb215a91e57ae53d8aef11a0f636"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "98fc27fa604da7d7a784b3438f265d925e4316fa8c793703dcd471bc96e34951f6c8612a4d8081b5826257947d5435df8eb28eda153ebc90f3a65c6c4d41ee35"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 1)",
+        "input": {
+            "key_hex": "bb46d11f8c91035334e5259c8104211c3b295461ee7a79a775f102e9b3aed61a",
+            "nonce_hex": "43715a0da0dd6096"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "f620113a9fa0bab071de4a981f75665d70e007716da809ee10c7f8ee9c238fc4f81c0fb4c6c03fcb0f45b92ce4ca776a04b301cafd9707c92f30e7c4f7072599"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "4be88e58fb78936194931d1ffcb53724d31d8e291f41192f971e5a8ce22442820716bbb08276698736ccf6ac68c15b476515af81e456bf7c89b25f7e518d96ec"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "d3f42ee74851d52bba62243d8f7c795fd74918eec75ae73784b5632a59820082c16cc321980ad46511c65b742e59b7b65f6882b6e0975863e6bb6573a0f9f2bb"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "49d51e85cff70f25ec0097db10ad97ef46bfd748aa33756f386c58f0444b96c44c14eec0c911cf4fc6a5023eddb66eeaab057d5a7d93a560b8f34b2f45beec9b"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "ecfb7da32ab2891cd09eadbc2659f2604aa99b380e95db40bed3ef5809b76558c28fa7940a34c68ff6e13a972a28eff17a07023962ede1498a334611b59823ad"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 2)",
+        "input": {
+            "key_hex": "8231752631423d0954158706358a5e35bc4715eb4dd503c8d2d9b79bb5bf74a2",
+            "nonce_hex": "894c18c02b9e3ad6"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "e48080ff9bbff5c3ff7a72ba50e1e93410c7f6127a3bbe69839a98c397541f0aa044ea9d7947c8d5d61693725c1a287d7676ab27cacbeb6beeb08a4440459ed0"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "a260c888310427d77ea0dd6b566f6920bd1aabaeb744dbc0d5e89c7ea5111d7d6ef068e9522830e940875da2370a255a1639b8725a67896626ed39bc170c05a3"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "c946334e0190af2147d4ff568469ea2fddee9024ce3b11298c8deefdbdf9abbe01792b8521a4b290cdd450e1da3376f2e58aa2673914eb919592c423c88b424d"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "3a050b5e2a640eb8e67f064daa4fa3f02c541974bf9b2311ee67107dfe51c06ce00e8c6a4befd38671974fb3b10399083377181e7b386c0e05c38ed7ca9342b4"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "8d09886183b522c400ef4f21b06124af88f45a79b327e2e933dd712ba79efcb38153a49ebfc9e82879aa6b4bede76bb5effca5220bebecfed2ba5c6721aa20ca"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 3)",
+        "input": {
+            "key_hex": "99a8fdd951097428dae66452a28d06bfa12b80f41ff50d9e83c5a75698d255f0",
+            "nonce_hex": "0a837a6e61fbec96"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "ad0352faee0e3b6295ada678188506542f6e6f916a03cbc3631c4e457144455107e7a053e8f2b7b1e23931fb324ed309637303197ab6695fbe9ad38b6a15cc46"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "e6f08320bd450590c933569a3e731203c60c80ac25faf036f1f71e4be69db1551c511913e4224d3f780c84143790418fa96134c0139612881b3171bbb9c34343"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ba8b143a5c4272831f96a103519aaf627894acc7c76e23f564f31ad53f9d6af733082d1f8bcb2870a85b4660980faecbcf8e18f5399b462018dca9f1a4ea74a0"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "ac85081588d29e7b799649e30820123ad7a5b6487fedac00a5617d050ac31e4343284243ea77e996d0e14eb43692d9ff8296bd96dbd5623e9ffd88eb00185c97"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "191a0adc7a42e800e983cf61b2a741cd3ce601cb24060beeb383e7fee13f813ad671f3a38ad82e244e1b5970d6dc82f21a4961a0c935b05fa969423aeea2582b"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 4)",
+        "input": {
+            "key_hex": "45fb1c46296eaa3c2d79ade978983ad29e27ad50035dff6c45e79b640441ef66",
+            "nonce_hex": "8db785dc726947ab"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "6b839f03e2965961dcccb5cb2c59bcb43b7c36ab3b23ba8694f2ecca7a08a83b6d697aa32e90948117540909f2525ecd92539ebb5b19d52bc39a6fcd8afd2f39"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "076598587ba43de378f373ac2ada5e604a40e8675777bf91b1836e785aa84705fc098766ca3aafc1d045953a844e583ca64c1c37b353194883fc63600f6a92c5"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "41ce32107bb76898a815846c9aef655cf6d09d4bb22b40541b28bc26dc2576924f12050d98668e3fbc2cb4bb8fbc5073c3937a006115a26c25492bcefc2fb7c8"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "af00238f67679063d01461c46e51edc6074a0d3e3ae2ba2584692f438ab3e6f083d6905ed2059dd05b08df9bda52c579d8acd5f18b008e05a683619398cdcd32"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "af55421f4b24382209d8879ab23e56f7b32c3012a05507367be37c9028222feca27b151921fc5d37b003d8539881796c58b24c64466aa7fb4ddb47f2f5f2993d"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 5)",
+        "input": {
+            "key_hex": "a067065c6acc7c508663d748300cab478cc74ed3ac3ce281a61dd79e1a76e422",
+            "nonce_hex": "72abc1cb32cccd4a"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "e0681ff644e3027a5226283a507aca6b7b10163435a68753acaf289a2477ec56b0c3697794b3dc55b6ba3bd1abf464b8be74218b3d4d124794a8e6de5de7ca69"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "829b324b12472bea93dcc1488ba2587671901b5eec5f1f6f00265c5ebad78fc76a359d42ed0e8f0a2342e8c6579363b52bf724a2594d2e2fedb582f9fbf3f2bd"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ab9cad4e80cd0d8527d08484b91d5b81c6e8d88b26333ea075b930509d1304d4538e28101a8942d24c72b5183a3432dd3c5993a5b9c910ee4384a454804ab90f"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "0398fd14f68e41fa2e61bca513be1b0d0ed0677053ce632d6a1a7c5e4914237b4e3b2a0ffd85810703e5c8ccb1b64f5ce2b586490e91e3e6d93bfcff438ee886"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "252d5dc61809e0817a8bd26fc94bdff2bf986eaf9b144ea10aeed5e9e2cab2a3dc171d7266ee4ffec3a5a29f9ce8927c27b1ae23da3b9580eb0925f26ab11723"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 6)",
+        "input": {
+            "key_hex": "698dae90a8b07a6094f84f562ff5905d41dd9d8aece1f49855864f26584d5272",
+            "nonce_hex": "e43e20c5e6d8006a"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "e58cbafc3aa61604e2aac9cebcaa3da59b0dc6314750a3d779c6c2765dafcddaae916a25c30050afaf752487e82a4699bee0c1b829c0af35ee51e4a71aefa6d0"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "0fc21d9e0abc4193f04a634f8b52e150654a020042eb276cf66ab9a7993bf19734a9831d1a23ab3eff0385f59ceef425b27b30f76074449fe91f7005b7e8d489"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "2dd050e1d1ec5b751c5ce424f22ec0fdd2be00d0ce4cc58beeafc4d1a4d6ed0ac103f975dcae4eceacc66512a5c7b57da5f66e55cfe8fd7b8a284452d914b444"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "923df0099cef539e054fbc67a7b9ff1658a1a35eed6290c5e629a86a48bfd4b447199779f87fe63a1ea27a2c6ce124de4e8ed7180d659be6f86003c33f40b60b"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "df5218446ab68a544b0fc89016299a40b3f07b6346efa69e0ff8801c49825af8d4f13b1d74d7afea498cc0e516aa522d742f387a5e7df1362793468424ce50a3"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 7)",
+        "input": {
+            "key_hex": "fa124624580aecc7d3e4ad18f3f901a7ee328c32b45b212a01cd0ee05d4404b7",
+            "nonce_hex": "798db731acccb30c"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "63051343cfd04b4cc6cd30dce2f204450b204f36e333db7fdc587840b3e1063acc694b1d066a8c37ec0a21783f8ec4f267ddb772b163949dfbdc6ba5bf7b6c6e"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "9bd1be2859c119fc95b08b2f4d53da4aa7a88f830eb9369efd7a7c59fe5a91ca36f89d2081a22ef43648a1054beeb4e528ba5def77b344276ff60847ea5aabe2"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "f786e124051f779deccafddfdba6e8d5918c8c3f5294fae1c1d7c890d223ce453a0a4509e3e4614b715e2dd13b021d1d81b5e3914eb526fd8606aa2e3418f928"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "b903f40ff9b2d4946ac6d75e707fc4dc5e7ac74487628553b992721e017c9c389d0f647a05805847f45df491c5dee3c9df590a74ef973198320ecb80f5868a96"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "2ae727eb32bcc18095fc0cb1b6fef197665cd07e44818b1c2d243c53b8814e61198490c5715cad20c28feb979956a7b342c01359673a3db870c4787e1e6be3de"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 8)",
+        "input": {
+            "key_hex": "57d818e346df1d21b4c81920e45d7b1ed1d2b7adf131848edec3e2f62bf6b8a8",
+            "nonce_hex": "aae4cbae1705df95"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "4cfe08db27e7c7ce830d839c7a7d73bcda2390c803d2ceecd53d6d99b149e65d711eb9ec3653db8e8c2d298fc708448382c1fc9a93b95fed1929a3e798f46a27"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "51bbaa7b53aa71ea0cd196b195e50b5224e78e4d067b03a719db06fc48e68ec6247767d068370f7ec76776a5cefd4e724c81e0fe7af3f82c5663151531df65de"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ee5eab9ef8b4093fe50858ac0ea25638b0287d6fb4b0b8907d91051eb8164f7cf9ae9f89f17e3b454c432e3bdda9f14f824cc5f5662e6493f2f49266196edb07"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "eaf76601c2b2ac0a28d04f782689a4c72d3ff5aaf4c8705dc05245531293c7ea125bb9c654c9203a9aeb32d22e723ebffe0566b01dc52213becfee2b00256744"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "4a7a40ce5c42eb779788b145b561a1b98858df93d47d2a5303fc05600fa4aed37f0aef9b58453657a7bf466cfed7176336e1983fb24e951f7bfa344229199bca"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random ( 9)",
+        "input": {
+            "key_hex": "5355c5fa449b2cfcec92faf40d44c7198cd458e50d04cdae73ee88f039b0ff3d",
+            "nonce_hex": "ac3d1e0122e4a5c2"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "24fc8cedcc5194aa4838a783ff0bf7ac3c8a76bdf9d944ea9e058e648fd75d872da690fb2c327c016fa81c8f41d9eae3f423ec3dff619a146a535f85a4616f67"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "faa097b628533862c5deb1a35d5e96979d6da8242acf8d0dfe3a1c10370bdff3f2221ed90e180c0a747b2eed1377001e659326e716c023201f9f4ebdc2a58bd6"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "fb8bac2c7be15fd7bcc9f15253ff18af4cd28a5383b2b782f57607b2038cd7462646dafbcd0e6a54882331c78605d5908cd4adc6e6b5455c434f66dc0e20324e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "8076f36a45c8e55ab5554c9dff5f6a7f56c5a135fcd9fa5736f895cd9dc3501e31bcd57a288fe2882c558c6c24a5f889f63ceb60b0c21a83a5557ce23f9cb9f9"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "d0747f9285f86a441102c0edb9cee37e181ea90ca80016b1bb5eb70674cb347c1092e7be675f3d70823f923f5a1dcf44e8bce6363520c0ce5600c32b51b3fb0b"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random (10)",
+        "input": {
+            "key_hex": "1b66996b2684158168519e0f525cb6e4a06469f4ea7be87181748f6be8a108e3",
+            "nonce_hex": "9bf4e9c3ad09b478"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "b1be3486a53d39e77b625081e29b129efb3db9f510663811317e05bf9fc3f90163d71a8c10f261c65b119e7b27952d096fee047ad452cffaaf81946343147236"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "31d24269849139346b0e0b1639aea4847046a460403feb4765af2d4ee5fd1ec0cbf7811601816d668e4027a3a84a2f86006b1b863de4d126c51d55b160e4fe84"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "ff512f8f6190878114d907600159a142ae726e8ee45e7679b67e2931f5ecea08b33e71056172f860c61770651e16bc6f7897eb786e0538d6da8bc49f790b184e"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "c6d19f49616f9e276d6dd1773693e9ad5a4c03424882f156158038f813ff6dc1264bc876a8452850fce62ad4e0dec3731650c0fc116a1f307f95fd0deb1e4961"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "63a64ba9dcabb5af70c2ea0fbe9fc417727475f34ccc13e1a7aaa44f5acef6e3cea3d4b4a38d305f7ec5528b9d0cce178d641e464099e2ffaf2f8b7c5d25ef09"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random (11)",
+        "input": {
+            "key_hex": "45aa6ab676db59e254229cfa3b12aef71d23764220939f888b52487271e50963",
+            "nonce_hex": "8916dd3e6a626d08"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "daf46db3b797b1d8a69f22cc13bb284b41d0cff3a5a74af5afbb5c258611d864354ef0c27138fe0abdf6fd4975d20cbeb68d161f9051d48a475891b98fb92cd5"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "63a92f8fd5493563487f19e15b342dcf7757ba4ef850c2ae50444ebfe3d67e23b78cbcdb994fbcb6e3d69619b2709962850246bb94c32dc4a24d1ed634e8d80a"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "06b1426d262b19afd9dc6f958b41eb5f882102b9aa478fa1e2ca7bf81df6b427ea9731496603d9b28b662f15dd22ae28e5992c6ba3d5eb898beab54eb7a21e57"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "cb6930faaff27f6baf1db37c428c19260c7eec232bcfe25e0a18a55e3cf020d49b3dbb555dc556a26e2cd2ac1c34f25718d436297794a34301cf57fe828335fc"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "76bbe24def4320c3170e7cf8696097bae01a9d48e0c710ce63822645dadc81ef2ad3313488c8a2e940f5a99d63af4b8538952f677c83818fb4c80e70b7dc4fcf"
+            }
+        ]
+    },
+    {
+        "cipher": {
+            "cipher": "ChaCha",
+            "rounds": 20,
+            "lengths": {
+                "key": 32,
+                "nonce": 8
+            }
+        },
+        "description": "Random (12)",
+        "input": {
+            "key_hex": "0ccaa0242f29a6d39dc35b697e6eba6d06e23df6231dbff1c9e90a1e9e45f66d",
+            "nonce_hex": "52a2f7d666991c79"
+        },
+        "tests": [
+            {
+                "input": {
+                    "offset": 0
+                },
+                "result_hex": "cc30ac463e6f905f2e993f4a9d6cc6e925ceddbd625c63a64879362e89471874b24cd9d4a25d15de207e79263d34765ea5ef54e0da4400d047b8d6cff77af880"
+            },
+            {
+                "input": {
+                    "offset": 1
+                },
+                "result_hex": "7e6d38992253831a11ecfd1bb6db0a780cebcf705d4b4365ce9de14588d98596ff916d9b2e32aa083245ed000d7e53b96efc6ae97ef909bebe8aff47fa4c2393"
+            },
+            {
+                "input": {
+                    "offset": 1023
+                },
+                "result_hex": "a892c02abec2c6a5e1cd9da39d1dadf09c1310c8abacae6f0ed884b9f441ddf6a946df3a28f18591669826df8e13e00fb807ca52a73ad234478b7ce57c380686"
+            },
+            {
+                "input": {
+                    "offset": 1024
+                },
+                "result_hex": "fde58d8e34f2848c1c936aabc03e5fbd00c2fb72c46281d6b9e3c4a34990ea2513cb9423a2dbec74fcb5d75c9b2c0e5c699767c1a5648cf2d69ed0f450e18f6f"
+            },
+            {
+                "input": {
+                    "offset": 2048
+                },
+                "result_hex": "10f39bcd8059c39093a7b05e74dfd93045e29f0218b44bf6368b2a74eb147146e4af3af49bc12794c824fd871be956ac6419b329c1b259fa74a746cdaec9b8c3"
+            }
+        ]
+    }
+]

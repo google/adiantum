@@ -1,0 +1,621 @@
+% Copyright 2018 Google Inc.
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+
+@inproceedings{poly1305
+,    url={https://cr.yp.to/papers.html#poly1305}
+,    author={Daniel J. Bernstein}
+,    crossref={2005-gilbert-fse2005}
+,    ID={0018d9551b5546d97c340e0dd8cb5750}
+,    pages={32--49}
+,    title={{The Poly1305-AES message-authentication code}}
+,    year={2005}
+}
+
+@book{2005-gilbert-fse2005
+,    title={{Fast software encryption: 12th international workshop, FSE 2005, Paris, France, February 21--23, 2005, revised selected papers}}
+,    booktitle={{Fast software encryption: 12th international workshop, FSE 2005, Paris, France, February 21--23, 2005, revised selected papers}}
+,    editor={Henri Gilbert and Helena Handschuh}
+,    ISBN={3--540--26541--4}
+,    publisher={Springer}
+,    series={Lecture Notes in Computer Science}
+,    volume={3557}
+,    year={2005}
+}
+
+@inproceedings{chacha
+,    url={https://cr.yp.to/papers.html#chacha}
+,    author = {Daniel J. Bernstein}
+,    year = {2008}
+,    month = {01}
+,    title = {ChaCha, a variant of Salsa20}
+,    booktitle = {State of the Art of Stream Ciphers Workshop, {SASC} 2008, Lausanne, Switzerland}
+}
+
+@techreport{RFC7539
+,    author = {Y. Nir and A. Langley}
+,    title = {ChaCha20 and Poly1305 for IETF Protocols}
+,    howpublished = {Internet Requests for Comments}
+,    type = {RFC}
+,    number = {7539}
+,    year = {2015}
+,    month = {5}
+,    issn = {2070-1721}
+,    publisher = {RFC Editor}
+,    institution = {RFC Editor}
+,    url = {https://www.rfc-editor.org/rfc/rfc7539.txt}
+}
+
+@ARTICLE{hch
+,    author={D. Chakraborty and P. Sarkar}
+,    journal={IEEE Transactions on Information Theory}
+,    title={HCH: A New Tweakable Enciphering Scheme Using the Hash-Counter-Hash Approach}
+,    year={2008}
+,    volume={54}
+,    number={4}
+,    pages={1683-1699}
+,    keywords={cryptography;disc storage;block cipher;disk encryption;hash-counter-hash approach;tweakable enciphering scheme;Authentication;Building materials;Computer science;Counting circuits;Cryptography;Information security;Material storage;NIST;Proposals;Secure storage;Disk encryption;modes of operations;strong pseudorandom permutation;tweakable encryption}
+,    doi={10.1109/TIT.2008.917623}
+,    ISSN={0018-9448}
+,    month={4}
+,    url={https://eprint.iacr.org/2007/028}
+}
+
+@Inbook{cmc
+,    author="Halevi, Shai
+and Rogaway, Phillip"
+,    editor="Boneh, Dan"
+,    title="A Tweakable Enciphering Mode"
+,    bookTitle="Advances in Cryptology - CRYPTO 2003: 23rd Annual International Cryptology Conference, Santa Barbara, California, USA, August 17-21, 2003. Proceedings"
+,    year="2003"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="482--499"
+,    abstract="We describe a block-cipher mode of operation, CMC, that turns an n-bit block cipher into a tweakable enciphering scheme that acts on strings of mn bits, where m{\thinspace}≥{\thinspace}2. When the underlying block cipher is secure in the sense of a strong pseudorandom permutation (PRP), our scheme is secure in the sense of tweakable, strong PRP. Such an object can be used to encipher the sectors of a disk, in-place, offering security as good as can be obtained in this setting. CMC makes a pass of CBC encryption, xors in a mask, and then makes a pass of CBC decryption; no universal hashing, nor any other non-trivial operation beyond the block-cipher calls, is employed. Besides proving the security of CMC we initiate a more general investigation of tweakable enciphering schemes, considering issues like the non-malleability of these objects."
+,    isbn="978-3-540-45146-4"
+,    doi="10.1007/978-3-540-45146-4_28"
+,    url = {https://eprint.iacr.org/2003/148}
+}
+
+@Inbook{eme
+,    author="Halevi, Shai
+and Rogaway, Phillip"
+,    editor="Okamoto, Tatsuaki"
+,    title="A Parallelizable Enciphering Mode"
+,    bookTitle="Topics in Cryptology -- CT-RSA 2004: The Cryptographers' Track at the RSA Conference 2004, San Francisco, CA, USA, February 23-27, 2004, Proceedings"
+,    year="2004"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="292--304"
+,    abstract="We describe a block-cipher mode of operation, EME, that turns an n-bit block cipher into a tweakable enciphering scheme that acts on strings of mn bits, where m$\epsilon$[1..n]. The mode is parallelizable, but as serial-efficient as the non-parallelizable mode CMC [6]. EME can be used to solve the disk-sector encryption problem. The algorithm entails two layers of ECB encryption and a ``lightweight mixing'' in between. We prove EME secure, in the reduction-based sense of modern cryptography. We motivate some of the design choices in EME by showing that a few simple modifications of this mode are insecure."
+,    isbn="978-3-540-24660-2"
+,    doi="10.1007/978-3-540-24660-2_23"
+,    url = {https://eprint.iacr.org/2003/147}
+}
+
+@Inbook{emestar
+,    author="Halevi, Shai"
+,    editor="Canteaut, Anne
+and Viswanathan, Kapaleeswaran"
+,    title="EME*: Extending EME to Handle Arbitrary-Length Messages with Associated Data"
+,    bookTitle="Progress in Cryptology - INDOCRYPT 2004: 5th International Conference on Cryptology in India, Chennai, India, December 20-22, 2004. Proceedings"
+,    year="2005"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="315--327"
+,    abstract="This work describes a mode of operation, EME*, that turns a regular block cipher into a length-preserving enciphering scheme for messages of (almost) arbitrary length. Specifically, the resulting scheme can handle any bit-length, not shorter than the block size of the underlying cipher, and it also handles associated data of arbitrary bit-length. Such a scheme can either be used directly in applications that need encryption but cannot afford length expansion, or serve as a convenient building block for higher-level modes."
+,    isbn="978-3-540-30556-9"
+,    doi="10.1007/978-3-540-30556-9_25"
+,    url = {https://eprint.iacr.org/2004/125}
+}
+
+@Inbook{pep
+,    author="Chakraborty, Debrup
+and Sarkar, Palash"
+,    editor="Robshaw, Matthew"
+,    title="A New Mode of Encryption Providing a Tweakable Strong Pseudo-random Permutation"
+,    bookTitle="Fast Software Encryption: 13th International Workshop, FSE 2006, Graz, Austria, March 15-17, 2006, Revised Selected Papers"
+,    year="2006"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="293--309"
+,    abstract="We present PEP, which is a new construction of a tweakable strong pseudo-random permutation. PEP uses a hash-encrypt-hash approach which has been recently used in the construction of HCTR. This approach is different from the encrypt-mask-encrypt approach of constructions such as CMC, EME and EME*. The general hash-encrypt-hash approach was earlier used by Naor-Reingold to provide a generic construction technique for an SPRP (but not a tweakable SPRP). PEP can be seen as the development of the Naor-Reingold approach into a fully specified mode of operation with a concrete security reduction for a tweakable strong pseudo-random permutation. HCTR is also based on the Naor-Reingold approach but its security bound is weaker than PEP. Compared to previous known constructions, PEP is the only known construction of tweakable SPRP which uses a single key, is efficiently parallelizable and can handle an arbitrary number of blocks."
+,    isbn="978-3-540-36598-3"
+,    doi="10.1007/11799313_19"
+,    url = {https://eprint.iacr.org/2006/275}
+}
+
+@Inbook{tet
+,    author="Halevi, Shai"
+,    editor="Menezes, Alfred"
+,    title="Invertible Universal Hashing and the TET Encryption Mode"
+,    bookTitle="Advances in Cryptology - CRYPTO 2007: 27th Annual International Cryptology Conference, Santa Barbara, CA, USA, August 19-23, 2007. Proceedings"
+,    year="2007"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="412--429"
+,    abstract="This work describes a mode of operation, TET, that turns a regular block cipher into a length-preserving enciphering scheme for messages of (almost) arbitrary length. When using an n-bit block cipher, the resulting scheme can handle input of any bit-length between n and 2                  n                 and associated data of arbitrary length."
+,    isbn="978-3-540-74143-5"
+,    doi="10.1007/978-3-540-74143-5_23"
+,    url="https://eprint.iacr.org/2007/014"
+}
+
+@Inbook{heh
+,    author="Sarkar, Palash"
+,    editor="Nam, Kil-Hyun
+and Rhee, Gwangsoo"
+,    title="Improving Upon the TET Mode of Operation"
+,    bookTitle="Information Security and Cryptology - ICISC 2007: 10th International Conference, Seoul, Korea, November 29-30, 2007. Proceedings"
+,    year="2007"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="180--192"
+,    abstract="Naor and Reingold had proposed the construction of a strong pseudo-random permutation (SPRP) by using a layer of ECB encryption between two layers of invertible block-wise universal hash functions. At Crypto 2007, Halevi presented constructions of invertible block-wise universal hash functions and a new mode of operation (called TET) based on them. In this paper, we present a new mode of operation called HEH using the Naor-Reingold approach. This is built using a new construction of invertible block-wise universal hash function. The new construction improves over Halevi's construction by removing restrictions on the hashing key. This in turn, leads to HEH improving over TET by allowing more efficient encryption and decryption of variable length messages as well as supporting better key agility. For the important application of disk encryption, we present a variant called HEHfp which has better key agility than TET."
+,    isbn="978-3-540-76788-6"
+,    doi="10.1007/978-3-540-76788-6_15"
+,    url="https://eprint.iacr.org/2007/317"
+}
+
+@techreport{hmc
+,    author = {Mridul Nandi}
+,    title = {Improving upon HCTR and matching attacks for Hash-Counter-Hash approach}
+,    howpublished = {Cryptology ePrint Archive, Report 2008/090}
+,    year = {2008}
+,    url = {https://eprint.iacr.org/2008/090}
+}
+
+@Inbook{xcb
+,    author="McGrew, David A.
+and Fluhrer, Scott R."
+,    editor="Adams, Carlisle
+and Miri, Ali
+and Wiener, Michael"
+,    title="The Security of the Extended Codebook (XCB) Mode of Operation"
+,    bookTitle="Selected Areas in Cryptography: 14th International Workshop, SAC 2007, Ottawa, Canada, August 16-17, 2007, Revised Selected Papers"
+,    year="2007"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="311--327"
+,    abstract="The XCB mode of operation was outlined in 2004 as a contribution to the IEEE Security in Storage effort, but no security analysis was provided. In this paper, we provide a proof of security for XCB, and show that it is a secure tweakable (super) pseudorandom permutation. Our analysis makes several new contributions: it uses an algebraic property of XCB's internal universal hash function to simplify the proof, and it defines a nonce mode in which XCB can be securely used even when the plaintext is shorter than twice the width of the underlying block cipher. We also show minor modifications that improve the performance of XCB and make it easier to analyze. XCB is interesting because it is highly efficient in both hardware and software, it has no alignment restrictions on input lengths, it can be used in nonce mode, and it uses the internal functions of the Galois/Counter Mode (GCM) of operation, which facilitates design re-use and admits multi-purpose implementations."
+,    isbn="978-3-540-77360-3"
+,    doi="10.1007/978-3-540-77360-3_20"
+,    url="https://eprint.iacr.org/2007/298"
+}
+
+
+@Inbook{hctr
+,    author="Wang, Peng
+and Feng, Dengguo
+and Wu, Wenling"
+,    editor="Feng, Dengguo
+and Lin, Dongdai
+and Yung, Moti"
+,    title="HCTR: A Variable-Input-Length Enciphering Mode"
+,    bookTitle="Information Security and Cryptology: First SKLOIS Conference, CISC 2005, Beijing, China, December 15-17, 2005. Proceedings"
+,    year="2005"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="175--188"
+,    abstract="This paper proposes a blockcipher mode of operation, HCTR, which is a length-preserving encryption mode. HCTR turns an n-bit blockcipher into a tweakable blockcipher that supports arbitrary variable input length which is no less than n bits. The tweak length of HCTR is fixed and can be zero. We prove that HCTR is a strong tweakable pseudorandom permutation (                                                                           {\$}{\backslash}widetilde{\{}sprp{\}}{\$}                ), when the underlying blockcipher is a strong pseudorandom permutation (sprp). HCTR is shown to be a very efficient mode of operation when some pre-computations are taken into consideration. Arbitrary variable input length brings much flexibility in various application environments. HCTR can be used in disk sector encryption, and other length-preserving encryptions, especially for the message that is not multiple of n bits."
+,    isbn="978-3-540-32424-9"
+,    doi="10.1007/11599548_15"
+,    url="https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.470.5288"
+}
+
+@inproceedings{xsalsa
+,    url={https://cr.yp.to/papers.html#xsalsa}
+,    author={Daniel J. Bernstein}
+,    ID={c4b172305ff16e1429a48d9434d50e8a}
+,    title={Extending the Salsa20 nonce}
+,    booktitle = {Workshop Record of Symmetric Key Encryption Workshop 2011}
+,    year={2011}
+}
+
+@online{supercop
+,    title = {eBACS: ECRYPT Benchmarking of Cryptographic Systems}
+,    author={Daniel J. Bernstein and Tanja Lange (editors)}
+,    year = 2018
+,    url = {https://bench.cr.yp.to/}
+,    urldate = {2018-05-02}
+}
+
+@online{monocypher
+,    title = {monocypher.c}
+,    author={Loup Vaillant}
+,    year = 2017
+,    url = {https://github.com/LoupVaillant/Monocypher/blob/c8e4340a579fcf3a785539bec36399ec04319126/src/monocypher.c}
+,    urldate = {2017-12-25}
+}
+
+@online{xchacha20
+,    title = {XChaCha20}
+,    author={Frank Denis}
+,    organization={libsodium}
+,    year = 2017
+,    url = {https://download.libsodium.org/doc/advanced/xchacha20.html}
+,    urldate = {2017-12-25}
+}
+
+@Inbook{mercy
+,    author="Crowley, Paul"
+,    editor="Goos, Gerhard
+and Hartmanis, Juris
+and van Leeuwen, Jan
+and Schneier, Bruce"
+,    title="Mercy: A Fast Large Block Cipher for Disk Sector Encryption"
+,    bookTitle="Fast Software Encryption: 7th International Workshop, FSE 2000 New York, NY, USA, April 10--12, 2000 Proceedings"
+,    year="2001"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="49--63"
+,    abstract="We discuss the special requirements imposed on the underlying cipher of systems which encrypt each sector of a disk partition independently, and demonstrate a certificational weakness in some existing block ciphers including Bellare and Rogaway's 1999 proposal, proposing a new quantitative measure of avalanche. To address these needs, we present Mercy, a new block cipher accepting large (4096-bit) blocks, which uses a key-dependent state machine to build a bijective F function for a Feistel cipher. Mercy achieves 9 cycles/byte on a Pentium compatible processor."
+,    isbn="978-3-540-44706-1"
+,    doi="10.1007/3-540-44706-7_4"
+,    url="http://www.ciphergoth.org/crypto/mercy/"
+}
+
+@Inbook{bearlion
+,    author="Anderson, Ross
+and Biham, Eli"
+,    editor="Gollmann, Dieter"
+,    title="Two practical and provably secure block ciphers: BEAR and LION"
+,    bookTitle="Fast Software Encryption: Third International Workshop Cambridge, UK, February 21--23 1996 Proceedings"
+,    year="1996"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="113--120"
+,    abstract="In this paper we suggest two new provably secure block ciphers, called BEAR and LION. They both have large block sizes, and are based on the Luby-Rackoff construction. Their underlying components are a hash function and a stream cipher, and they are provably secure in the sense that attacks which find their keys would yield attacks on one or both of the underlying components. They also have the potential to be much faster than existing block ciphers in many applications."
+,    isbn="978-3-540-49652-6"
+,    doi="10.1007/3-540-60865-6_48"
+,    url="https://www.cl.cam.ac.uk/~rja14/Papers/bear-lion.pdf"
+}
+
+@INPROCEEDINGS{mercycryptanalysis
+,    author = {Scott R. Fluhrer}
+,    title = {Cryptanalysis of the Mercy Block Cipher}
+,    booktitle = {Proc. Fast Software Encryption 2001, LNCS 2355}
+,    year = {2002}
+,    pages = {28--36}
+,    publisher = {Springer-Verlag}
+,    url={https://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.5.6494}
+}
+
+@article{luby-rackoff
+,    author = {Luby, Michael and Rackoff, Charles}
+,    title = {How to Construct Pseudorandom Permutations from Pseudorandom Functions}
+,    journal = {SIAM J. Comput.}
+,    issue_date = {April 1988}
+,    volume = {17}
+,    number = {2}
+,    month = apr
+,    year = {1988}
+,    issn = {0097-5397}
+,    pages = {373--386}
+,    numpages = {14}
+,    doi = {10.1137/0217022}
+,    acmid = {45485}
+,    publisher = {Society for Industrial and Applied Mathematics}
+,    address = {Philadelphia, PA, USA}
+,    url={https://github.com/emintham/Papers/blob/master/Luby%2CRackoff-%20How%20to%20Construct%20Pseudorandom%20Permutations%20from%20Pseudorandom%20Functions.pdf}
+}
+
+@inproceedings{maurer-luby-rackoff
+,    author = {Maurer, Ueli M.}
+,    title = {A Simplified and Generalized Treatment of Luby-Rackoff Pseudorandom Permutation Generators}
+,    booktitle = {Proceedings of the 11th Annual International Conference on Theory and Application of Cryptographic Techniques}
+,    series = {EUROCRYPT'92}
+,    year = {1993}
+,    isbn = {3-540-56413-6}
+,    location = {Balatonfüred, Hungary}
+,    pages = {239--255}
+,    numpages = {17}
+,    url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.6117}
+,    acmid = {1754978}
+,    publisher = {Springer-Verlag}
+,    address = {Berlin, Heidelberg}
+,    keywords = {Luby-Rackoff permutation generator, locally random function, pseudorandom function, pseudorandom permutation}
+}
+
+@Inbook{brvil
+,    author="Bellare, Mihir
+and Rogaway, Phillip"
+,    editor="Knudsen, Lars"
+,    title="On the Construction of Variable-Input-Length Ciphers"
+,    bookTitle="Fast Software Encryption: 6th International Workshop, FSE'99 Rome, Italy, March 24--26, 1999 Proceedings"
+,    year="1999"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="231--244"
+,    abstract="Whereas a block cipher enciphers messages of some one particular length (the blocklength), a variable-input-length cipher takes messages of varying (and preferably arbitrary) lengths. Still, the length of the ciphertext must equal the length of the plaintext. This paper introduces the problem of constructing such objects, and provides a practical solution. Our VIL mode of operation makes a variable-input-length cipher from any block cipher. The method is demonstrably secure in the provable-security sense of modern cryptography: we give a quantitative security analysis relating the difficulty of breaking the constructed (variable-input-length) cipher to the difficulty of breaking the underlying block cipher."
+,    isbn="978-3-540-48519-3"
+,    doi="10.1007/3-540-48519-8_17"
+,    url="https://cseweb.ucsd.edu/~mihir/papers/lpe.pdf"
+}
+
+@Inbook{beast
+,    author="Lucks, Stefan"
+,    editor="Horster, Patrick"
+,    title="BEAST: A fast block cipher for arbitrary blocksizes"
+,    bookTitle="Communications and Multimedia Security II: Proceedings of the IFIP TC6/TC11 International Conference on Communications and Multimedia Security at Essen, Germany, 23rd -- 24th September 1996"
+,    year="1996"
+,    publisher="Springer US"
+,    address="Boston, MA"
+,    pages="144--153"
+,    abstract="This paper describes BEAST, a new blockcipher for arbitrary size blocks. It is a Luby-Rackoff cipher and fast when the blocks are large. BEAST is assembled from cryptographic hash functions and stream ciphers. It is provably secure if these building blocks are secure."
+,    isbn="978-0-387-35083-7"
+,    doi="10.1007/978-0-387-35083-7_13"
+,    url="https://pdfs.semanticscholar.org/18fd/ac6eddb22687450c22e1135dc2d9c38c40d1.pdf"
+}
+
+@Inbook{tweakable
+,    author="Liskov, Moses
+and Rivest, Ronald L.
+and Wagner, David"
+,    editor="Yung, Moti"
+,    title="Tweakable Block Ciphers"
+,    bookTitle="Advances in Cryptology --- CRYPTO 2002: 22nd Annual International Cryptology Conference Santa Barbara, California, USA, August 18--22, 2002 Proceedings"
+,    year="2002"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="31--46"
+,    abstract="We propose a new cryptographic primitive, the ``tweakable block cipher.'' Such a cipher has not only the usual inputs --- message and cryptographic key --- but also a third input, the ``tweak.'' The tweak serves much the same purpose that an initialization vector does for CBC mode or that a nonce does for OCB mode. Our proposal thus brings this feature down to the primitive block-cipher level, instead of incorporating it only at the higher modes-of-operation levels. We suggest that (1) tweakable block ciphers are easy to design, (2) the extra cost of making a block cipher ``tweakable'' is small, and (3) it is easier to design and prove modes of operation based on tweakable block ciphers."
+,    isbn="978-3-540-45708-4"
+,    doi="10.1007/3-540-45708-9_3"
+,    url="https://people.csail.mit.edu/rivest/pubs/LRW02.pdf"
+}
+
+@techreport{games
+,    author = {Victor Shoup}
+,    title = {Sequences of games: a tool for taming complexity in security proofs}
+,    howpublished = {Cryptology ePrint Archive, Report 2004/332}
+,    year = {2004}
+,    url = {https://eprint.iacr.org/2004/332}
+}
+
+@Article{NaorReingold
+,    author="Naor, Moni
+and Reingold, Omer"
+,    title="On the Construction of Pseudorandom Permutations: Luby--Rackoff Revisited "
+,    journal="Journal of Cryptology"
+,    year="1999"
+,    month="01"
+,    day="01"
+,    volume="12"
+,    number="1"
+,    pages="29--66"
+,    abstract="Luby and Rackoff [26] showed a method for constructing a pseudorandom permutation from a pseudorandom function. The method is based on composing four (or three for weakened security) so-called Feistel permutations, each of which requires the evaluation of a pseudorandom function. We reduce somewhat the complexity of the construction and simplify its proof of security by showing that two Feistel permutations are sufficient together with initial and final pairwise independent permutations. The revised construction and proof provide a framework in which similar constructions may be brought up and their security can be easily proved. We demonstrate this by presenting some additional adjustments of the construction that achieve the following:"
+,    issn="1432-1378"
+,    doi="10.1007/PL00003817"
+,    url="https://omereingold.files.wordpress.com/2014/10/lr.pdf"
+}
+
+@online{hpc
+,    author={Rich Schroeppel}
+,    title={Hasty Pudding Cipher Specification}
+,    year={1998}
+,    url={http://richard.schroeppel.name/hpc/hpc-spec}
+,    urldate = {2018-05-21}
+}
+
+@Inbook{salsa20
+,    author="Bernstein, Daniel J."
+,    editor="Robshaw, Matthew
+and Billet, Olivier"
+,    title="The Salsa20 Family of Stream Ciphers"
+,    bookTitle="New Stream Cipher Designs: The eSTREAM Finalists"
+,    year="2008"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="84--97"
+,    abstract="Salsa20 is a family of 256-bit stream ciphers designed in 2005 and submitted to eSTREAM, the ECRYPT Stream Cipher Project. Salsa20 has progressed to the third round of eSTREAM without any changes. The 20-round stream cipher Salsa20/20 is consistently faster than AES and is recommended by the designer for typical cryptographic applications. The reduced-round ciphers Salsa20/12 and Salsa20/8 are among the fastest 256-bit stream ciphers available and are recommended for applications where speed is more important than confidence. The fastest known attacks use ≈{\thinspace}2153 simple operations against Salsa20/7, ≈{\thinspace}2249 simple operations against Salsa20/8, and ≈{\thinspace}2255 simple operations against Salsa20/9, Salsa20/10, etc. In this paper, the Salsa20 designer presents Salsa20 and discusses the decisions made in the Salsa20 design."
+,    isbn="978-3-540-68351-3"
+,    doi="10.1007/978-3-540-68351-3_8"
+,    url="https://cr.yp.to/papers.html#salsafamily"
+}
+
+@online{salsa812
+,    author="Bernstein, Daniel J."
+,    title={Salsa20/8 and Salsa20/12}
+,    year={2006}
+,    url={https://cr.yp.to/snuffle/812.pdf}
+,    urldate = {2018-05-21}
+}
+
+@manual{AES
+,    author       = {NIST}
+,    title        = {Advanced Encryption Standard ({AES})}
+,    edition      = {}
+,    organization = {National Institute of Standards and Technology}
+,    address      = {{FIPS} Publication 197}
+,    month        = {11}
+,    year         = {2001}
+,    url         = {https://csrc.nist.gov/csrc/media/publications/fips/197/final/documents/fips-197.pdf}
+}
+
+@techreport{speck1
+,    author = {Ray Beaulieu and Douglas Shors and Jason Smith and Stefan Treatman-Clark and Bryan Weeks and Louis Wingers}
+,    title = {The SIMON and SPECK Families of Lightweight Block Ciphers}
+,    howpublished = {Cryptology ePrint Archive, Report 2013/404}
+,    year = {2013}
+,    url = {https://eprint.iacr.org/2013/404}
+}
+
+@techreport{speck2
+,    author = {Ray Beaulieu and Douglas Shors and Jason Smith and Stefan Treatman-Clark and Bryan Weeks and Louis Wingers}
+,    title = {SIMON and SPECK: Block Ciphers for the Internet of Things}
+,    howpublished = {Cryptology ePrint Archive, Report 2015/585}
+,    year = {2015}
+,    url = {https://eprint.iacr.org/2015/585}
+}
+
+@techreport{speck3
+,    author = {Ray Beaulieu and Douglas Shors and Jason Smith and Stefan Treatman-Clark and Bryan Weeks and Louis Wingers}
+,    title = {Notes on the design and analysis of SIMON and  SPECK}
+,    howpublished = {Cryptology ePrint Archive, Report 2017/560}
+,    year = {2017}
+,    url = {https://eprint.iacr.org/2017/560}
+}
+
+@online{poly1305clamp
+,    title = {poly1305aes\_test\_clamp.c}
+,    author={Daniel J. Bernstein}
+,    year = 2005
+,    url = {https://cr.yp.to/mac/poly1305aes_test_clamp.c}
+,    urldate = {2018-05-31}
+}
+
+@InProceedings{hctr2
+,    author="Chakraborty, Debrup and Nandi, Mridul"
+,    editor="Nyberg, Kaisa"
+,    title="An Improved Security Bound for HCTR"
+,    booktitle="Fast Software Encryption"
+,    year="2008"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="289--302"
+,    abstract={HCTR was proposed by Wang, Feng and Wu in 2005. It is a mode of operation which provides a tweakable strong pseudorandom permutation. Though HCTR is quite an efficient mode, the authors showed a cubic security bound for HCTR which makes it unsuitable for applications where tweakable strong pseudorandom permutations are required. In this paper we show that HCTR has a better security bound than what the authors showed. We prove that the distinguishing advantage of an adversary in distinguishing HCTR and its inverse from a random permutation and its inverse is bounded above by $4.5\sigma^2/2^n$, where n is the block-length of the block-cipher and $\sigma$ is the number of n-block queries made by the adversary (including the tweak).}
+,    isbn="978-3-540-71039-4"
+,    doi="10.1007/978-3-540-71039-4_18"
+,    url="https://www.iacr.org/cryptodb/archive/2008/FSE/paper/15611.pdf"
+}
+
+@InProceedings{ppdes
+,    author="Patarin, Jacques"
+,    editor="Cohen, G{\'e}rard
+and Charpin, Pascale"
+,    title="Pseudorandom permutations based on the D.E.S. scheme"
+,    booktitle="EUROCODE '90"
+,    year="1991"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="193--204"
+,    abstract={We present in a new way the results of Michael Luby and Charles Rackoff ``How to construct pseudorandom permutations from pseudorandom functions'', SIAM J. Comput., 1988, together with some new results thereon.}
+,    isbn="978-3-540-47546-0"
+,    doi="10.1007/3-540-54303-1_131"
+}
+
+@InProceedings{fasterlr
+,    author="Lucks, Stefan"
+,    editor="Gollmann, Dieter"
+,    title="Faster Luby-Rackoff ciphers"
+,    booktitle="Fast Software Encryption"
+,    year="1996"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="189--203"
+,    abstract="This paper deals with a generalization of Luby's and Rackoff's results [9] on the construction of block ciphers and their consequences for block cipher implementations. Based on dedicated hash functions, block ciphers are proposed which are more efficient and operate on larger blocks than their original Luby-Rackoff counterparts."
+,    isbn="978-3-540-49652-6"
+,    doi="10.1007/3-540-60865-6_53"
+,    url="https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.35.7485"
+}
+
+@techreport{sarkar1
+,    author = {Palash Sarkar}
+,    title = {Tweakable Enciphering Schemes From Stream Ciphers With IV}
+,    howpublished = {Cryptology ePrint Archive, Report 2009/321}
+,    year = {2009}
+,    url = {https://eprint.iacr.org/2009/321}
+}
+
+@article{sarkar2
+,    title = "Tweakable enciphering schemes using only the encryption function of a block cipher"
+,    journal = "Information Processing Letters"
+,    volume = "111"
+,    number = "19"
+,    pages = "945 - 955"
+,    year = "2011"
+,    issn = "0020-0190"
+,    doi = "https://doi.org/10.1016/j.ipl.2011.06.014"
+,    author = "Palash Sarkar"
+,    keywords = "Cryptography, Block cipher, Disk encryption, Mode of operation, Stream cipher, Tweakable enciphering scheme"
+}
+
+@article{sarkar3
+,    title={STES: A Stream Cipher Based Low Cost Scheme for Securing Stored Data}
+,    author={Debrup Chakraborty and Cuauhtemoc Mancillas-L{\'o}pez and Palash Sarkar}
+,    journal={IEEE Transactions on Computers}
+,    year={2013}
+,    volume={64}
+,    pages={2691-2707}
+,    doi = {10.1109/TC.2014.2366739}
+}
+
+@techreport{sarkar4
+,    author = {Debrup Chakraborty and Sebati Ghosh and Cuauhtemoc Mancillas Lopez and Palash Sarkar}
+,    title = {FAST: Disk Encryption and Beyond}
+,    howpublished = {Cryptology ePrint Archive, Report 2017/849}
+,    year = {2017}
+,    url = {https://eprint.iacr.org/2017/849}
+}
+
+@InProceedings{kdm
+,    author="Black, John
+and Rogaway, Phillip
+and Shrimpton, Thomas"
+,    editor="Nyberg, Kaisa
+and Heys, Howard"
+,    title="Encryption-Scheme Security in the Presence of Key-Dependent Messages"
+,    booktitle="Selected Areas in Cryptography"
+,    year="2003"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="62--75"
+,    abstract="Encryption that is only semantically secure should not be used on messages that depend on the underlying secret key; all bets are off when, for example, one encrypts using a shared key K the value K. Here we introduce a new notion of security, KDM security, appropriate for key-dependent messages. The notion makes sense in both the publickey and shared-key settings. For the latter we show that KDM security is easily achievable within the random-oracle model. By developing and achieving stronger notions of encryption-scheme security it is hoped that protocols which are proven secure under ``formal'' models of security can, in time, be safely realized by generically instantiating their primitives."
+,    isbn="978-3-540-36492-4"
+,    doi="10.1007/3-540-36492-7_6"
+,    url={https://cise.ufl.edu/~teshrim/kdm.pdf}
+}
+
+@inproceedings{concrete
+,    author = {Bellare, Mihir and Desai, Anand and Jokipii, Eron and Rogaway, Phillip}
+,    title = {A Concrete Security Treatment of Symmetric Encryption}
+,    booktitle = {Proceedings of the 38th Annual Symposium on Foundations of Computer Science}
+,    series = {FOCS '97}
+,    year = {1997}
+,    isbn = {0-8186-8197-7}
+,    pages = {394--}
+,    acmid = {796360}
+,    publisher = {IEEE Computer Society}
+,    address = {Washington, DC, USA}
+,    url = {https://cseweb.ucsd.edu/~mihir/papers/sym-enc.html}
+,    doi = {10.1109/SFCS.1997.646128}
+}
+
+@techreport{xts
+,    author={IEEE}
+,    title={ANSI/IEEE 1619-2007 - IEEE Standard for Cryptographic Protection of Data on Block-Oriented Storage Devices}
+,    year={2008}
+,    url={https://standards.ieee.org/findstds/standard/1619-2007.html}
+}
+
+@techreport{noekeon
+,    author        = {Joan Daemen and Michaël Peeters and Gilles Van Assche and Vincent Rijmen}
+,    howpublished  = {Nessie submission}
+,    title         = {Nessie Proposal: the block cipher {{\sc Noekeon}}}
+,    url           = {http://gro.noekeon.org/}
+,    year          = {2000}
+}
+
+@techreport{xtea
+,    author = {Roger M. Needham and David J. Wheeler}
+,    title = {Tea extensions}
+,    url = {http://www.cix.co.uk/~klockstone/xtea.pdf}
+,    year = {1997}
+}
+
+@misc{ctr
+,    author = {Helger Lipmaa and David Wagner and Phillip Rogaway}
+,    title = {Comments to NIST concerning AES modes of operation: CTR-mode encryption}
+,    year = {2000}
+,    url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.79.1353}
+}

@@ -1,0 +1,894 @@
+% Copyright 2018 Google Inc.
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+
+%%% script AUTHOR: Paul Crowley, Eric Biggers%%%
+%%% script TITLE: {HPolyC}: length-preserving encryption for entry-level processors%%%
+
+\RequirePackage{etoolbox}
+\newtoggle{iacr}
+\input{work/toggle.tex}
+\iftoggle{iacr}{
+    \documentclass[journal=tosc,preprint,floatrow]{iacrtrans}
+}{ % iacr
+
+    \documentclass[letterpaper,luatex,11pt]{article}
+
+    \usepackage{fontspec}
+    \setmainfont{TeX Gyre Pagella}
+    \setsansfont{TeX Gyre Heros}
+    \setmathrm{Latin Modern Roman}
+    \defaultfontfeatures{}
+    \setmonofont{TeX Gyre Cursor}[Ligatures={NoCommon,NoRequired,NoContextual},Scale=0.9]
+
+    \usepackage[hmargin=4cm,vmargin=3cm,nohead]{geometry}
+    \usepackage{parskip}
+    \usepackage[style]{abstract}
+    \usepackage{titling}
+    \usepackage{sectsty}
+    \usepackage{authblk}
+    \usepackage{floatrow}
+    \usepackage[svgnames]{xcolor}
+    \usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen]{hyperref}
+
+    \pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
+    \renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract
+    \allsectionsfont{\sffamily} % sf sections
+
+    \raggedright
+    \raggedbottom
+
+} % non-iacr
+
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[logic,probability,advantage,adversary,landau]{cryptocode}
+\usepackage{algpseudocode}
+
+\usepackage{tikz}
+\usepackage{makecell}
+
+\usepackage{longtable}
+
+\DeclareMathOperator{\GF}{GF}
+\DeclareMathOperator{\encode}{encode}
+\DeclareMathOperator{\XChaCha12}{XChaCha12}
+\DeclareMathOperator{\HPolyC}{HPolyC}
+
+\addbibresource{bib.bib}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{groupops}
+
+\newcommand*{\arrowoplus}{\leftarrow\mkern-12mu\oplus}
+\newcommand*{\xprm}[2]{\textsf{\ref*{#1}-#2}}
+\newcommand*{\xprmtitle}[2]{\textbf{\xprm{#1}{#2}}}
+\newcommand*{\calE}{\mathcal{E}}
+\newcommand*{\calD}{\mathcal{D}}
+\newcommand*{\barE}{\overline{\calE}}
+\newcommand*{\barD}{\overline{\calD}}
+
+\title{HPolyC: length-preserving encryption for entry-level processors}
+\iftoggle{iacr}{
+    \author{Paul~Crowley \and Eric~Biggers}
+    \institute{Google Inc. \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
+}{ % iacr
+    \author{Paul~Crowley}
+    \author{Eric~Biggers}
+    \affil{Google LLC\\ \href{mailto:paulcrowley@google.com,ebiggers@google.com}{\{paulcrowley,ebiggers\}@google.com}}
+} % non-iacr
+
+\tikzset{cbox/.style={
+        rectangle,
+        thick,
+        draw,
+        minimum height=1cm,
+        text centered,
+        anchor=center,
+        rounded corners=2pt,
+    }
+}
+
+\begin{document}
+\maketitle
+\iftoggle{iacr}{
+    \keywords{strong pseudorandom permutation \and
+        variable input length \and
+        tweakable encryption \and
+        disk encryption}
+}{ % iacr
+} % non-iacr
+
+\begin{abstract}
+    We present HPolyC, a construction which builds on Poly1305, XChaCha12, and a
+    single block cipher invocation per message to offer length-preserving
+    encryption with a fast constant-time implementation where crypto
+    instructions are absent.  On an ARM Cortex-A7 processor, HPolyC decrypts
+    4096-byte messages at 14.5 cycles per byte, over four times faster than
+    AES-256-XTS.
+    Assuming secure primitives, we prove an advantage bound of
+    $\approx 2^{-111}q^2(l + 156)$,
+    where $q$ is the number of queries and $l$ is the sum of message and tweak length in bits.
+\end{abstract}
+
+\section{Introduction}
+Two aspects of disk encryption make it a challenge for cryptography.  First,
+performance is critical; every extra cycle is a worse user experience, and on a mobile device
+a reduced battery life.  Second, the ciphertext can be no larger than the plaintext: a sector-sized
+read or write to the filesystem must mean a sector-sized read or write to the underlying device,
+or performance will again suffer greatly
+(as well as, in the case of writes to flash memory, the life of the device).
+Nonce reuse is inevitable as there is nowhere to store a varying nonce, and there is no space
+for a MAC; thus standard constructions like AES-GCM are not an option and standard notions
+of semantic security are unachievable.  The best that can be done under the circumstances is
+a ``tweakable super-pseudorandom permutation'': an attacker with access to both encryption
+and decryption functions who can choose tweak and plaintext/ciphertext freely is unable to
+distinguish it from a family of independent random permutations.
+
+\subsection{History}
+
+Hasty Pudding Cipher~\cite{hpc} was a variable-input-length primitive presented to the AES contest.
+A key innovation
+was the idea of a ``spice'', which was later formalized as a ``tweak'' in~\cite{tweakable}.
+Another tweakable large-block primitive was Mercy~\cite{mercy},
+cryptanalyzed in~\cite{mercycryptanalysis}.
+
+\cite{luby-rackoff} (see also~\cite{maurer-luby-rackoff,ppdes})
+shows how to construct a pseudorandom permutation using a three-round Feistel
+network of pseudorandom functions;
+proves that this is not a secure super-pseudorandom permutation (where the adversary
+has access to decryption as well as encryption) and that four rounds suffice for this aim.
+BEAR and LION~\cite{bearlion} apply this result to an unbalanced Feistel network to build a
+large-block cipher from a hash function and a stream cipher (see also BEAST~\cite{beast}).
+
+\cite{fasterlr} shows that a universal function (here called a ``difference concentrator'')
+suffices for the first round, which~\cite{NaorReingold} extends to four-round function
+to build a super-pseudorandom permutation.
+
+More recently, proposals in this space have focused on the use of
+block ciphers. VIL mode~\cite{brvil} is a CBC-MAC based two-pass variable-input-length construction which
+is a PRP but not an SPRP. CMC mode~\cite{cmc} is a true SPRP using two passes of the block cipher;
+EME mode~\cite{eme} is similar but parallelizable, while
+EME* mode~\cite{emestar} extends EME mode to handle blocks that are not a multiple of the block
+cipher size. PEP~\cite{pep}, TET~\cite{tet}, and HEH~\cite{heh} have a mixing layer either side of
+an ECB layer.
+
+XCB~\cite{xcb} is a block-cipher based unbalanced three-round Feistel network with an
+$\epsilon$-almost-XOR-universal hash function for the first and third rounds
+(``hash-XOR-hash''),
+which uses block
+cipher invocations on the narrow side of the network to ensure that the network is an SPRP, rather
+than just a PRP; it also introduces a tweak.
+HCTR~\cite{hctr,hctr2}, HCH~\cite{hch}, and HMC~\cite{hmc} reduce this to a single
+block cipher invocation within the Feistel network.
+These proposals require
+either two AES invocations, or an AES invocation and two $\GF(2^{128})$ multiplications,
+per 128 bits of input.
+
+\subsection{Our contribution}
+On the ARM architecture, the ARMv8 Cryptography Extensions include instructions that make
+AES and $\GF(2^{128})$ multiplications much more efficient. However,
+smartphones designed for developing markets
+often use lower-end processors which
+don't support these extensions, and as a result there is no existing SPRP construction which performs
+acceptably on them.
+
+On such platforms stream ciphers such as ChaCha12~\cite{chacha} significantly
+outperform block ciphers in cycles per byte, especially with constant-time implementations.
+Similarly, absent specific processor support, Poly1305 hash~\cite{poly1305} will be much faster
+than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
+the data in a disk-sector-sized block, a hash-XOR-hash
+mode of operation relying on them should achieve
+much improved performance on such platforms.
+
+To this end, we present HPolyC, which:
+\begin{itemize}
+    \item is a tweakable, variable-input-length, super-pseudorandom permutation
+    \item has a security bound quadratic in the number of queries and linear in message length
+    \item is highly key agile
+    \item is highly parallelizable
+    \item needs only three passes over the bulk of the data, or
+        two if the XOR is combined with the second hash.
+\end{itemize}
+
+Without special cases or extra setup, HPolyC handles:
+\begin{itemize}
+    \item messages that are not a multiple of 128 bits in length
+    \item tweak lengths from 0 to $2^{32}-1$ bits
+    \item varying message and tweak lengths for the same keys.
+\end{itemize}
+
+The proof of security differs from other hash-XOR-hash modes in three ways. First,
+Poly1305 hash is not XOR universal, but universal over $\mathbb{Z}/2^{128}\mathbb{Z}$,
+so for XOR of hash values we substitute addition and subtraction in this group.
+Second, using the XSalsa20 construction~\cite{xsalsa}, we can directly
+build a stream cipher which takes a 192-bit nonce to generate a $2^{73}$-bit stream, simplifying
+the second Feistel operation and associated proof, as well as subkey generation.
+Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
+the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
+
+\section{Specification}
+HPolyC divides the input into a right-hand block of $n = 128$ bits and a left-hand block with
+the remainder of the input, and uses a stream cipher $S$ and an
+$\epsilon$-almost-$\Delta$-universal
+function $H$ to build an unbalanced Feistel network that includes one invocation of a
+block cipher $E$.
+
+\begin{figure}
+    \begin{floatrow}
+        \ffigbox{
+            \input{finalfig.tex}
+        }{
+            \caption{HPolyC}\label{finalfig}
+        }
+        \ffigbox{
+            \begin{algorithmic}[0]
+                \Procedure{HPolyCEncrypt}{$T,P$}
+                \State $P_L || P_R \gets P$
+                \State $P_M \gets P_R \boxplus H_{K_H}(\encode(T, P_L))$
+                \State $C_M \gets E_{K_E}(P_M)$
+                \State $C_L \gets P_L \arrowoplus S_{K_S}(C_M)$
+                \State $C_R \gets C_M \boxminus H_{K_H}(\encode(T, C_L))$
+                \State $C \gets C_L || C_R$
+                \State \textbf{return} $C$
+                \EndProcedure
+            \end{algorithmic}
+            \begin{algorithmic}[0]
+                \Procedure{HPolyCDecrypt}{$T,C$}
+                \State $C_L || C_R \gets C$
+                \State $C_M \gets C_R \boxplus H_{K_H}(\encode(T, C_L))$
+                \State $P_L \gets C_L \arrowoplus S_{K_S}(C_M)$
+                \State $P_M \gets E_{K_E}^{-1}(C_M)$
+                \State $P_R \gets P_M \boxminus H_{K_H}(\encode(T, P_L))$
+                \State $P \gets P_L || P_R$
+                \State \textbf{return} $P$
+                \EndProcedure
+            \end{algorithmic}
+        }{\caption{Pseudocode for HPolyC}\label{pseudocode}}
+    \end{floatrow}
+\end{figure}
+
+We derive ciphertext $C$ from plaintext $P$ and tweak $T$ as shown in \autoref{pseudocode}.
+$||$ represents concatenation, and $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
+$\encode$ is an injective
+encoding function defined below.
+Byte/bit mapping is little endian, as is all arithmetic.
+$\boxplus$ represents addition mod $2^n$, and $\boxminus$ subtraction. $X \arrowoplus Y$
+is the bitwise XOR of $X$ with the first $|X|$ bits of $Y$.
+Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
+$a \in A$ then $f_a: B \rightarrow C$ and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
+
+\subsection{Hash}
+Poly1305~\cite{poly1305} is a MAC which combines the use of AES with an
+$\epsilon$-almost-$\Delta$-universal
+($\epsilon$A$\Delta$U) polynomial hash function. RFC 7539~\cite{RFC7539} takes this
+$\epsilon$A$\Delta$U polynomial function and
+uses it without AES to build an AEAD mode based on ChaCha20.
+Here we call this $\epsilon$A$\Delta$U function
+$H: \mathcal{K}_H \times \{0,1\}^* \rightarrow \{0,1\}^n$ where $\mathcal{K}_H$
+is the $2^{106}$-bit keyspace;
+it is this function, rather than the Poly1305 MAC itself, that we use in HPolyC.
+Many Poly1305 libraries
+take parameters $K_H || g, m$ and return $g \boxplus H_{K_H}(m)$; where subtraction
+is needed we use bitwise inversion and the identity
+$g \boxminus g' = \neg ((\neg g) \boxplus g')$.
+
+The key for this function is required to have certain bits clear per the ``Keys''
+subsection of the specification~\cite{poly1305};
+the sample implementation~\cite{poly1305clamp}
+and~\cite{RFC7539} call clearing these bits ``clamping'', and following those
+specifications we define $\mathrm{Poly1305Clamp}$
+below, with $\wedge$ representing bitwise AND.
+
+\begin{align*}
+    \mathrm{Poly1305Clamp}(\overline{K_H})
+    &= \overline{K_H} \wedge 1^{28} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^4
+\end{align*}
+
+\subsection{Encoding function}
+We hash the tweak and the left side of the message, so we need an injective encoding function.
+Poly1305 hash's
+$\epsilon$A$\Delta$U guarantee holds for messages of differing lengths, so we only need
+to length-encode one of the two parameters.
+
+$[|T|]_{32}$ is a 32-bit little endian encoding of the length of the tweak in bits; we
+require that $0 \leq |T| < 2^{32}$.
+$v$ is the least integer $\geq 0$ such that $n$ divides $32 + |T| + v$, and we define:
+\begin{align*}
+\encode &: \{0,1\}^* \times \{0,1\}^* \rightarrow \{0,1\}^* \\
+\encode(T, L) &= [|T|]_{32} || T || 0^v || L
+\end{align*}
+
+\subsection{Block cipher}
+The 128-bit block cipher $E: \mathcal{K}_E \times \{0,1\}^n \rightarrow \{0,1\}^n$
+is only invoked once no matter the size of the input, so for disk sector-sized inputs
+its performance isn't critical; we have tested AES-256~\cite{AES}.
+
+\subsection{Stream cipher}
+The ChaCha12 stream cipher~\cite{chacha}
+defines a PRF which takes a 64-bit (or 96-bit~\cite{RFC7539})
+nonce and an integer stream offset and returns a 512-bit output, and
+concatenates successive outputs to define a function from key and nonce to stream
+in a seekable way.
+Since $C_M$ is larger than the ChaCha12 nonce size, we use the
+XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20 \cite{salsa20,salsa812}
+to construct XChaCha12 which extends the nonce to 192 bits
+(as libsodium~\cite{xchacha20}
+%and Monocypher~\cite{monocypher} do
+does with ChaCha20), and pad
+with a 1 followed by zeroes. For a
+given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
+therefore require that the HPolyC plaintext length be within the bounds
+$n \leq |P| \leq l_S + n$.
+
+\begin{align*}
+    S:& \mathcal{K}_S \times \{0,1\}^n \rightarrow \{0,1\}^{l_S} \\
+    S_{K_S}(C_M) =& \XChaCha12_{K_S}(C_M || 1 || 0^{63})
+\end{align*}
+
+\subsection{Key derivation}\label{keyderivation}
+HPolyC takes a 256-bit key $K_S$, and derives keys $K_H$ and $K_E$ using XChaCha12:
+\begin{align*}
+    \overline{K_H} || K_E || \ldots &= \XChaCha12_{K_S}(1 || 0^{191}) \\
+    K_H &= \mathrm{Poly1305Clamp}(\overline{K_H})
+\end{align*}
+where
+$|\overline{K_H}| = 128$ and $|K_E| = 256$. Note that the nonce
+used here is distinct from all nonces used for $S_{K_S}$.
+
+\section{Design}
+Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
+it all. A secure SPRP must have the same property in the reverse direction;
+a three-pass structure therefore seems natural.
+$\epsilon$A$\Delta$U functions are the fastest options for reading the plaintext in a
+cryptographically useful way, and stream ciphers are the fastest options for modifying it.
+$\epsilon$A$\Delta$Us
+are typically much faster than stream ciphers, and so the hash-XOR-hash structure emerges as
+the best option for performance. This structure also has the advantage that it naturally handles
+blocks in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
+to handle the case where the large-block size is not
+a multiple of the block size of the underlying primitive.
+
+\cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
+a simple attack with two plaintexts and one ciphertext distinguishes it. A single block cipher call
+in the narrow part of the unbalanced network suffices to frustrate this attack; the
+larger the block, the smaller the relative cost of this call.
+Compared to HCTR~\cite{hctr} or HCH~\cite{hch}, we sacrifice
+symmetry of encryption with decryption in return for
+the ability to run the block cipher and stream cipher in parallel when decrypting.
+For disk encryption, decryption performance matters most:
+reads are more frequent than writes, and reads generally affect user-perceived latency, while
+operating systems can usually perform writes asynchronously in the background.
+
+It's unusual for a construction to require three distinct building blocks.
+More commonly, a hash-XOR-hash mode will use a block cipher both on the narrow side of the
+block, and to build the stream cipher in the XOR phase (eg using CTR mode~\cite{ctr}).
+Using XChaCha12 in place of a block cipher affords a significant increase in performance;
+however it cannot easily be substituted in the narrow side of the cipher.
+\cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
+and a stream cipher, and build a hash-XOR-hash SPRP
+with a construction that uses a four-round Feistel network over the non-bulk side of the data
+broken into two halves. However if we were to build this using XChaCha12,
+such a construction would require four extra invocations of ChaCha per block, which would be
+a much greater cost than one block cipher invocation.
+
+The advantage bound we are able to prove is limited mainly by the 106-bit keyspace of
+the Poly1305 hash. \cite{poly1305} specifies that 22 bits of the 128-bit key must be zero,
+to facilitate fast implementation. Many modern implementations do not
+make use of this, and would work equally well with keys that were not zeroed in this way, which
+could improve the advantage bound by almost a factor of $2^{-22}$. However the current advantage
+bound is tight enough for our purposes.
+
+HPolyC does not consider an attack model in which derived keys are presented as input.
+A trivial distinguisher would be to encrypt $0^{(k+1)n}||K_H$ and $0^{kn}||1||0^{2n-1}$
+with the same tweak for some $k$; the resulting ciphertexts will share the same
+$kn$-bit prefix. Length-preserving encryption
+which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
+attacker to submit a query with a $g$-function
+that constructs a plaintext whose ciphertext is all zeroes.
+Whether there is a notion of KDM-security that can be
+applied in this domain is an open problem. Users must take care to protect the keys from being
+included in the input.
+
+For a new key, it is necessary to compute the keys for hash and the block cipher, and
+schedule the block cipher key; if the hash is to be calculated in parallel, it can also
+be useful to cache powers of the hash key.
+ChaCha12 has no key schedule and makes no use of
+precomputation; XChaCha12 has a ``nonce scheduling'' step that
+must be called once to compute subkeys and once for each HPolyC encryption or decryption.
+No extra work needs to be done for differing message or tweak lengths, unless
+new powers of the hash key are needed for parallelism.
+
+For storage encryption, tweaks will often be short and fixed-length. With a tweak
+of 96 bits or fewer, only a single
+$\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305)
+is needed before processing the message. We tolerate
+the extra complexity of padding in our $\encode$ function so that plaintext/ciphertext
+is aligned to the Poly1305 block size. If the
+tweak is long, the partial result of hashing it can be used both for encoding and decoding; an
+earlier version of HPolyC included a ``disambiguation bit'' in the input to the hash, but
+closer analysis showed this to be unnecessary.
+
+Poly1305 and ChaCha12 are both designed such that the most natural fast implementations are
+constant-time and free from data-dependent lookups. So long as the block cipher implementation
+also has these properties, HPolyC will inherit security against
+this class of side-channel attacks.
+
+Both Poly1305 and ChaCha12 are highly parallelizable.
+The stream cipher and second hash stages can also be run in combination for a total
+of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
+which requires at least three.
+We put the ``special'' block on the right so that in typical uses the bulk encryption has
+the best alignment for fast operations.
+
+\section{Performance}
+
+In \autoref{performance} we
+show performance on an ARM \mbox{Cortex-A7}
+processor in the Snapdragon 2100 chipset running at \mbox{1.094 GHz}.  This
+processor supports the NEON vector instruction set, but not the ARM cryptographic
+extensions; it is used in many smartphones and smartwatches, especially low-end
+or older devices, and is representative of the kind of platform we mean to target.
+Where the figures are the same, a single row is shown for both encryption and decryption.
+
+\begin{table}
+    \caption{Performance on ARM Cortex-A7}
+    \label{performance}
+    \centering
+    \begin{tabular}{lrr}
+        Algorithm &
+            \makecell{Cycles per byte \\ (4096-byte sectors)} &
+            \makecell{Cycles per byte \\ (512-byte sectors)} \\
+    \hline
+    Poly1305                              & 2.94 & 3.29 \\
+    ChaCha8                               & 5.43 & 5.55 \\
+    ChaCha12                              & 7.58 & 7.72 \\
+    ChaCha20                              & 11.9 & 12.0 \\
+    HPolyC-XChaCha8-AES (encryption)      & 12.1 & 18.4 \\
+    HPolyC-XChaCha8-AES (decryption)      & 12.3 & 19.8 \\
+    \textbf{HPolyC-XChaCha12-AES (encryption)} & \textbf{14.3} & \textbf{21.1} \\
+    \textbf{HPolyC-XChaCha12-AES (decryption)} & \textbf{14.5} & \textbf{22.5} \\
+    Speck128/256-XTS                      & 15.9 & 16.9 \\
+    HPolyC-XChaCha20-AES (encryption)     & 18.8 & 26.5 \\
+    HPolyC-XChaCha20-AES (decryption)     & 18.9 & 28.0 \\
+    NOEKEON-XTS                           & 27.0 & 27.8 \\
+    XTEA-XTS                              & 28.7 & 29.7 \\
+    AES-128-XTS (encryption)              & 36.3 & 38.9 \\
+    AES-128-XTS (decryption)              & 43.1 & 45.6 \\
+    AES-256-XTS (encryption)              & 49.4 & 52.9 \\
+    AES-256-XTS (decryption)              & 59.0 & 62.5 \\
+    \end{tabular}
+\end{table}
+
+We have prioritized performance on 4096-byte messages, but we also tested 512-byte messages.
+512-byte disk sectors were the standard until the introduction of Advanced Format in 2010;
+modern large hard drives and flash drives now use 4096-byte sectors.
+On Linux, 4096 bytes is the standard page size, the standard allocation unit size for filesystems,
+and the granularity of \textit{fscrypt} file-based encryption, while
+\mbox{\textit{dm-crypt}} full-disk encryption has recently been updated
+to support this size.
+
+For comparison we evaluate against various block ciphers in XTS mode~\cite{xts}:
+AES\mbox~\cite{AES}, Speck~\cite{speck1,speck2,speck3}, NOEKEON~\cite{noekeon},
+and XTEA~\cite{xtea}. We also include the performance of ChaCha
+and Poly1305 by themselves for reference.
+We used the fastest constant-time implementation of each algorithm we were able
+to find or write for the platform; see \autoref{implementation}.  In every case
+except \texttt{aes\_ti.c},
+the performance-critical parts were written in assembly language using NEON
+instructions.
+
+\begin{table}
+    \caption{Implementations}
+    \label{implementation}
+    \centering
+    \begin{tabular}{llp{7cm}}
+        Algorithm & Source & Notes \\
+    \hline
+    ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support ChaCha8 and ChaCha12 \\
+    Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to allow key
+    powers to be computed just once per key \\
+    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HPolyC \\
+    \mbox{AES-XTS} & Linux v4.17 & \texttt{aes-neonbs-core.S} (bit-sliced) \\
+    \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
+    \mbox{NOEKEON-XTS} & ours & \\
+    \mbox{XTEA-XTS} & ours & \\
+    \end{tabular}
+\end{table}
+
+HPolyC is the only algorithm in \autoref{performance} which is a tweakable
+super-pseudorandom permutation over the entire sector.  We expect any AES-based
+construction to that end to be significantly slower than \mbox{AES-XTS}.
+HPolyC has a larger per-message overhead than XTS; both require one
+extra block cipher invocation per message, but HPolyC must also perform one extra
+ChaCha permutation for the XChaCha construction and one extra Poly1305 block for the tweak.
+
+We conclude that for 4096-byte sectors, \mbox{HPolyC-XChaCha12-AES} can perform
+as well as an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
+Efficient implementations of Poly1305 and ChaCha are available for many
+platforms, as these algorithms are well-suited for implementation with either
+general-purpose scalar instructions or with general-purpose vector instructions
+such as NEON or AVX2.
+For a greater margin of security at a slower speed, ChaCha20 can
+be used instead of ChaCha12; the same stream cipher
+must be used for key derivation as for the Feistel function.
+
+\section{Security reduction}
+HPolyC is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
+succeeds if they distinguish it from a family of independent random permutations indexed by
+input length and tweak, given access to both encryption and decryption oracles.
+
+Given keys $K_S$, $K_H$, $K_E$, HPolyC is the conjugation of an inner transform by an outer:
+\begin{align*}
+    \HPolyC:
+    \{0,1\}^* &\times \{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n \\
+    \HPolyC_{T} &= \phi^{-1}_{K_H, T}
+    \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T} \\
+    \theta_{e, s}(P_L, P_M) &= (P_L \arrowoplus s(e(P_M)), e(P_M)) \\
+    \phi_{K_H, T}(L, R) &= (L, R \boxplus H_{K_H}(\encode(T, L)) \\
+    \phi^{-1}_{K_H, T}(L, R) &= (L, R \boxminus H_{K_H}(\encode(T, L))
+\end{align*}
+
+These are families of length-preserving functions parameterized by the length
+$|P_L| = |L| = |C_L| = l \in \mathbb{N}$;
+for notational convenience we leave this parameter implicit.
+
+We prove a security bound for HPolyC in three stages:
+\begin{itemize}
+    \item we consider distinguishers for the inner construction $\theta$ in an
+    attack model which forbids ``inner collisions'' in queries
+    \item we prove a bound on the probability of an attacker causing an inner collision
+    \item we put this together to bound the success probability of a distinguisher against
+    HPolyC.
+\end{itemize}
+
+At each stage, we consider an attacker \(\adv^{\calE, \calD}\) who makes $q$ queries
+to oracles for
+two length-preserving function families which take a tweak; the attacker is always free to vary
+the length of input and tweak.
+
+\begin{align*}
+\calE, \calD:
+\{0,1\}^* &\times \{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n \\
+(C_L, C_R) &\leftarrow \calE_T(P_L, P_R) \\
+(P_L, P_R) &\leftarrow \calD_T(C_L, C_R) \\
+\end{align*}
+
+\subsection{Inner part}\label{innerpart}
+
+We consider an attacker trying to distinguish an idealized $\theta$ from a
+pair of families of random length-preserving functions,
+but we forbid the attacker from causing ``inner collisions'':
+having made either of the queries: \label{constraints}
+\begin{itemize}
+    \item $(C_L, C_M) \leftarrow \calE_T(P_L, P_M)$
+    \item $(P_L, P_M) \leftarrow \calD_T(C_L, C_M)$
+\end{itemize}
+both of the queries below are subsequently disallowed:
+\begin{itemize}
+    \item $\calE_\cdotp(\cdotp, P_M)$
+    \item $\calD_\cdotp(\cdotp, C_M)$
+\end{itemize}
+where $\cdotp$ represents any value. However assuming $C_M \neq P_M$, this does not disallow
+subsequent queries of the form $\calD_\cdotp(\cdotp, P_M)$ or $\calE_\cdotp(\cdotp, C_M)$
+and it's important to consider such queries at each step below. We write
+$P_M$/$C_M$ for the second argument and result to match notation used for $\theta$ elsewhere.
+At this stage, we consider computationally unbounded attackers; we'll consider resource-bounded
+attackers in~\autoref{composition}.
+
+In what follows we use a standard concrete security hybrid argument per~\cite{concrete,games}:
+for a fixed class of attacker, distinguishing advantage obeys the triangle inequality and
+forms a pseudometric space. We consider a
+sequence of experiments, bound the distingushing advantage between successive
+experiments, and thereby
+prove an advantage bound for a distinguisher between the first and the last experiment
+which is the sum of the advantage bound between each successive experiment.
+
+\xprmtitle{innerpart}{randinner}: $\calE$ and $\calD$ are families of
+random functions. Since by our constraints above every query to each
+is distinct, every output of the
+appropriate length is equally likely. Wherever we specify that an experiment uses multiple random
+functions, those functions are independent unless stated otherwise.
+
+\xprmtitle{innerpart}{notweak}: Ignore the tweak: let
+$\barE, \barD$ be random length-preserving function families from
+$\{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n$
+and let $\calE_T = \barE$ and $\calD_T = \barD$ for all $T$.
+Since by the above constraints, for each random function the second argument in every query
+is still always distinct, every output of the appropriate length is equally
+likely as before, and this is indistinguishable from \xprm{innerpart}{randinner}.
+
+\xprmtitle{innerpart}{doublerf}: Use a Feistel network in which the stream cipher
+nonce includes both $P_M$ and $C_M$.
+\begin{itemize}
+    \item $F_S: \{0,1\}^{2n} \rightarrow \{0,1\}^{l_S}$ is a random
+    function
+    \item $F_E, F_D: \{0,1\}^n \rightarrow \{0,1\}^n$ are random functions
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || F_E(P_M)), F_E(P_M))$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(F_D(C_M) || C_M), F_D(C_M))$
+\end{itemize}
+Again, the constraints above ensure that for each random function,
+every query is distinct,
+every output of the appropriate length is equally
+likely as before, and this is indistinguishable from
+\xprm{innerpart}{notweak} and \xprm{innerpart}{randinner}.
+
+\xprmtitle{innerpart}{rpswitch}: Substitute a random permutation for the pair of random functions.
+\begin{itemize}
+    \item $F_S: \{0,1\}^{2n} \rightarrow \{0,1\}^{l_S}$ is a random function as before
+    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || \pi(P_M)), \pi(P_M))$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(\pi^{-1}(C_M) || C_M), \pi^{-1}(C_M))$
+    ie $\calD_T = \calE_T^{-1}$
+\end{itemize}
+The constraints above rule out ``pointless'' queries on $\pi$, so per section C of~\cite{cmc}
+the advantage in distinguishing this from \xprm{innerpart}{doublerf} is at most
+$2^{-n}\binom{q}{2}$.
+
+\xprmtitle{innerpart}{halfrf}: Replace the two-argument $F_S$ with
+a single-argument version which uses only $C_M$.
+\begin{itemize}
+    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation as before
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(\pi(P_M)), \pi(P_M))$
+    ie $\calE_T = \theta_{\pi, F_S}$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(C_M), \pi^{-1}(C_M))$
+    ie $\calD_T = \theta_{\pi, F_S}^{-1}$
+\end{itemize}
+Since $\pi$ is a permutation,
+for any pair of queries $C_M = C_M'$ if and only if $P_M = P_M'$.
+This is therefore indistinguishable from \xprm{innerpart}{rpswitch}.
+This is a small upside to HPolyC's asymmetry: if a symmetrical
+construction such as $F_S(P_M \oplus \pi(P_M))$ were used here instead, it would be
+distinguishable with advantage $2^{-n}\binom{q}{2}$.
+
+Summing these distances, with these constraints the advantage distinguishing between
+\xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf} is at most
+$2^{-n}\binom{q}{2}$.
+
+\subsection{Collision finding}\label{collision}
+Theorem 3.3 of~\cite{poly1305} shows that $H$ is $\epsilon$-almost-$\Delta$-universal:
+for any $g \in \{0,1\}^n$ and
+any two distinct message $m$, $m'$
+such that $|m|, |m'| \leq kn$, there are at most
+$8k$ keys $K_H \in \mathcal{K}_H$
+such that $H_{K_H}(m) \boxminus H_{K_H}(m') = g$.
+Since  $|\mathcal{K}_H| = 2^{106}$, for a random
+$K_H \xleftarrow{\$} \mathcal{K}_H$ we have for any $(g, m) \neq (g', m')$ that
+$\prob{H_{K_H}(m) \boxplus g = H_{K_H}(m') \boxplus g'} \leq 2^{-103}k$.
+We use this to bound the probability that the attacker will cause an
+``inner collision''---a query to the inner part which doesn't meet the constraints described
+in \autoref{constraints}.
+
+From here on, we forbid only ``pointless queries'': after either of the queries
+$(C_L, C_R) \leftarrow \calE_T(P_L, P_R)$ or $(P_L, P_R) \leftarrow \calD_T(C_L, C_R)$,
+both the subsequent queries
+$\calE_T(P_L, P_R)$ and $\calD_T(C_L, C_R)$ would be forbidden. Again, we consider a
+computationally unbounded attacker.
+
+A hash key $K_H \xleftarrow{\$} \mathcal{K}_H$ is chosen at random, and for each query we define
+\begin{itemize}
+    \item $P_M = P_R \boxplus H_{K_H}(\encode(T, P_L))$
+    \item $C_M = C_R \boxplus H_{K_H}(\encode(T, C_L))$
+\end{itemize}
+
+For query $1 \leq i \leq q$, we'll use superscripts to refer to the variables for that query, eg
+$P_M^i$, $C_M^i$. The attacker wins if there exists $i < j \leq q$ such that
+either
+\begin{itemize}
+    \item $j$ is a plaintext query (a query to $\calE$) and $P_M^i = P_M^j$ or
+    \item $j$ is a ciphertext query (a query to $\calD$) and $C_M^i = C_M^j$.
+\end{itemize}
+We do not consider a query such that $C_M^i = P_M^j$ (or vice versa) a win.
+
+Let $k$ be
+the maximum number of blocks processed by the
+hash, ie the least integer such that
+$|\encode(T^i, P_L^i)| = |\encode(T^i, C_L^i)| \leq kn$ for all $i$.
+
+Here we are considering not distingushing probability but success probability; we
+show a bound on success probability for the first experiment, and for each subsequent experiment
+we bound the increase in success probability over the previous experiment.
+
+\xprmtitle{collision}{keyend}: Choose responses fairly at random of the appropriate length;
+once all $q$ queries are complete, choose the hash key and see if the attacker succeeded.
+
+If query $j$ is a plaintext query, the attacker knows the query and result
+for all $i < j$, and can choose plaintext values to maximize the probability of success.
+If $T^i, P_L^i = T^j, P_L^j$ then the hashes will be the same, and since pointless
+queries are forbidden we have that $P_R^i \neq P_R^j$ and therefore that
+$P_M^i \neq P_M^j$. Otherwise by the $\epsilon$A$\Delta$U property,
+$\prob{P_M^i = P_M^j} \leq 2^{-103}k$. The same success bound holds for a ciphertext query.
+The overall probability of success
+is at most the sum of the probability of success for each pair:
+$2^{-103}k\binom{q}{2}$.
+
+Note that we don't assume that probabilities are independent here;
+for any events $A$, $B$ we have that $\prob{A \vee B} \leq \prob{A} + \prob{B}$, with
+equality if $A$, $B$ are disjoint. Here distjointness means that the attacker can
+choose queries such that no key causes more than one pair to succeed, making full use of
+the assumption on each query that previous queries have failed.
+
+\xprmtitle{collision}{keystart}: As with \xprm{collision}{keyend}, but
+choose the key at the start of the experiment. This
+does not change the probability of success.
+
+\xprmtitle{collision}{earlystop}: As with \xprm{collision}{keystart}, but
+end the experiment as soon as the attacker succeeds.
+This doesn't change the success probability.
+
+\xprmtitle{collision}{randomfuncs}: Use random function families for $\calE$,
+$\calD$. Since we forbid pointless queries,
+all responses of the appropriate length are equally likely as before,
+and this doesn't change the success probability.
+
+\xprmtitle{collision}{randinner}: Use random function families for $\calE'$, $\calD'$, and define
+\begin{itemize}
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \calE_T' \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \calD_T' \circ \phi_{K_H, T}$
+\end{itemize}
+
+Since a random function composed with a bijective function is a random function,
+this doesn't change the success probability, which remains at most
+$2^{-103}k\binom{q}{2}$.
+
+\xprmtitle{collision}{halfrf}: The middle part of the sandwich is now a pair of random functions,
+as per the first experiment in \autoref{innerpart}, \xprm{innerpart}{randinner}.
+Substitute this with the last experiment, \xprm{innerpart}{halfrf}:
+
+\begin{itemize}
+    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1} = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T}$
+\end{itemize}
+
+Given any attacker for this experiment,
+we construct a distinguisher between \xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf} as
+follows: we choose a random $K_H$, and use our oracle for the inner part as $\theta$.
+We report 1 if the attacker succeeds in generating an inner collision.
+We stop the experiment early if the attacker succeeds, and any query in which the attacker
+does not succeed is one that obeys the query bounds of \autoref{innerpart}.
+Therefore, the difference in success probability
+between \xprm{collision}{randinner} and \xprm{collision}{halfrf}
+for these two outer experiments can be no more than
+the advantage bound of $2^{-n}\binom{q}{2}$
+established in~\autoref{innerpart} for distinguishing between
+\xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf}.
+The success
+probability for this final experiment is therefore at most
+$(2^{-103}k + 2^{-n})\binom{q}{2}$.
+
+\subsection{Composition}\label{composition}
+
+Finally we put these pieces together to bound the advantage of distinguishing HPolyC from
+a family of random permutations. As before, the attacker can make encryption and decryption queries
+but ``pointless'' queries are forbidden; in addition, the attacker is constrained by a time
+bound $t$. We start with this experiment:
+
+\xprmtitle{composition}{permutation}: For all lengths and all $T$, $\calE_T$ is a random permutation,
+and $\calD_T = \calE_T^{-1}$. The security of a variable-length tweakable SPRP is defined by
+the advantage bound in distinguishing it from this experiment.
+
+\xprmtitle{composition}{randomfuncs}: $\calE$ and $\calD$ are
+families of random functions.
+Since pointless queries are forbidden, the advantage in distinguishing this from
+\xprm{composition}{permutation} is at most $2^{-|P|}\binom{q}{2} \leq 2^{-n}\binom{q}{2}$
+per section C of~\cite{cmc}.
+
+\xprmtitle{composition}{randinner}: $\calE'$ and $\calD'$ are families of random functions.
+Choose a hash key $K_H \xleftarrow{\$} \mathcal{K}_H$,
+and conjugate the random functions by Feistel calls to the hash function:
+
+\begin{itemize}
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \calE_T' \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \calD_T' \circ \phi_{K_H, T}$
+\end{itemize}
+
+as per the step from \xprm{collision}{randomfuncs}
+to \xprm{collision}{randinner}.
+Since a random function composed with a bijective function is a random function,
+this is indistinguishable from \xprm{composition}{randomfuncs}.
+
+\xprmtitle{composition}{halfrf}: Substitute \xprm{innerpart}{halfrf} for \xprm{innerpart}{randinner}.
+\begin{itemize}
+    \item $K_H \xleftarrow{\$} \mathcal{K}_H$
+    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+By \autoref{collision} the attacker's probability of causing an inner collision is at most
+$(2^{-103}k + 2^{-n})\binom{q}{2}$. If they do not cause a collision,
+their queries to $\theta$ meet the constraints set out in \autoref{innerpart}, which
+bounds the distinguishing advantage in this case to $2^{-n}\binom{q}{2}$.
+The advantage in distinguishing from \xprm{composition}{randinner}
+is at most the sum of the collision probability and the no-collision advantage, which is
+$(2^{-103}k + 2(2^{-n}))\binom{q}{2}$.
+
+\xprmtitle{composition}{block}: Choose a random $K_E \xleftarrow{\$} \mathcal{K}_E$ and
+substitute a block cipher $E_{K_E}$ for $\pi$.
+\begin{itemize}
+    \item $K_H \xleftarrow{\$} \mathcal{K}_H$, $K_E \xleftarrow{\$} \mathcal{K}_E$
+    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+By the standard argument
+for such a substitution, the advantage for this substitution is at most
+$\advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]$ where $t$ is a time bound on the attacker and
+$t' = t + \bigO{\sum_i |P^i| + |T^i|}$.
+
+\xprmtitle{composition}{xrf}: Use an XChaCha12-like random function to define the stream cipher
+and derive the keys $K_H$, $K_E$ using the algorithm in \autoref{keyderivation}:
+
+\begin{itemize}
+    \item $F_X: \{0,1\}^{192} \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $\overline{K_H} || K_E || \ldots = F_X(1 || 0^{191})$
+    \item $K_H = \mathrm{Poly1305Clamp}(\overline{K_H})$
+    \item $F_S(C_M) = F_X(C_M || 1 || 0^{63})$
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+This is indistinguishable from \xprm{composition}{block}.
+
+\xprmtitle{composition}{xchacha}: Choose a random $K_S \xleftarrow{\$} \mathcal{K}_S$ and
+substitute $\XChaCha12_{K_S}$ for $F_X$.
+
+\begin{itemize}
+    \item $K_S \xleftarrow{\$} \mathcal{K}_S$
+    \item $\overline{K_H} || K_E || \ldots = \XChaCha12_{K_S}(1 || 0^{191})$
+    \item $K_H = \mathrm{Poly1305Clamp}(\overline{K_H})$
+    \item $F_S(C_M) = \XChaCha12_{K_S}(C_M || 1 || 0^{63}) = S_{K_S}(C_M)$
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+This is HPolyC. Taking into account the 192-bit
+query to $\XChaCha12$ to derive $K_H$, $K_E$,
+by the standard argument the advantage for this substitution is at most
+$\advantage{\mathrm{prf}}{\XChaCha12_{K_S}}[(192 + \sum_i |P^i|-n, t')]$ (where
+the first argument measures not queries but bits of output).
+
+Summing these,
+the advantage in distinguishing HPolyC from a family of random permutations is at most
+$2^{-103}k\binom{q}{2} + 3(2^{-n})\binom{q}{2}
++ \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
++ \advantage{\mathrm{prf}}{\XChaCha12_{K_S}}[(192 + \sum_i |P^i|-n, t')]$.
+If the block and stream ciphers are secure, this will be
+dominated by the first term. Since
+$|P_L| + n = |P|$ but
+$\encode$ adds up to 159 bits, and padding for the last block of $P_L$ another 127,
+$kn \leq \max_i (T^i + P^i + 158)$ and this first term is less than
+$2^{-111}q^2\max_i (T^i + P^i + 158)$.
+
+\printbibliography
+
+%\appendix
+%\section{Test vectors}
+
+%A sample Python implementation and thousands of test vectors are available
+%from our source code repository at \url{https://github.com/google/hpolyc}. We include a few
+%of these test vectors for HPolyC-XChaCha12-AES below:
+
+%\begingroup
+%\renewcommand*{\arraystretch}{1.5}
+%\input{work/test_vectors.tex}
+%\endgroup
+
+Version: \texttt{\input{work/git.tex}}
+\end{document}
