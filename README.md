@@ -11,7 +11,7 @@ this has two disadvantages:
 
 HPolyC uses a fast polynomial hash (Poly1305) and a fast stream cipher (XChaCha12) to build
 a construction which encrypts an entire sector at a time. On
-an ARM Cortex-A7 processor, HPolyC decrypts 4096-byte messages at 14.6 cycles
+an ARM Cortex-A7 processor, HPolyC decrypts 4096-byte messages at 14.5 cycles
 per byte, over four times faster than AES-256-XTS. HPolyC is also a "super
 pseudorandom permutation" over the whole sector, which means that any change to the plaintext
 of the sector results in an unrecognizably different ciphertext sector and vice versa.
