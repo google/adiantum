@@ -16,6 +16,8 @@ per byte, over four times faster than AES-256-XTS. HPolyC is also a "super
 pseudorandom permutation" over the whole sector, which means that any change to the plaintext
 of the sector results in an unrecognizably different ciphertext sector and vice versa.
 
+HPolyC is published as [ePrint report 2018/720](https://eprint.iacr.org/2018/720).
+
 This repository includes:
 
 - LaTeX sources for the paper presenting HPolyC
