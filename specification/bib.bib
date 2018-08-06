@@ -68,7 +68,7 @@
 ,    doi={10.1109/TIT.2008.917623}
 ,    ISSN={0018-9448}
 ,    month={4}
-,    url={https://eprint.iacr.org/2007/028}
+,    url={https://ia.cr/2007/028}
 }
 
 @Inbook{cmc
@@ -84,7 +84,7 @@ and Rogaway, Phillip"
 ,    abstract="We describe a block-cipher mode of operation, CMC, that turns an n-bit block cipher into a tweakable enciphering scheme that acts on strings of mn bits, where m{\thinspace}≥{\thinspace}2. When the underlying block cipher is secure in the sense of a strong pseudorandom permutation (PRP), our scheme is secure in the sense of tweakable, strong PRP. Such an object can be used to encipher the sectors of a disk, in-place, offering security as good as can be obtained in this setting. CMC makes a pass of CBC encryption, xors in a mask, and then makes a pass of CBC decryption; no universal hashing, nor any other non-trivial operation beyond the block-cipher calls, is employed. Besides proving the security of CMC we initiate a more general investigation of tweakable enciphering schemes, considering issues like the non-malleability of these objects."
 ,    isbn="978-3-540-45146-4"
 ,    doi="10.1007/978-3-540-45146-4_28"
-,    url = {https://eprint.iacr.org/2003/148}
+,    url = {https://ia.cr/2003/148}
 }
 
 @Inbook{eme
@@ -100,7 +100,7 @@ and Rogaway, Phillip"
 ,    abstract="We describe a block-cipher mode of operation, EME, that turns an n-bit block cipher into a tweakable enciphering scheme that acts on strings of mn bits, where m$\epsilon$[1..n]. The mode is parallelizable, but as serial-efficient as the non-parallelizable mode CMC [6]. EME can be used to solve the disk-sector encryption problem. The algorithm entails two layers of ECB encryption and a ``lightweight mixing'' in between. We prove EME secure, in the reduction-based sense of modern cryptography. We motivate some of the design choices in EME by showing that a few simple modifications of this mode are insecure."
 ,    isbn="978-3-540-24660-2"
 ,    doi="10.1007/978-3-540-24660-2_23"
-,    url = {https://eprint.iacr.org/2003/147}
+,    url = {https://ia.cr/2003/147}
 }
 
 @Inbook{emestar
@@ -116,7 +116,7 @@ and Viswanathan, Kapaleeswaran"
 ,    abstract="This work describes a mode of operation, EME*, that turns a regular block cipher into a length-preserving enciphering scheme for messages of (almost) arbitrary length. Specifically, the resulting scheme can handle any bit-length, not shorter than the block size of the underlying cipher, and it also handles associated data of arbitrary bit-length. Such a scheme can either be used directly in applications that need encryption but cannot afford length expansion, or serve as a convenient building block for higher-level modes."
 ,    isbn="978-3-540-30556-9"
 ,    doi="10.1007/978-3-540-30556-9_25"
-,    url = {https://eprint.iacr.org/2004/125}
+,    url = {https://ia.cr/2004/125}
 }
 
 @Inbook{pep
@@ -132,7 +132,7 @@ and Sarkar, Palash"
 ,    abstract="We present PEP, which is a new construction of a tweakable strong pseudo-random permutation. PEP uses a hash-encrypt-hash approach which has been recently used in the construction of HCTR. This approach is different from the encrypt-mask-encrypt approach of constructions such as CMC, EME and EME*. The general hash-encrypt-hash approach was earlier used by Naor-Reingold to provide a generic construction technique for an SPRP (but not a tweakable SPRP). PEP can be seen as the development of the Naor-Reingold approach into a fully specified mode of operation with a concrete security reduction for a tweakable strong pseudo-random permutation. HCTR is also based on the Naor-Reingold approach but its security bound is weaker than PEP. Compared to previous known constructions, PEP is the only known construction of tweakable SPRP which uses a single key, is efficiently parallelizable and can handle an arbitrary number of blocks."
 ,    isbn="978-3-540-36598-3"
 ,    doi="10.1007/11799313_19"
-,    url = {https://eprint.iacr.org/2006/275}
+,    url = {https://ia.cr/2006/275}
 }
 
 @Inbook{tet
@@ -147,7 +147,7 @@ and Sarkar, Palash"
 ,    abstract="This work describes a mode of operation, TET, that turns a regular block cipher into a length-preserving enciphering scheme for messages of (almost) arbitrary length. When using an n-bit block cipher, the resulting scheme can handle input of any bit-length between n and 2                  n                 and associated data of arbitrary length."
 ,    isbn="978-3-540-74143-5"
 ,    doi="10.1007/978-3-540-74143-5_23"
-,    url="https://eprint.iacr.org/2007/014"
+,    url="https://ia.cr/2007/014"
 }
 
 @Inbook{heh
@@ -163,7 +163,7 @@ and Rhee, Gwangsoo"
 ,    abstract="Naor and Reingold had proposed the construction of a strong pseudo-random permutation (SPRP) by using a layer of ECB encryption between two layers of invertible block-wise universal hash functions. At Crypto 2007, Halevi presented constructions of invertible block-wise universal hash functions and a new mode of operation (called TET) based on them. In this paper, we present a new mode of operation called HEH using the Naor-Reingold approach. This is built using a new construction of invertible block-wise universal hash function. The new construction improves over Halevi's construction by removing restrictions on the hashing key. This in turn, leads to HEH improving over TET by allowing more efficient encryption and decryption of variable length messages as well as supporting better key agility. For the important application of disk encryption, we present a variant called HEHfp which has better key agility than TET."
 ,    isbn="978-3-540-76788-6"
 ,    doi="10.1007/978-3-540-76788-6_15"
-,    url="https://eprint.iacr.org/2007/317"
+,    url="https://ia.cr/2007/317"
 }
 
 @techreport{hmc
@@ -171,7 +171,7 @@ and Rhee, Gwangsoo"
 ,    title = {Improving upon HCTR and matching attacks for Hash-Counter-Hash approach}
 ,    howpublished = {Cryptology ePrint Archive, Report 2008/090}
 ,    year = {2008}
-,    url = {https://eprint.iacr.org/2008/090}
+,    url = {https://ia.cr/2008/090}
 }
 
 @Inbook{xcb
@@ -189,7 +189,7 @@ and Wiener, Michael"
 ,    abstract="The XCB mode of operation was outlined in 2004 as a contribution to the IEEE Security in Storage effort, but no security analysis was provided. In this paper, we provide a proof of security for XCB, and show that it is a secure tweakable (super) pseudorandom permutation. Our analysis makes several new contributions: it uses an algebraic property of XCB's internal universal hash function to simplify the proof, and it defines a nonce mode in which XCB can be securely used even when the plaintext is shorter than twice the width of the underlying block cipher. We also show minor modifications that improve the performance of XCB and make it easier to analyze. XCB is interesting because it is highly efficient in both hardware and software, it has no alignment restrictions on input lengths, it can be used in nonce mode, and it uses the internal functions of the Galois/Counter Mode (GCM) of operation, which facilitates design re-use and admits multi-purpose implementations."
 ,    isbn="978-3-540-77360-3"
 ,    doi="10.1007/978-3-540-77360-3_20"
-,    url="https://eprint.iacr.org/2007/298"
+,    url="https://ia.cr/2007/298"
 }
 
 
@@ -379,7 +379,7 @@ and Wagner, David"
 ,    title = {Sequences of games: a tool for taming complexity in security proofs}
 ,    howpublished = {Cryptology ePrint Archive, Report 2004/332}
 ,    year = {2004}
-,    url = {https://eprint.iacr.org/2004/332}
+,    url = {https://ia.cr/2004/332}
 }
 
 @Article{NaorReingold
@@ -447,7 +447,7 @@ and Billet, Olivier"
 ,    title = {The SIMON and SPECK Families of Lightweight Block Ciphers}
 ,    howpublished = {Cryptology ePrint Archive, Report 2013/404}
 ,    year = {2013}
-,    url = {https://eprint.iacr.org/2013/404}
+,    url = {https://ia.cr/2013/404}
 }
 
 @techreport{speck2
@@ -455,7 +455,7 @@ and Billet, Olivier"
 ,    title = {SIMON and SPECK: Block Ciphers for the Internet of Things}
 ,    howpublished = {Cryptology ePrint Archive, Report 2015/585}
 ,    year = {2015}
-,    url = {https://eprint.iacr.org/2015/585}
+,    url = {https://ia.cr/2015/585}
 }
 
 @techreport{speck3
@@ -463,7 +463,7 @@ and Billet, Olivier"
 ,    title = {Notes on the design and analysis of SIMON and  SPECK}
 ,    howpublished = {Cryptology ePrint Archive, Report 2017/560}
 ,    year = {2017}
-,    url = {https://eprint.iacr.org/2017/560}
+,    url = {https://ia.cr/2017/560}
 }
 
 @online{poly1305clamp
@@ -524,7 +524,7 @@ and Charpin, Pascale"
 ,    title = {Tweakable Enciphering Schemes From Stream Ciphers With IV}
 ,    howpublished = {Cryptology ePrint Archive, Report 2009/321}
 ,    year = {2009}
-,    url = {https://eprint.iacr.org/2009/321}
+,    url = {https://ia.cr/2009/321}
 }
 
 @article{sarkar2
@@ -555,7 +555,7 @@ and Charpin, Pascale"
 ,    title = {FAST: Disk Encryption and Beyond}
 ,    howpublished = {Cryptology ePrint Archive, Report 2017/849}
 ,    year = {2017}
-,    url = {https://eprint.iacr.org/2017/849}
+,    url = {https://ia.cr/2017/849}
 }
 
 @InProceedings{kdm
