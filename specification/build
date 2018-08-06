@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import os
 import pathlib
 import subprocess
@@ -30,10 +31,25 @@ def writechanged(path, content):
         path.write_bytes(content)
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--iacr', action='store_true')
+    args = parser.parse_args()
     work = wd / "work"
     work.mkdir(parents = True, exist_ok = True)
     fetch = work / "fetch"
     fetch.mkdir(parents = True, exist_ok = True)
+
+    if args.iacr:
+        iacrtrans = work / "iacrtrans"
+        if not iacrtrans.is_dir():
+            fetchhash.fetch_file(fetch / "iacr_tosc.zip",
+                "https://tosc.iacr.org/public/journals/6/iacr_tosc.zip",
+                "dac48968ba4259261b06028eda1a880c3a8f411f7cac62060b308a7acb68a71f")
+            uz = fetch / "iacrtrans"
+            if uz.exists():
+                subprocess.run(["rm", "-rf", str(uz)], check=True)
+            subprocess.run(["unzip", "iacr_tosc.zip"], cwd=fetch, check=True)
+            uz.rename(iacrtrans)
 
     latexrun = work / "latexrun"
     if not latexrun.is_file():
@@ -61,13 +77,26 @@ def main():
     gitstate += b"\n"
     writechanged(work / "git.tex", gitstate)
 
+    extrainputs = []
+    latex = "lualatex"
+    output = "hpolyc.pdf"
+    toggle = rb"\togglefalse{iacr}"
+    if args.iacr:
+        extrainputs.append(str(iacrtrans))
+        latex = "xelatex"
+        output = "hpolyc-iacr.pdf"
+        toggle = rb"\toggletrue{iacr}"
+
+    writechanged(work / "toggle.tex", toggle)
+    env = dict(os.environ)
+    env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
     subprocess.run([str(latexrun),
-            "-o", "hpolyc.pdf",
+            "-o", output,
             "-O", str(work / "latex.out"),
-            "--latex-cmd", "lualatex",
+            "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
             "hpolyc.tex"],
-        cwd=wd, check=True)
+        cwd=wd, check=True, env=env)
 
 if __name__ == "__main__":
     main()

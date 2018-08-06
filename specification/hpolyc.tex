@@ -15,31 +15,40 @@
 %%% script AUTHOR: Paul Crowley, Eric Biggers%%%
 %%% script TITLE: {HPolyC}: length-preserving encryption for entry-level processors%%%
 
-\documentclass[letterpaper,luatex,11pt]{article}
+\RequirePackage{etoolbox}
+\newtoggle{iacr}
+\input{work/toggle.tex}
+\iftoggle{iacr}{
+    \documentclass[journal=tosc,preprint,floatrow]{iacrtrans}
+}{ % iacr
 
-\usepackage{fontspec}
-\setmainfont{TeX Gyre Pagella}
-\setsansfont{TeX Gyre Heros}
-\setmathrm{Latin Modern Roman}
-\defaultfontfeatures{}
-\setmonofont{TeX Gyre Cursor}[Ligatures={NoCommon,NoRequired,NoContextual},Scale=0.9]
+    \documentclass[letterpaper,luatex,11pt]{article}
 
-\usepackage[hmargin=4cm,vmargin=3cm,nohead]{geometry}
-\usepackage{parskip}
-\usepackage[style]{abstract}
-\usepackage{titling}
-\usepackage{sectsty}
-\usepackage{authblk}
-\usepackage{floatrow}
-\usepackage[svgnames]{xcolor}
-\usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen]{hyperref}
+    \usepackage{fontspec}
+    \setmainfont{TeX Gyre Pagella}
+    \setsansfont{TeX Gyre Heros}
+    \setmathrm{Latin Modern Roman}
+    \defaultfontfeatures{}
+    \setmonofont{TeX Gyre Cursor}[Ligatures={NoCommon,NoRequired,NoContextual},Scale=0.9]
 
-\pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
-\renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract
-\allsectionsfont{\sffamily} % sf sections
+    \usepackage[hmargin=4cm,vmargin=3cm,nohead]{geometry}
+    \usepackage{parskip}
+    \usepackage[style]{abstract}
+    \usepackage{titling}
+    \usepackage{sectsty}
+    \usepackage{authblk}
+    \usepackage{floatrow}
+    \usepackage[svgnames]{xcolor}
+    \usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen]{hyperref}
 
-\raggedright
-\raggedbottom
+    \pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
+    \renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract
+    \allsectionsfont{\sffamily} % sf sections
+
+    \raggedright
+    \raggedbottom
+
+} % non-iacr
 
 \usepackage[style=alphabetic,backend=biber]{biblatex}
 \usepackage{amsmath}
@@ -71,9 +80,14 @@
 \newcommand*{\barD}{\overline{\calD}}
 
 \title{HPolyC: length-preserving encryption for entry-level processors}
-\author{Paul~Crowley}
-\author{Eric~Biggers}
-\affil{Google LLC}
+\iftoggle{iacr}{
+    \author{Paul~Crowley \and Eric~Biggers}
+    \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
+}{ % iacr
+    \author{Paul~Crowley}
+    \author{Eric~Biggers}
+    \affil{Google LLC}
+} % non-iacr
 
 \tikzset{cbox/.style={
         rectangle,
@@ -88,6 +102,13 @@
 
 \begin{document}
 \maketitle
+\iftoggle{iacr}{
+    \keywords{strong pseudorandom permutation \and
+        variable input length \and
+        tweakable encryption \and
+        disk encryption}
+}{ % iacr
+} % non-iacr
 
 \begin{abstract}
     We present HPolyC, a construction which builds on Poly1305, XChaCha12, and a
