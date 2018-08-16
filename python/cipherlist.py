@@ -16,6 +16,7 @@ import aes
 import bachata
 import hpolyc
 import latindance
+import nh
 import poly1305
 import xconstruct
 
@@ -31,6 +32,7 @@ common_ciphers = [
 our_test_ciphers = common_ciphers + [
     hpolyc.HPolyC(),
     bachata.Bachata(),
+    nh.NH(),
 ]
 
 all_ciphers = our_test_ciphers + [
