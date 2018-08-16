@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import paths
-import aes
 
 def parse_tvs():
     p = paths.top / "test_vectors" / "other" / "aes"

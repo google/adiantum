@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import latindance
-import xconstruct
-
 # from https://github.com/jedisct1/libsodium/blob/fff87d50dd43900ce837537471d54626669384b4/test/default/xchacha20.c
 
 tvs = [

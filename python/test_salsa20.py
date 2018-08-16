@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import latindance
 import parse_salsa20_tv
 
 def read_hex(s): return bytes.fromhex("".join(s))

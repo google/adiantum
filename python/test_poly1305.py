@@ -13,10 +13,7 @@
 # limitations under the License.
 
 import json
-import poly1305
 import paths
-import tvgen
-import json
 
 def test_vectors(ch):
     with (paths.top / "test_vectors" / "other" / "poly1305.json").open() as f:
