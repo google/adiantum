@@ -55,6 +55,19 @@ class HBSH(cipher.Blockcipher):
         padded_nonce = nonce + b'\1' + b'\0' * (needed - len(nonce) -1)
         return self._stream.encrypt(m, key=self._stream_key, nonce=padded_nonce)
 
+    def _setup_key_helper(self, needed):
+        km = self._stream_xor(b'', b'\0' * sum(needed))
+        return [km[sum(needed[:i]):sum(needed[:i+1])] for i in range(len(needed))]
+
+    def _block_add(self, block, toadd):
+        i = int.from_bytes(block, byteorder='little')
+        i += toadd
+        i &= ((1<<128)-1)
+        return i.to_bytes(16, byteorder='little')
+
+    def _block_subtract(self, block, tosubtract):
+        return self._block_add(block, -tosubtract)
+
     def encrypt(self, block, key, tweak):
         self._setup_key(key)
         pl, pr = block[:-16], block[-16:]

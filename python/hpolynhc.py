@@ -13,15 +13,30 @@
 # limitations under the License.
 
 import hbsh
+import nh
 import poly1305
 
-class HPolyC(hbsh.HBSH):
+class HPolyNHC(hbsh.HBSH):
+    def _setup_variant(self):
+        super()._setup_variant()
+        self._nh = nh.NH()
+
     def _setup_key(self, key):
         self._stream_key = key
-        r, self._block_key = self._setup_key_helper([16, 32])
+        r, self._block_key, self._nh_key = self._setup_key_helper(
+            [16, 32, self._nh.lengths()["key"]])
         self._polyr = poly1305.read_r(r)
 
     def _hash(self, tweak, msg):
-        header = (8*len(tweak)).to_bytes(4, byteorder='little') + tweak
-        padding = b'\0' * (-len(header) % 16)
-        return poly1305.poly1305_h_rbar(self._polyr, header + padding + msg)
+        tohash = (8*len(msg)).to_bytes(8, byteorder='little')
+        tohash += (8*len(tweak)).to_bytes(8, byteorder='little')
+        bulk = msg + tweak
+        nl = self._nh.lengths()
+        il = nl["message"]
+        while len(bulk) > nl["hash"]:
+            inp = bulk[:il]
+            inp += b'\0' * (il - len(inp))
+            tohash += self._nh.nh(self._nh_key, inp)
+            bulk = bulk[il:]
+        tohash += bulk
+        return poly1305.poly1305_h_rbar(self._polyr, tohash)
