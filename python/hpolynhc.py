@@ -28,15 +28,11 @@ class HPolyNHC(hbsh.HBSH):
         self._polyr = poly1305.read_r(r)
 
     def _hash(self, tweak, msg):
-        tohash = (8*len(msg)).to_bytes(8, byteorder='little')
-        tohash += (8*len(tweak)).to_bytes(8, byteorder='little')
-        bulk = msg + tweak
-        nl = self._nh.lengths()
-        il = nl["message"]
-        while len(bulk) > nl["hash"]:
-            inp = bulk[:il]
-            inp += b'\0' * (il - len(inp))
-            tohash += self._nh.nh(self._nh_key, inp)
-            bulk = bulk[il:]
-        tohash += bulk
-        return poly1305.poly1305_h_rbar(self._polyr, tohash)
+        header = (8*len(tweak)).to_bytes(4, byteorder='little') + tweak
+        header += b'\0' * (-len(header) % 16)
+        il = self._nh.lengths()["message"]
+        msg += b'\1'
+        msg += b'\0' * (-len(msg) % il)
+        msghashes = b"".join(self._nh.nh(self._nh_key, msg[i:i + il])
+            for i in range(0, len(msg), il))
+        return poly1305.poly1305_h_rbar(self._polyr, header + msghashes)
