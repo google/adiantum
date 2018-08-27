@@ -48,7 +48,7 @@ class Mac(cipher.Cipher):
         self.variant = tv["cipher"]
         assert tv["mac"] == self.mac(**tv["input"])
 
-    def lengths(self):
+    def test_input_lengths(self):
         v = self.variant['lengths']
         for mlen in 0, 1, 16, 47:
             yield {"key": v['key'], "mask": v['mask'], "message": mlen}

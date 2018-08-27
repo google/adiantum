@@ -41,7 +41,7 @@ class Cipher(object):
                 return
         raise Exception("No variant matching criterion")
 
-    def lengths(self):
+    def test_input_lengths(self):
         yield self.variant["lengths"]
 
 class ARXCipher(Cipher):
@@ -87,7 +87,7 @@ class Blockcipher(Cipher):
         assert tv["ciphertext"] == self.encrypt(tv["plaintext"], **tv["input"])
         assert tv["plaintext"] == self.decrypt(tv["ciphertext"], **tv["input"])
 
-    def lengths(self):
+    def test_input_lengths(self):
         v = self.variant['lengths']
         for m in "plaintext", "ciphertext":
             yield {'key': v['key'], m: v['block']}

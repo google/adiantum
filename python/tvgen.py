@@ -49,7 +49,7 @@ def recursive_unhex(o):
         return o
 
 def generate_testvectors(cipher):
-    for lengths in cipher.lengths():
+    for lengths in cipher.test_input_lengths():
         print(lengths)
         for tv, d in inputgen.generate_testinputs(lengths):
             yield cipher.make_testvector(tv, d)

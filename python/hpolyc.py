@@ -91,7 +91,7 @@ class HPolyC(cipher.Blockcipher):
         pr = self._block_add(pm, -self._hash(tweak, pl))
         return pl + pr
 
-    def lengths(self):
+    def test_input_lengths(self):
         for tlen in 0, 12, 17:
             for mlen in 16, 31, 128:
                 for m in "plaintext", "ciphertext":
