@@ -21,7 +21,7 @@ class AES(cipher.Blockcipher):
         self.choose_variant(lambda v: v["lengths"]["key"] == k)
 
     def variant_name(self):
-        l = self.variant['lengths']
+        l = self.lengths()
         return "{}{}".format(self.name(), l['key'] * 8)
 
     def variants(self):
@@ -35,11 +35,11 @@ class AES(cipher.Blockcipher):
             }
 
     def encrypt(self, pt, key):
-        assert len(key) == self.variant['lengths']['key']
+        assert len(key) == self.lengths()['key']
         a = Crypto.Cipher.AES.new(key)
         return a.encrypt(pt)
 
     def decrypt(self, ct, key):
-        assert len(key) == self.variant['lengths']['key']
+        assert len(key) == self.lengths()['key']
         a = Crypto.Cipher.AES.new(key)
         return a.decrypt(ct)

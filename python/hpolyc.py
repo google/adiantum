@@ -69,7 +69,7 @@ class HPolyC(cipher.Blockcipher):
         return i.to_bytes(16, byteorder='little')
 
     def _stream_xor(self, nonce, m):
-        needed = self._stream.variant["lengths"]["nonce"]
+        needed = self._stream.lengths()["nonce"]
         padded_nonce = nonce + b'\1' + b'\0' * (needed - len(nonce) -1)
         return self._stream.encrypt(m, key=self._stream_key, nonce=padded_nonce)
 

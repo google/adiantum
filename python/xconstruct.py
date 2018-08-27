@@ -30,7 +30,7 @@ class XConstruct(latindance.Latinlike):
         for v in d.variants():
             d.variant = v
             dhl = d.hash_lengths()
-            dl = d.variant["lengths"]
+            dl = d.lengths()
             # "Extending the Salsa20 nonce" asserts that Salsa20 takes a 256-bit key, and
             # doesn't specify how a 128-bit key would be handled, so we simply force the
             # key size to be the same as the hash output length here.

@@ -79,7 +79,7 @@ class Latindance(Latinlike, cipher.ARXCipher):
                 self._initstate[p] = vv
 
     def _setup(self, key, **kw):
-        if self.variant["lengths"]["key"] != self._length("key"):
+        if self.lengths()["key"] != self._length("key"):
             key += key
         self._write_initstate(dict(kw,
             const=self._constant.format(self.variant).encode('US-ASCII'), key=key))
@@ -130,7 +130,7 @@ class Latindance(Latinlike, cipher.ARXCipher):
         return self.cipher_output()
 
     def hash_lengths(self):
-        return {"key": self.variant["lengths"]["key"], "nonceoffset": self._length("nonceoffset"),
+        return {"key": self.lengths()["key"], "nonceoffset": self._length("nonceoffset"),
             "output": self._length("const") + self._length("nonceoffset")}
 
     def setup_hash(self, key, nonceoffset):
