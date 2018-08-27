@@ -18,6 +18,7 @@ import importlib
 import sys
 
 import cipherlist
+import hexjson
 import paths
 import tvgen
 
@@ -31,7 +32,7 @@ def write_other(ciphers):
         fname = path / cipher.name() / "other.json"
         print(f"Writing: {fname}")
         testmod = importlib.import_module(f"test_{test}")
-        tvgen.write_using_hex(fname, testmod.test_vectors(cipher))
+        hexjson.write_using_hex(fname, testmod.test_vectors(cipher))
 
 def write_ours(ciphers):
     if ciphers is None: ciphers=cipherlist.our_test_ciphers
