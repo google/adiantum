@@ -49,9 +49,10 @@ class Mac(cipher.Cipher):
         assert tv["mac"] == self.mac(**tv["input"])
 
     def test_input_lengths(self):
-        v = self.lengths()
+        v = dict(self.lengths())
+        del v["output"]
         for mlen in 0, 1, 16, 47:
-            yield {"key": v['key'], "mask": v['mask'], "message": mlen}
+            yield {**v, "message": mlen}
 
 class Poly1305(Mac):
     def __init__(self):

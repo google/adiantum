@@ -91,6 +91,8 @@ class Blockcipher(Cipher):
         assert tv["plaintext"] == self.decrypt(tv["ciphertext"], **tv["input"])
 
     def test_input_lengths(self):
-        v = self.lengths()
+        v = dict(self.lengths())
+        b = v['block']
+        del v['block']
         for m in "plaintext", "ciphertext":
-            yield {'key': v['key'], m: v['block']}
+            yield {**v, m: b}
