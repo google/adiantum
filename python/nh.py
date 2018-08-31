@@ -44,27 +44,28 @@ class NH(cipher.Cipher):
         v = self.variant
         unit = v['word_bytes'] * v['stride'] * 2
         return {
-            'message': unit * v['unitcount'],
+            'unit': unit,
+            'messagemax': unit * v['unitcount'],
             'key': unit * (v['unitcount'] + v['passes'] - 1),
-            'hash': v["word_bytes"] * v["passes"]
+            'hash': v['word_bytes'] * v['passes']
         }
 
     def test_input_lengths(self):
-        v = dict(self.lengths())
-        del v["hash"]
-        yield v
+        v = self.lengths()
+        for l in [v['unit'], v['messagemax'] - v['unit'], v['messagemax']]:
+            yield {'key': v['key'], 'message': l}
 
     def make_testvector(self, input, description):
         return {
-            "cipher": self.variant,
-            "description": description,
-            "input": input,
-            "hash": self.nh(**input),
+            'cipher': self.variant,
+            'description': description,
+            'input': input,
+            'hash': self.nh(**input),
         }
 
     def check_testvector(self, tv):
-        self.variant = tv["cipher"]
-        assert tv["hash"] == self.nh(**tv["input"])
+        self.variant = tv['cipher']
+        assert tv['hash'] == self.nh(**tv['input'])
 
     def _nhpass(self, key, message):
         stride = self.variant['stride']
@@ -81,6 +82,11 @@ class NH(cipher.Cipher):
             for off in range(0, step * self.variant['passes'], step)]
 
     def nh(self, key, message):
+        lengths = self.lengths()
+        assert len(message) > 0
+        assert len(message) <= lengths['messagemax']
+        assert len(message) % lengths['unit'] == 0
+        assert len(key) == lengths['key']
         key = w32._to_ints(key)
         message = w32._to_ints(message)
         return w64._from_ints(self._nh_vec(key, message))
