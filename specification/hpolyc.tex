@@ -13,13 +13,13 @@
 % limitations under the License.
 
 %%% script AUTHOR: Paul Crowley, Eric Biggers%%%
-%%% script TITLE: {HPolyC}: length-preserving encryption for entry-level processors%%%
+%%% script TITLE: {HBSH} and {HPolyNHC}: length-preserving encryption for entry-level processors%%%
 
 \RequirePackage{etoolbox}
 \newtoggle{iacr}
 \input{work/toggle.tex}
 \iftoggle{iacr}{
-    \documentclass[journal=tosc,preprint,floatrow]{iacrtrans}
+    \documentclass[journal=tosc,preprint,floatrow,submission]{iacrtrans}
 }{ % iacr
 
     \documentclass[letterpaper,luatex,11pt]{article}
@@ -64,6 +64,7 @@
 \DeclareMathOperator{\GF}{GF}
 \DeclareMathOperator{\encode}{encode}
 \DeclareMathOperator{\XChaCha12}{XChaCha12}
+\DeclareMathOperator{\HBSH}{HBSH}
 \DeclareMathOperator{\HPolyC}{HPolyC}
 
 \addbibresource{bib.bib}
@@ -79,7 +80,7 @@
 \newcommand*{\barE}{\overline{\calE}}
 \newcommand*{\barD}{\overline{\calD}}
 
-\title{HPolyC: length-preserving encryption for entry-level processors}
+\title{{HBSH} and {HPolyNHC}: length-preserving encryption for entry-level processors}
 \iftoggle{iacr}{
     \author{Paul~Crowley \and Eric~Biggers}
     \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
@@ -111,15 +112,13 @@
 } % non-iacr
 
 \begin{abstract}
-    We present HPolyC, a construction which builds on Poly1305, XChaCha12, and a
-    single block cipher invocation per message to offer length-preserving
-    encryption with a fast constant-time implementation where crypto
-    instructions are absent.  On an ARM Cortex-A7 processor, HPolyC decrypts
-    4096-byte messages at 14.5 cycles per byte, over four times faster than
-    AES-256-XTS.
-    Assuming secure primitives, we prove an advantage bound of
-    $\approx 2^{-111}q^2(l + 156)$,
-    where $q$ is the number of queries and $l$ is the sum of message and tweak length in bits.
+    We present HBSH, a simple construction for tweakable length-preserving encryption which
+    directly supports the fastest options for hashing and stream encryption for processors
+    without AES or other crypto instructions, with a provable
+    quadratic advantage bound. Our composition HPolyNHC uses NH, Poly1305, XChaCha12,
+    and a single AES invocation; on an ARM Cortex-A7 processor, HPolyNHC decrypts
+    4096-byte messages at FIXME cycles per byte, over FIXME times faster than
+    AES-256-XTS, with a constant-time implementation.
 \iftoggle{iacr}{
 }{
 
@@ -193,40 +192,48 @@ acceptably on them.
 
 On such platforms stream ciphers such as ChaCha12~\cite{chacha} significantly
 outperform block ciphers in cycles per byte, especially with constant-time implementations.
-Similarly, absent specific processor support, Poly1305 hash~\cite{poly1305} will be much faster
+Similarly, absent specific processor support, hash functions such as NH~\cite{NH} and
+Poly1305 hash~\cite{poly1305} will be much faster
 than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
 the data in a disk-sector-sized block, a hash-XOR-hash
 mode of operation relying on them should achieve
 much improved performance on such platforms.
 
-To this end, we present HPolyC, which:
+To this end, we present the HBSH (Hash, Block cipher, Stream cipher, Hash)
+construction, which generalizes over constructions such as
+HCTR~\cite{HCTR} and HCH~\cite{hch} by allowing arbitrary substitution of
+$\epsilon$-almost-XOR-universal hash functions and stream ciphers for the $\GF(2^{128})$-based
+hash and counter mode-like encryption these modes use. More specifically, we propose HPolyNHC,
+which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
+AES for the single blockcipher application. HPolyNHC:
+
+which:
 \begin{itemize}
     \item is a tweakable, variable-input-length, super-pseudorandom permutation
     \item has a security bound quadratic in the number of queries and linear in message length
-    \item is highly key agile
+    \item is key agile
     \item is highly parallelizable
     \item needs only three passes over the bulk of the data, or
         two if the XOR is combined with the second hash.
 \end{itemize}
 
-Without special cases or extra setup, HPolyC handles:
+Without special cases or extra setup, HPolyNHC handles:
 \begin{itemize}
-    \item messages that are not a multiple of 128 bits in length
-    \item tweak lengths from 0 to $2^{32}-1$ bits
+    \item any message and tweak lengths within the allowed range, 
     \item varying message and tweak lengths for the same keys.
 \end{itemize}
 
 The proof of security differs from other hash-XOR-hash modes in three ways. First,
 Poly1305 hash is not XOR universal, but universal over $\mathbb{Z}/2^{128}\mathbb{Z}$,
-so for XOR of hash values we substitute addition and subtraction in this group.
+so for XOR of hash values we substitute addition and subtraction in the appropriate group.
 Second, using the XSalsa20 construction~\cite{xsalsa}, we can directly
-build a stream cipher which takes a 192-bit nonce to generate a $2^{73}$-bit stream, simplifying
+build a stream cipher which takes a 192-bit nonce to generate a stream, simplifying
 the second Feistel operation and associated proof, as well as subkey generation.
 Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
 the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
 
 \section{Specification}
-HPolyC divides the input into a right-hand block of $n = 128$ bits and a left-hand block with
+HBSH divides the input into a right-hand block of $n$ bits and a left-hand block with
 the remainder of the input, and uses a stream cipher $S$ and an
 $\epsilon$-almost-$\Delta$-universal
 function $H$ to build an unbalanced Feistel network that includes one invocation of a
@@ -237,46 +244,47 @@ block cipher $E$.
         \ffigbox{
             \input{finalfig.tex}
         }{
-            \caption{HPolyC}\label{finalfig}
+            \caption{HBSH}\label{finalfig}
         }
         \ffigbox{
             \begin{algorithmic}[0]
-                \Procedure{HPolyCEncrypt}{$T,P$}
+                \Procedure{HBSHEncrypt}{$T,P$}
                 \State $P_L || P_R \gets P$
-                \State $P_M \gets P_R \boxplus H_{K_H}(\encode(T, P_L))$
+                \State $P_M \gets P_R \boxplus H_{K_H}(T, P_L)$
                 \State $C_M \gets E_{K_E}(P_M)$
                 \State $C_L \gets P_L \arrowoplus S_{K_S}(C_M)$
-                \State $C_R \gets C_M \boxminus H_{K_H}(\encode(T, C_L))$
+                \State $C_R \gets C_M \boxminus H_{K_H}(T, C_L)$
                 \State $C \gets C_L || C_R$
                 \State \textbf{return} $C$
                 \EndProcedure
             \end{algorithmic}
             \begin{algorithmic}[0]
-                \Procedure{HPolyCDecrypt}{$T,C$}
+                \Procedure{HBSHDecrypt}{$T,C$}
                 \State $C_L || C_R \gets C$
-                \State $C_M \gets C_R \boxplus H_{K_H}(\encode(T, C_L))$
+                \State $C_M \gets C_R \boxplus H_{K_H}(T, C_L)$
                 \State $P_L \gets C_L \arrowoplus S_{K_S}(C_M)$
                 \State $P_M \gets E_{K_E}^{-1}(C_M)$
-                \State $P_R \gets P_M \boxminus H_{K_H}(\encode(T, P_L))$
+                \State $P_R \gets P_M \boxminus H_{K_H}(T, P_L)$
                 \State $P \gets P_L || P_R$
                 \State \textbf{return} $P$
                 \EndProcedure
             \end{algorithmic}
-        }{\caption{Pseudocode for HPolyC}\label{pseudocode}}
+        }{\caption{Pseudocode for HBSH}\label{pseudocode}}
     \end{floatrow}
 \end{figure}
 
 We derive ciphertext $C$ from plaintext $P$ and tweak $T$ as shown in \autoref{pseudocode}.
 $||$ represents concatenation, and $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
-$\encode$ is an injective
-encoding function defined below.
 Byte/bit mapping is little endian, as is all arithmetic.
-$\boxplus$ represents addition mod $2^n$, and $\boxminus$ subtraction. $X \arrowoplus Y$
+$\boxplus$ represents addition in a group which depends
+on the hash function, and $\boxminus$ subtraction. $X \arrowoplus Y$
 is the bitwise XOR of $X$ with the first $|X|$ bits of $Y$.
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$ and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 
 \subsection{Hash}
+$H_{K_H}$
+
 Poly1305~\cite{poly1305} is a MAC which combines the use of AES with an
 $\epsilon$-almost-$\Delta$-universal
 ($\epsilon$A$\Delta$U) polynomial hash function. RFC 7539~\cite{RFC7539} takes this
@@ -332,8 +340,8 @@ Since $C_M$ is larger than the ChaCha12 nonce size, we use the
 XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20 \cite{salsa20,salsa812}
 to construct XChaCha12 which extends the nonce to 192 bits
 (as libsodium~\cite{xchacha20}
-%and Monocypher~\cite{monocypher} do
-does with ChaCha20), and pad
+and Monocypher~\cite{monocypher} do
+with ChaCha20), and pad
 with a 1 followed by zeroes. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
 therefore require that the HPolyC plaintext length be within the bounds
