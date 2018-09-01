@@ -117,7 +117,7 @@
     without AES or other crypto instructions, with a provable
     quadratic advantage bound. Our composition HPolyNHC uses NH, Poly1305, XChaCha12,
     and a single AES invocation; on an ARM Cortex-A7 processor, HPolyNHC decrypts
-    4096-byte messages at FIXME cycles per byte, over FIXME times faster than
+    4096-byte messages at 11.8 cycles per byte, five times faster than
     AES-256-XTS, with a constant-time implementation.
 \iftoggle{iacr}{
 }{
@@ -392,11 +392,11 @@ the best alignment for fast operations.
 
 In \autoref{performance} we
 show performance on an ARM \mbox{Cortex-A7}
-processor in the Snapdragon 2100 chipset running at \mbox{1.094 GHz}.  This
+processor in the Snapdragon 400 chipset running at \mbox{1.19 GHz}.  This
 processor supports the NEON vector instruction set, but not the ARM cryptographic
 extensions; it is used in many smartphones and smartwatches, especially low-end
 or older devices, and is representative of the kind of platform we mean to target.
-Where the figures are the same, a single row is shown for both encryption and decryption.
+Where the figures are within 2\%, a single row is shown for both encryption and decryption.
 
 \begin{table}
     \caption{Performance on ARM Cortex-A7}
@@ -407,23 +407,7 @@ Where the figures are the same, a single row is shown for both encryption and de
             \makecell{Cycles per byte \\ (4096-byte sectors)} &
             \makecell{Cycles per byte \\ (512-byte sectors)} \\
     \hline
-    Poly1305                              & 2.94 & 3.29 \\
-    ChaCha8                               & 5.43 & 5.55 \\
-    ChaCha12                              & 7.58 & 7.72 \\
-    ChaCha20                              & 11.9 & 12.0 \\
-    HPolyNHC-XChaCha8-AES (encryption)      & FIXME 12.1 & 18.4 \\
-    HPolyNHC-XChaCha8-AES (decryption)      & 12.3 & 19.8 \\
-    \textbf{HPolyNHC-XChaCha12-AES (encryption)} & \textbf{14.3} & \textbf{21.1} \\
-    \textbf{HPolyNHC-XChaCha12-AES (decryption)} & \textbf{14.5} & \textbf{22.5} \\
-    Speck128/256-XTS                      & 15.9 & 16.9 \\
-    HPolyNHC-XChaCha20-AES (encryption)     & 18.8 & 26.5 \\
-    HPolyNHC-XChaCha20-AES (decryption)     & 18.9 & 28.0 \\
-    NOEKEON-XTS                           & 27.0 & 27.8 \\
-    XTEA-XTS                              & 28.7 & 29.7 \\
-    AES-128-XTS (encryption)              & 36.3 & 38.9 \\
-    AES-128-XTS (decryption)              & 43.1 & 45.6 \\
-    AES-256-XTS (encryption)              & 49.4 & 52.9 \\
-    AES-256-XTS (decryption)              & 59.0 & 62.5 \\
+    \input{work/performance.tex}
     \end{tabular}
 \end{table}
 
