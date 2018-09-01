@@ -199,15 +199,13 @@ the data in a disk-sector-sized block, a hash-XOR-hash
 mode of operation relying on them should achieve
 much improved performance on such platforms.
 
-To this end, we present the HBSH (Hash, Block cipher, Stream cipher, Hash)
+To this end, we present the HBSH (hash, block cipher, stream cipher, hash)
 construction, which generalizes over constructions such as
-HCTR~\cite{HCTR} and HCH~\cite{hch} by allowing arbitrary substitution of
+HCTR and HCH by allowing arbitrary substitution of
 $\epsilon$-almost-XOR-universal hash functions and stream ciphers for the $\GF(2^{128})$-based
 hash and counter mode-like encryption these modes use. More specifically, we propose HPolyNHC,
 which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
 AES for the single blockcipher application. HPolyNHC:
-
-which:
 \begin{itemize}
     \item is a tweakable, variable-input-length, super-pseudorandom permutation
     \item has a security bound quadratic in the number of queries and linear in message length
@@ -219,7 +217,7 @@ which:
 
 Without special cases or extra setup, HPolyNHC handles:
 \begin{itemize}
-    \item any message and tweak lengths within the allowed range, 
+    \item any message and tweak lengths within the allowed range,
     \item varying message and tweak lengths for the same keys.
 \end{itemize}
 
@@ -236,8 +234,8 @@ the proof is shaped around ensuring we pay the smallest multiple of this cost we
 HBSH divides the input into a right-hand block of $n$ bits and a left-hand block with
 the remainder of the input, and uses a stream cipher $S$ and an
 $\epsilon$-almost-$\Delta$-universal
-function $H$ to build an unbalanced Feistel network that includes one invocation of a
-block cipher $E$.
+function $H$ to build an unbalanced Feistel network that includes one invocation of an
+$n$-bit block cipher $E$.
 
 \begin{figure}
     \begin{floatrow}
@@ -282,69 +280,30 @@ is the bitwise XOR of $X$ with the first $|X|$ bits of $Y$.
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$ and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 
-\subsection{Hash}
-$H_{K_H}$
-
-Poly1305~\cite{poly1305} is a MAC which combines the use of AES with an
-$\epsilon$-almost-$\Delta$-universal
-($\epsilon$A$\Delta$U) polynomial hash function. RFC 7539~\cite{RFC7539} takes this
-$\epsilon$A$\Delta$U polynomial function and
-uses it without AES to build an AEAD mode based on ChaCha20.
-Here we call this $\epsilon$A$\Delta$U function
-$H: \mathcal{K}_H \times \{0,1\}^* \rightarrow \{0,1\}^n$ where $\mathcal{K}_H$
-is the $2^{106}$-bit keyspace;
-it is this function, rather than the Poly1305 MAC itself, that we use in HPolyC.
-Many Poly1305 libraries
-take parameters $K_H || g, m$ and return $g \boxplus H_{K_H}(m)$; where subtraction
-is needed we use bitwise inversion and the identity
-$g \boxminus g' = \neg ((\neg g) \boxplus g')$.
-
-The key for this function is required to have certain bits clear per the ``Keys''
-subsection of the specification~\cite{poly1305};
-the sample implementation~\cite{poly1305clamp}
-and~\cite{RFC7539} call clearing these bits ``clamping'', and following those
-specifications we define $\mathrm{Poly1305Clamp}$
-below, with $\wedge$ representing bitwise AND.
-
-\begin{align*}
-    \mathrm{Poly1305Clamp}(\overline{K_H})
-    &= \overline{K_H} \wedge 1^{28} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^4
-\end{align*}
-
-\subsection{Encoding function}
-We hash the tweak and the left side of the message, so we need an injective encoding function.
-Poly1305 hash's
-$\epsilon$A$\Delta$U guarantee holds for messages of differing lengths, so we only need
-to length-encode one of the two parameters.
-
-$[|T|]_{32}$ is a 32-bit little endian encoding of the length of the tweak in bits; we
-require that $0 \leq |T| < 2^{32}$.
-$v$ is the least integer $\geq 0$ such that $n$ divides $32 + |T| + v$, and we define:
-\begin{align*}
-\encode &: \{0,1\}^* \times \{0,1\}^* \rightarrow \{0,1\}^* \\
-\encode(T, L) &= [|T|]_{32} || T || 0^v || L
-\end{align*}
-
 \subsection{Block cipher}
 The 128-bit block cipher $E: \mathcal{K}_E \times \{0,1\}^n \rightarrow \{0,1\}^n$
 is only invoked once no matter the size of the input, so for disk sector-sized inputs
-its performance isn't critical; we have tested AES-256~\cite{AES}.
+its performance isn't critical. HPolyNHC uses AES-256~\cite{AES}.
 
 \subsection{Stream cipher}
+$S_{K_S}$ is a stream cipher which takes a nonce and produces a long random stream. In normal use
+the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
+is distinct from all $n$-bit strings.
+
 The ChaCha12 stream cipher~\cite{chacha}
 defines a PRF which takes a 64-bit (or 96-bit~\cite{RFC7539})
 nonce and an integer stream offset and returns a 512-bit output, and
 concatenates successive outputs to define a function from key and nonce to stream
 in a seekable way.
-Since $C_M$ is larger than the ChaCha12 nonce size, we use the
-XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20 \cite{salsa20,salsa812}
+Since $C_M$ is larger than the ChaCha12 nonce size, HPolyNHC uses the
+XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20~\cite{salsa20,salsa812}
 to construct XChaCha12 which extends the nonce to 192 bits
 (as libsodium~\cite{xchacha20}
 and Monocypher~\cite{monocypher} do
-with ChaCha20), and pad
-with a 1 followed by zeroes. For a
+with ChaCha20). From here we construct a function that takes a variable-length nonce of up to
+191 bits by padding with a 1 followed by zeroes. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
-therefore require that the HPolyC plaintext length be within the bounds
+therefore require that the HPolyNHC plaintext length be within the bounds
 $n \leq |P| \leq l_S + n$.
 
 \begin{align*}
@@ -352,15 +311,18 @@ $n \leq |P| \leq l_S + n$.
     S_{K_S}(C_M) =& \XChaCha12_{K_S}(C_M || 1 || 0^{63})
 \end{align*}
 
+\subsection{Hash}
+$H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function over a group
+defined on $n$-bit strings. The fastest such hash functions are based on NH, but NH generally
+requires a second hashing stage. For HPolyNHC we combine NH with Poly1305, and the group for
+$\boxplus$ and $\boxminus$ is $\mathbb{Z}/2^{128}\mathbb{Z}$; we defer the exact specification
+of this function to \autoref{NHPoly1305}.
+
 \subsection{Key derivation}\label{keyderivation}
-HPolyC takes a 256-bit key $K_S$, and derives keys $K_H$ and $K_E$ using XChaCha12:
+HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
 \begin{align*}
-    \overline{K_H} || K_E || \ldots &= \XChaCha12_{K_S}(1 || 0^{191}) \\
-    K_H &= \mathrm{Poly1305Clamp}(\overline{K_H})
+    K_E || K_H \ldots &= S_{K_S}(\lambda)
 \end{align*}
-where
-$|\overline{K_H}| = 128$ and $|K_E| = 256$. Note that the nonce
-used here is distinct from all nonces used for $S_{K_S}$.
 
 \section{Design}
 Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
@@ -405,10 +367,8 @@ make use of this, and would work equally well with keys that were not zeroed in 
 could improve the advantage bound by almost a factor of $2^{-22}$. However the current advantage
 bound is tight enough for our purposes.
 
-HPolyC does not consider an attack model in which derived keys are presented as input.
-A trivial distinguisher would be to encrypt $0^{(k+1)n}||K_H$ and $0^{kn}||1||0^{2n-1}$
-with the same tweak for some $k$; the resulting ciphertexts will share the same
-$kn$-bit prefix. Length-preserving encryption
+HBSH does not consider an attack model in which derived keys are presented as input.
+Length-preserving encryption
 which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
 attacker to submit a query with a $g$-function
 that constructs a plaintext whose ciphertext is all zeroes.
@@ -416,31 +376,23 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-For a new key, it is necessary to compute the keys for hash and the block cipher, and
-schedule the block cipher key; if the hash is to be calculated in parallel, it can also
+The main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
+most of which is NH's 304-byte key. Another cost is the AES key schedule;
+if the hash is to be calculated in parallel, it can also
 be useful to cache powers of the hash key.
 ChaCha12 has no key schedule and makes no use of
 precomputation; XChaCha12 has a ``nonce scheduling'' step that
-must be called once to compute subkeys and once for each HPolyC encryption or decryption.
-No extra work needs to be done for differing message or tweak lengths, unless
+must be called once to compute subkeys and once for each HPolyNHC encryption or decryption.
+Where tweak and message lengths are constant, this can be hashed in advance, saving one $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305).
+Otherwise no extra work needs to be done for differing message or tweak lengths, unless
 new powers of the hash key are needed for parallelism.
 
-For storage encryption, tweaks will often be short and fixed-length. With a tweak
-of 96 bits or fewer, only a single
-$\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305)
-is needed before processing the message. We tolerate
-the extra complexity of padding in our $\encode$ function so that plaintext/ciphertext
-is aligned to the Poly1305 block size. If the
-tweak is long, the partial result of hashing it can be used both for encoding and decoding; an
-earlier version of HPolyC included a ``disambiguation bit'' in the input to the hash, but
-closer analysis showed this to be unnecessary.
-
-Poly1305 and ChaCha12 are both designed such that the most natural fast implementations are
+NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
-also has these properties, HPolyC will inherit security against
+also has these properties, HPolyNHC will inherit security against
 this class of side-channel attacks.
 
-Both Poly1305 and ChaCha12 are highly parallelizable.
+NH, Poly1305 and ChaCha12 are highly parallelizable.
 The stream cipher and second hash stages can also be run in combination for a total
 of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
 which requires at least three.
@@ -470,13 +422,13 @@ Where the figures are the same, a single row is shown for both encryption and de
     ChaCha8                               & 5.43 & 5.55 \\
     ChaCha12                              & 7.58 & 7.72 \\
     ChaCha20                              & 11.9 & 12.0 \\
-    HPolyC-XChaCha8-AES (encryption)      & 12.1 & 18.4 \\
-    HPolyC-XChaCha8-AES (decryption)      & 12.3 & 19.8 \\
-    \textbf{HPolyC-XChaCha12-AES (encryption)} & \textbf{14.3} & \textbf{21.1} \\
-    \textbf{HPolyC-XChaCha12-AES (decryption)} & \textbf{14.5} & \textbf{22.5} \\
+    HPolyNHC-XChaCha8-AES (encryption)      & FIXME 12.1 & 18.4 \\
+    HPolyNHC-XChaCha8-AES (decryption)      & 12.3 & 19.8 \\
+    \textbf{HPolyNHC-XChaCha12-AES (encryption)} & \textbf{14.3} & \textbf{21.1} \\
+    \textbf{HPolyNHC-XChaCha12-AES (decryption)} & \textbf{14.5} & \textbf{22.5} \\
     Speck128/256-XTS                      & 15.9 & 16.9 \\
-    HPolyC-XChaCha20-AES (encryption)     & 18.8 & 26.5 \\
-    HPolyC-XChaCha20-AES (decryption)     & 18.9 & 28.0 \\
+    HPolyNHC-XChaCha20-AES (encryption)     & 18.8 & 26.5 \\
+    HPolyNHC-XChaCha20-AES (decryption)     & 18.9 & 28.0 \\
     NOEKEON-XTS                           & 27.0 & 27.8 \\
     XTEA-XTS                              & 28.7 & 29.7 \\
     AES-128-XTS (encryption)              & 36.3 & 38.9 \\
@@ -514,7 +466,7 @@ instructions.
     ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support ChaCha8 and ChaCha12 \\
     Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to allow key
     powers to be computed just once per key \\
-    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HPolyC \\
+    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HPolyNHC \\
     \mbox{AES-XTS} & Linux v4.17 & \texttt{aes-neonbs-core.S} (bit-sliced) \\
     \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
     \mbox{NOEKEON-XTS} & ours & \\
@@ -522,16 +474,16 @@ instructions.
     \end{tabular}
 \end{table}
 
-HPolyC is the only algorithm in \autoref{performance} which is a tweakable
+HPolyNHC is the only algorithm in \autoref{performance} which is a tweakable
 super-pseudorandom permutation over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
-HPolyC has a larger per-message overhead than XTS; both require one
-extra block cipher invocation per message, but HPolyC must also perform one extra
+HPolyNHC has a larger per-message overhead than XTS; both require one
+extra block cipher invocation per message, but HPolyNHC must also perform one extra
 ChaCha permutation for the XChaCha construction and one extra Poly1305 block for the tweak.
 
-We conclude that for 4096-byte sectors, \mbox{HPolyC-XChaCha12-AES} can perform
-as well as an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
-Efficient implementations of Poly1305 and ChaCha are available for many
+We conclude that for 4096-byte sectors, \mbox{HPolyNHC-XChaCha12-AES} can perform
+significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
+Efficient implementations of NH, Poly1305 and ChaCha are available for many
 platforms, as these algorithms are well-suited for implementation with either
 general-purpose scalar instructions or with general-purpose vector instructions
 such as NEON or AVX2.
@@ -540,32 +492,32 @@ be used instead of ChaCha12; the same stream cipher
 must be used for key derivation as for the Feistel function.
 
 \section{Security reduction}
-HPolyC is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
+HBSH is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
 succeeds if they distinguish it from a family of independent random permutations indexed by
 input length and tweak, given access to both encryption and decryption oracles.
 
-Given keys $K_S$, $K_H$, $K_E$, HPolyC is the conjugation of an inner transform by an outer:
+Given keys $K_S$, $K_H$, $K_E$, HBSH is the conjugation of an inner transform by an outer:
 \begin{align*}
-    \HPolyC:
+    \HBSH:
     \{0,1\}^* &\times \{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n \\
-    \HPolyC_{T} &= \phi^{-1}_{K_H, T}
+    \HBSH_{T} &= \phi^{-1}_{K_H, T}
     \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T} \\
     \theta_{e, s}(P_L, P_M) &= (P_L \arrowoplus s(e(P_M)), e(P_M)) \\
-    \phi_{K_H, T}(L, R) &= (L, R \boxplus H_{K_H}(\encode(T, L)) \\
-    \phi^{-1}_{K_H, T}(L, R) &= (L, R \boxminus H_{K_H}(\encode(T, L))
+    \phi_{K_H, T}(L, R) &= (L, R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L, R) &= (L, R \boxminus H_{K_H}(T, L))
 \end{align*}
 
 These are families of length-preserving functions parameterized by the length
 $|P_L| = |L| = |C_L| = l \in \mathbb{N}$;
 for notational convenience we leave this parameter implicit.
 
-We prove a security bound for HPolyC in three stages:
+We prove a security bound for HBSH in three stages:
 \begin{itemize}
     \item we consider distinguishers for the inner construction $\theta$ in an
     attack model which forbids ``inner collisions'' in queries
     \item we prove a bound on the probability of an attacker causing an inner collision
     \item we put this together to bound the success probability of a distinguisher against
-    HPolyC.
+    HBSH.
 \end{itemize}
 
 At each stage, we consider an attacker \(\adv^{\calE, \calD}\) who makes $q$ queries
@@ -664,7 +616,7 @@ a single-argument version which uses only $C_M$.
 Since $\pi$ is a permutation,
 for any pair of queries $C_M = C_M'$ if and only if $P_M = P_M'$.
 This is therefore indistinguishable from \xprm{innerpart}{rpswitch}.
-This is a small upside to HPolyC's asymmetry: if a symmetrical
+This is a small upside to HBSH's asymmetry: if a symmetrical
 construction such as $F_S(P_M \oplus \pi(P_M))$ were used here instead, it would be
 distinguishable with advantage $2^{-n}\binom{q}{2}$.
 
@@ -694,8 +646,8 @@ computationally unbounded attacker.
 
 A hash key $K_H \xleftarrow{\$} \mathcal{K}_H$ is chosen at random, and for each query we define
 \begin{itemize}
-    \item $P_M = P_R \boxplus H_{K_H}(\encode(T, P_L))$
-    \item $C_M = C_R \boxplus H_{K_H}(\encode(T, C_L))$
+    \item $P_M = P_R \boxplus H_{K_H}(T, P_L)$
+    \item $C_M = C_R \boxplus H_{K_H}(T, C_L)$
 \end{itemize}
 
 For query $1 \leq i \leq q$, we'll use superscripts to refer to the variables for that query, eg
@@ -706,11 +658,6 @@ either
     \item $j$ is a ciphertext query (a query to $\calD$) and $C_M^i = C_M^j$.
 \end{itemize}
 We do not consider a query such that $C_M^i = P_M^j$ (or vice versa) a win.
-
-Let $k$ be
-the maximum number of blocks processed by the
-hash, ie the least integer such that
-$|\encode(T^i, P_L^i)| = |\encode(T^i, C_L^i)| \leq kn$ for all $i$.
 
 Here we are considering not distingushing probability but success probability; we
 show a bound on success probability for the first experiment, and for each subsequent experiment
@@ -724,10 +671,10 @@ for all $i < j$, and can choose plaintext values to maximize the probability of 
 If $T^i, P_L^i = T^j, P_L^j$ then the hashes will be the same, and since pointless
 queries are forbidden we have that $P_R^i \neq P_R^j$ and therefore that
 $P_M^i \neq P_M^j$. Otherwise by the $\epsilon$A$\Delta$U property,
-$\prob{P_M^i = P_M^j} \leq 2^{-103}k$. The same success bound holds for a ciphertext query.
+$\prob{P_M^i = P_M^j} \leq \epsilon$. The same success bound holds for a ciphertext query.
 The overall probability of success
 is at most the sum of the probability of success for each pair:
-$2^{-103}k\binom{q}{2}$.
+$\epsilon\binom{q}{2}$.
 
 Note that we don't assume that probabilities are independent here;
 for any events $A$, $B$ we have that $\prob{A \vee B} \leq \prob{A} + \prob{B}$, with
@@ -756,7 +703,7 @@ and this doesn't change the success probability.
 
 Since a random function composed with a bijective function is a random function,
 this doesn't change the success probability, which remains at most
-$2^{-103}k\binom{q}{2}$.
+$\epsilon\binom{q}{2}$.
 
 \xprmtitle{collision}{halfrf}: The middle part of the sandwich is now a pair of random functions,
 as per the first experiment in \autoref{innerpart}, \xprm{innerpart}{randinner}.
@@ -783,11 +730,11 @@ established in~\autoref{innerpart} for distinguishing between
 \xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf}.
 The success
 probability for this final experiment is therefore at most
-$(2^{-103}k + 2^{-n})\binom{q}{2}$.
+$(\epsilon + 2^{-n})\binom{q}{2}$.
 
 \subsection{Composition}\label{composition}
 
-Finally we put these pieces together to bound the advantage of distinguishing HPolyC from
+Finally we put these pieces together to bound the advantage of distinguishing HBSH from
 a family of random permutations. As before, the attacker can make encryption and decryption queries
 but ``pointless'' queries are forbidden; in addition, the attacker is constrained by a time
 bound $t$. We start with this experiment:
@@ -826,12 +773,12 @@ this is indistinguishable from \xprm{composition}{randomfuncs}.
 \end{itemize}
 
 By \autoref{collision} the attacker's probability of causing an inner collision is at most
-$(2^{-103}k + 2^{-n})\binom{q}{2}$. If they do not cause a collision,
+$(\epsilon + 2^{-n})\binom{q}{2}$. If they do not cause a collision,
 their queries to $\theta$ meet the constraints set out in \autoref{innerpart}, which
 bounds the distinguishing advantage in this case to $2^{-n}\binom{q}{2}$.
 The advantage in distinguishing from \xprm{composition}{randinner}
 is at most the sum of the collision probability and the no-collision advantage, which is
-$(2^{-103}k + 2(2^{-n}))\binom{q}{2}$.
+$(\epsilon + 2(2^{-n}))\binom{q}{2}$.
 
 \xprmtitle{composition}{block}: Choose a random $K_E \xleftarrow{\$} \mathcal{K}_E$ and
 substitute a block cipher $E_{K_E}$ for $\pi$.
@@ -847,14 +794,12 @@ for such a substitution, the advantage for this substitution is at most
 $\advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]$ where $t$ is a time bound on the attacker and
 $t' = t + \bigO{\sum_i |P^i| + |T^i|}$.
 
-\xprmtitle{composition}{xrf}: Use an XChaCha12-like random function to define the stream cipher
-and derive the keys $K_H$, $K_E$ using the algorithm in \autoref{keyderivation}:
+\xprmtitle{composition}{xrf}: Use the random function $F_S$ to derive the keys
+$K_E$, $K_H$:
 
 \begin{itemize}
-    \item $F_X: \{0,1\}^{192} \rightarrow \{0,1\}^{l_S}$ is a random function
-    \item $\overline{K_H} || K_E || \ldots = F_X(1 || 0^{191})$
-    \item $K_H = \mathrm{Poly1305Clamp}(\overline{K_H})$
-    \item $F_S(C_M) = F_X(C_M || 1 || 0^{63})$
+    \item $F_S: (\lambda \cup \{0,1\}^n) \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $K_E || K_H || \ldots = F_S(\lambda)$
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
 \end{itemize}
@@ -862,48 +807,75 @@ and derive the keys $K_H$, $K_E$ using the algorithm in \autoref{keyderivation}:
 This is indistinguishable from \xprm{composition}{block}.
 
 \xprmtitle{composition}{xchacha}: Choose a random $K_S \xleftarrow{\$} \mathcal{K}_S$ and
-substitute $\XChaCha12_{K_S}$ for $F_X$.
+substitute a stream cipher $S_{K_S}$ for the random function $F_S$
 
 \begin{itemize}
     \item $K_S \xleftarrow{\$} \mathcal{K}_S$
-    \item $\overline{K_H} || K_E || \ldots = \XChaCha12_{K_S}(1 || 0^{191})$
-    \item $K_H = \mathrm{Poly1305Clamp}(\overline{K_H})$
-    \item $F_S(C_M) = \XChaCha12_{K_S}(C_M || 1 || 0^{63}) = S_{K_S}(C_M)$
+    \item $K_E || K_H || \ldots = S_{K_S}(\lambda)$
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
 \end{itemize}
 
-This is HPolyC. Taking into account the 192-bit
-query to $\XChaCha12$ to derive $K_H$, $K_E$,
+This is HBSH. Taking into account the $|K_E| + |K_H|$-bit
+query to $S_{K_S}$ to derive $K_E$, $K_H$,
 by the standard argument the advantage for this substitution is at most
-$\advantage{\mathrm{prf}}{\XChaCha12_{K_S}}[(192 + \sum_i |P^i|-n, t')]$ (where
+$\advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]$ (where
 the first argument measures not queries but bits of output).
 
 Summing these,
-the advantage in distinguishing HPolyC from a family of random permutations is at most
-$2^{-103}k\binom{q}{2} + 3(2^{-n})\binom{q}{2}
+the advantage in distinguishing HBSH from a family of random permutations is at most
+$\epsilon\binom{q}{2} + 3(2^{-n})\binom{q}{2}
 + \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
-+ \advantage{\mathrm{prf}}{\XChaCha12_{K_S}}[(192 + \sum_i |P^i|-n, t')]$.
++ \advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]$.
 If the block and stream ciphers are secure, this will be
-dominated by the first term. Since
-$|P_L| + n = |P|$ but
-$\encode$ adds up to 159 bits, and padding for the last block of $P_L$ another 127,
-$kn \leq \max_i (T^i + P^i + 158)$ and this first term is less than
-$2^{-111}q^2\max_i (T^i + P^i + 158)$.
+dominated by the first term.
 
 \printbibliography
 
 \appendix
-\section{Test vectors}
+\section{NHPoly1305}\label{NHPoly1305}
+FIXME
 
-A sample Python implementation and thousands of test vectors are available
-from our source code repository at \url{https://github.com/google/hpolyc}. We include a few
-of these test vectors for HPolyC-XChaCha12-AES below:
+As originally specified, Poly1305~\cite{poly1305} is a MAC which combines the use of AES with an
+polynomial hash function. RFC 7539~\cite{RFC7539} takes this
+$\epsilon$A$\Delta$U polynomial function and
+uses it without AES to build an AEAD mode based on ChaCha20.
+Here we call this $\epsilon$A$\Delta$U function
+$H: \mathcal{K}_H \times \{0,1\}^* \rightarrow \{0,1\}^n$ where $\mathcal{K}_H$
+is the $2^{106}$-bit keyspace;
+it is this function, rather than the Poly1305 MAC itself, that we use in HPolyC.
+Many Poly1305 libraries
+take parameters $K_H || g, m$ and return $g \boxplus H_{K_H}(m)$; where subtraction
+is needed we use bitwise inversion and the identity
+$g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
-\begingroup
-\renewcommand*{\arraystretch}{1.5}
-\input{work/test_vectors.tex}
-\endgroup
+The key for this function is required to have certain bits clear per the ``Keys''
+subsection of the specification~\cite{poly1305};
+the sample implementation~\cite{poly1305clamp}
+and~\cite{RFC7539} call clearing these bits ``clamping'', and following those
+specifications we define $\mathrm{Poly1305Clamp}$
+below, with $\wedge$ representing bitwise AND.
+
+\begin{align*}
+    \mathrm{Poly1305Clamp}(\overline{K_H})
+    &= \overline{K_H} \wedge 1^{28} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^4
+\end{align*}
+
+\subsection{Encoding function}
+We hash the tweak and the left side of the message, so we need an injective encoding function.
+Poly1305 hash's
+$\epsilon$A$\Delta$U guarantee holds for messages of differing lengths, so we only need
+to length-encode one of the two parameters.
+
+$[|T|]_{32}$ is a 32-bit little endian encoding of the length of the tweak in bits; we
+require that $0 \leq |T| < 2^{32}$.
+$v$ is the least integer $\geq 0$ such that $n$ divides $32 + |T| + v$, and we define:
+\begin{align*}
+\encode &: \{0,1\}^* \times \{0,1\}^* \rightarrow \{0,1\}^* \\
+\encode(T, L) &= [|T|]_{32} || T || 0^v || L
+\end{align*}
+
+
 
 Version: \texttt{\input{work/git.tex}}
 \end{document}
