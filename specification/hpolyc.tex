@@ -192,7 +192,7 @@ acceptably on them.
 
 On such platforms stream ciphers such as ChaCha12~\cite{chacha} significantly
 outperform block ciphers in cycles per byte, especially with constant-time implementations.
-Similarly, absent specific processor support, hash functions such as NH~\cite{NH} and
+Similarly, absent specific processor support, hash functions such as NH~\cite{nh} and
 Poly1305 hash~\cite{poly1305} will be much faster
 than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
 the data in a disk-sector-sized block, a hash-XOR-hash
@@ -201,9 +201,8 @@ much improved performance on such platforms.
 
 To this end, we present the HBSH (hash, block cipher, stream cipher, hash)
 construction, which generalizes over constructions such as
-HCTR and HCH by allowing arbitrary substitution of
-$\epsilon$-almost-XOR-universal hash functions and stream ciphers for the $\GF(2^{128})$-based
-hash and counter mode-like encryption these modes use. More specifically, we propose HPolyNHC,
+HCTR and HCH by taking an $\epsilon$-almost-XOR-universal hash functions and a stream cipher
+as components. More specifically, we propose HPolyNHC,
 which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
 AES for the single blockcipher application. HPolyNHC:
 \begin{itemize}
@@ -286,7 +285,8 @@ is only invoked once no matter the size of the input, so for disk sector-sized i
 its performance isn't critical. HPolyNHC uses AES-256~\cite{AES}.
 
 \subsection{Stream cipher}
-$S_{K_S}$ is a stream cipher which takes a nonce and produces a long random stream. In normal use
+$S: \mathcal{K}_S \times (\lambda \cup \{0,1\}^n) \rightarrow \{0,1\}^{l_S}$
+is a stream cipher which takes a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
 
@@ -301,15 +301,11 @@ to construct XChaCha12 which extends the nonce to 192 bits
 (as libsodium~\cite{xchacha20}
 and Monocypher~\cite{monocypher} do
 with ChaCha20). From here we construct a function that takes a variable-length nonce of up to
-191 bits by padding with a 1 followed by zeroes. For a
+191 bits by padding with a 1 followed by zeroes:
+$S_{K_S}(C_M) = \XChaCha12_{K_S}(C_M || 1 || 0^{191-|C_M|})$. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
 therefore require that the HPolyNHC plaintext length be within the bounds
 $n \leq |P| \leq l_S + n$.
-
-\begin{align*}
-    S:& \mathcal{K}_S \times \{0,1\}^n \rightarrow \{0,1\}^{l_S} \\
-    S_{K_S}(C_M) =& \XChaCha12_{K_S}(C_M || 1 || 0^{63})
-\end{align*}
 
 \subsection{Hash}
 $H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function over a group
@@ -320,9 +316,7 @@ of this function to \autoref{NHPoly1305}.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
-\begin{align*}
-    K_E || K_H \ldots &= S_{K_S}(\lambda)
-\end{align*}
+$K_E || K_H \ldots = S_{K_S}(\lambda)$.
 
 \section{Design}
 Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
@@ -360,13 +354,6 @@ broken into two halves. However if we were to build this using XChaCha12,
 such a construction would require four extra invocations of ChaCha per block, which would be
 a much greater cost than one block cipher invocation.
 
-The advantage bound we are able to prove is limited mainly by the 106-bit keyspace of
-the Poly1305 hash. \cite{poly1305} specifies that 22 bits of the 128-bit key must be zero,
-to facilitate fast implementation. Many modern implementations do not
-make use of this, and would work equally well with keys that were not zeroed in this way, which
-could improve the advantage bound by almost a factor of $2^{-22}$. However the current advantage
-bound is tight enough for our purposes.
-
 HBSH does not consider an attack model in which derived keys are presented as input.
 Length-preserving encryption
 which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
@@ -383,7 +370,9 @@ be useful to cache powers of the hash key.
 ChaCha12 has no key schedule and makes no use of
 precomputation; XChaCha12 has a ``nonce scheduling'' step that
 must be called once to compute subkeys and once for each HPolyNHC encryption or decryption.
-Where tweak and message lengths are constant, this can be hashed in advance, saving one $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305).
+The first 16-byte block consumed by Poly1305 contains the tweak and hash lengths; where
+these are constant, the work of consuming these can be cached,
+saving one $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305).
 Otherwise no extra work needs to be done for differing message or tweak lengths, unless
 new powers of the hash key are needed for parallelism.
 
@@ -625,15 +614,17 @@ Summing these distances, with these constraints the advantage distinguishing bet
 $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
-Theorem 3.3 of~\cite{poly1305} shows that $H$ is $\epsilon$-almost-$\Delta$-universal:
+In what follows, we assume that $H$ is $\epsilon$-almost-$\Delta$-universal:
 for any $g \in \{0,1\}^n$ and
-any two distinct message $m$, $m'$
-such that $|m|, |m'| \leq kn$, there are at most
-$8k$ keys $K_H \in \mathcal{K}_H$
-such that $H_{K_H}(m) \boxminus H_{K_H}(m') = g$.
-Since  $|\mathcal{K}_H| = 2^{106}$, for a random
-$K_H \xleftarrow{\$} \mathcal{K}_H$ we have for any $(g, m) \neq (g', m')$ that
-$\prob{H_{K_H}(m) \boxplus g = H_{K_H}(m') \boxplus g'} \leq 2^{-103}k$.
+any two distinct messages $(T, m) \neq (T', m')$
+the number of keys $K_H \in \mathcal{K}_H$
+such that $H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g$ is at most $\epsilon|\mathcal{K}_H|$: ie
+for a random
+$K_H \xleftarrow{\$} \mathcal{K}_H$ we have for any $(g, T, m) \neq (g', T', m')$ that
+$\prob{H_{K_H}(T, m) \boxplus g = H_{K_H}(T', m') \boxplus g'} \leq \epsilon$.
+Since HPolyNHC builds $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
+on the maximum length of the message and tweak we allow the attacker to query for, as
+discussed in \autoref{NHPoly1305}.
 We use this to bound the probability that the attacker will cause an
 ``inner collision''---a query to the inner part which doesn't meet the constraints described
 in \autoref{constraints}.
