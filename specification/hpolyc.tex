@@ -65,7 +65,13 @@
 \DeclareMathOperator{\encode}{encode}
 \DeclareMathOperator{\XChaCha12}{XChaCha12}
 \DeclareMathOperator{\HBSH}{HBSH}
-\DeclareMathOperator{\HPolyC}{HPolyC}
+\DeclareMathOperator{\Polydjb}{Poly1305}
+\DeclareMathOperator{\NHPoly}{NHPoly1305}
+
+\DeclareMathOperator{\NH}{NH}
+\DeclareMathOperator{\intify}{int}
+\DeclareMathOperator{\fromint}{fromint}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 
 \addbibresource{bib.bib}
 
@@ -272,7 +278,6 @@ $n$-bit block cipher $E$.
 
 We derive ciphertext $C$ from plaintext $P$ and tweak $T$ as shown in \autoref{pseudocode}.
 $||$ represents concatenation, and $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
-Byte/bit mapping is little endian, as is all arithmetic.
 $\boxplus$ represents addition in a group which depends
 on the hash function, and $\boxminus$ subtraction. $X \arrowoplus Y$
 is the bitwise XOR of $X$ with the first $|X|$ bits of $Y$.
@@ -802,55 +807,123 @@ the advantage in distinguishing HBSH from a family of random permutations is at 
 $\epsilon\binom{q}{2} + 3(2^{-n})\binom{q}{2}
 + \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
 + \advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]$.
-If the block and stream ciphers are secure, this will be
-dominated by the first term.
 
 \printbibliography
 
 \appendix
 \section{NHPoly1305}\label{NHPoly1305}
-FIXME
 
-As originally specified, Poly1305~\cite{poly1305} is a MAC which combines the use of AES with an
-polynomial hash function. RFC 7539~\cite{RFC7539} takes this
+Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
+crucial. One of the fastest hash functions in software is NH; however, NH has various properties
+(issues handling variable length messages, double-sized output) which mean it is generally used
+with a second stage of hashing.
+In addition, we need a hash function which takes two variable-length inputs.
+For HPolyNHC we define a hash function NHPoly1305 which uses NH followed by Poly1305.
+
+\subsection{NH}
+
+We use a
+32-bit, unsigned, little-endian, 2-strided variant of NH which is efficient on our target platform.
+
+\begin{align*}
+    \NH&: \{0,1\}^{2432} \times \bigcup_{l = 1}^{16} \{0,1\}^{128l}
+    \rightarrow \{0,1\}^{256}
+\\
+    \NH(K, m) &= \eta(K[0;2048], m) | \eta(K[128;2048], m)
+    | \eta(K[256;2048], m) | \eta(K[384;2048], m)
+\\
+    \eta&: \{0,1\}^{2048} \times \bigcup_{l = 1}^{16} \{0,1\}^{128l}
+    \rightarrow \{0,1\}^{64}
+\\
+    \eta(K, m) &= \fromint_{64}\left[
+    \sum_{i = 0}^{|m|/128 -1}
+    \kappa(K[128i;128], m[128i;128])
+    \right]
+\\
+    \kappa&: \{0,1\}^{128} \times \{0,1\}^{128} \rightarrow \mathbb{Z}
+\\
+    \kappa(K, m) &= \sum_{i \in {0,32}} \xi(K[i;32], m[i;32]) * \xi(K[i + 64;32], m[i + 64;32])
+\\
+    \xi&: \{0,1\}^{32} \times \{0,1\}^{32} \rightarrow \mathbb{Z}
+\\
+    \xi(K, m) &= (\intify(K) + \intify(m)) \mod 2^{32}
+\end{align*}
+Here $m[a;l]$ refers to the subsequence of $m$ of length $l$ starting at $a$, $\intify$ maps a
+sequence of bits to an integer in little-endian fashion, and $y = \fromint_l(x)$ is the unique
+$l$-bit sequence such that $\intify(y) \equiv x \;(\textrm{mod}\;2^l)$.
+\cite{nh} shows that for equal-length
+messages this function is $\epsilon$-almost-$\Delta$-universal on $(\mathbb{Z}/2^{64}\mathbb{Z})^4$
+with $\epsilon = 2^{-128}$.
+
+\subsection{Poly1305}
+
+Where we refer to Poly1305 here, we mean specifically the $\epsilon$A$\Delta$U polynomial function
+$\Polydjb: \{0,1\}^{128} \times \{0,1\}^* \rightarrow \{0,1\}^n$
+based on the finite field $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$, which is defined in \cite{poly1305}
+and used to build a MAC which combines this function with the use of AES.
+RFC 7539~\cite{RFC7539} takes this
 $\epsilon$A$\Delta$U polynomial function and
 uses it without AES to build an AEAD mode based on ChaCha20.
-Here we call this $\epsilon$A$\Delta$U function
-$H: \mathcal{K}_H \times \{0,1\}^* \rightarrow \{0,1\}^n$ where $\mathcal{K}_H$
-is the $2^{106}$-bit keyspace;
-it is this function, rather than the Poly1305 MAC itself, that we use in HPolyC.
+Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
+$2^{22}$ keys and the effective keyspace is $2^{106}$.
+The output group for which the $\epsilon$A$\Delta$U property applies is
+$\mathbb{Z}/2^{128}\mathbb{Z}$, so we define
+
+\begin{align*}
+    x \boxplus y &= \fromint_{128}(\intify(x) + \intify(y)) \\
+    x \boxminus y &= \fromint_{128}(\intify(x) - \intify(y)) \\
+\end{align*}
+
 Many Poly1305 libraries
-take parameters $K_H || g, m$ and return $g \boxplus H_{K_H}(m)$; where subtraction
+take parameters $K || g, m$ and return $g \boxplus \Polydjb_K(m)$; where subtraction
 is needed we use bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
-The key for this function is required to have certain bits clear per the ``Keys''
-subsection of the specification~\cite{poly1305};
-the sample implementation~\cite{poly1305clamp}
-and~\cite{RFC7539} call clearing these bits ``clamping'', and following those
-specifications we define $\mathrm{Poly1305Clamp}$
-below, with $\wedge$ representing bitwise AND.
+\subsection{NHPoly1305}
+We break the message into 256-byte chunks, padding the last chunk with zeroes to the
+nearest 16-byte boundary, and compress each chunk down to 32 bytes with NH.
+We then hash with Poly1305 first the lengths of the tweak and the message, followed by the tweak,
+followed by padding to a Poly1305 boundary, followed by the NH-compressed chunks of the message
+itself.
 
-\begin{align*}
-    \mathrm{Poly1305Clamp}(\overline{K_H})
-    &= \overline{K_H} \wedge 1^{28} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^6 || 1^{26} || 0^4
-\end{align*}
+\begin{algorithmic}[0]
+    \Procedure{NHPoly1305}{$(K_H,T,M)$}
+    \State $K_0 \gets K_H[0;128]$
+    \State $K_1 \gets K_H[128;2432]$
+    \State $B \gets \fromint_{64}(|T|) || \fromint_{64}(|M|) || T$
+    \If {$|B| \mod 128 \neq 0$}
+        \State $B \gets B || 0^{128 - (|B| \mod 128)}$
+    \EndIf
+    \If {$M \neq \lambda$}
+        \State $M_0 || M_1 || \ldots || M_l \gets M$ ($|M_i|=2048$ for $i=0\ldots l-1$, $0 < |M_l| \leq 2048$)
+        \If {$|M_l| \mod 128 \neq 0$}
+            \State $M_l \gets M_l || 0^{128 - (|M_l| \mod 128)}$
+        \EndIf
+        \ForAll {$i \in 0\ldots l$}
+            \State $B_i \gets \NH_{K_1}(M_i)$
+        \EndFor
+        \State $B \gets B || B_0 || B_1 || \ldots || B_l$
+    \EndIf
+    \State \textbf{return} $\Polydjb_{K_0}(B)$
+    \EndProcedure
+\end{algorithmic}
 
-\subsection{Encoding function}
-We hash the tweak and the left side of the message, so we need an injective encoding function.
-Poly1305 hash's
-$\epsilon$A$\Delta$U guarantee holds for messages of differing lengths, so we only need
-to length-encode one of the two parameters.
+For distinct pairs $(T,M) \neq (T', M')$, we have that if $|T| \neq |T'|$, $|M| \neq |M'|$, or
+$T \neq T'$, then the inputs to Poly1305 will differ. If none of these hold then we have that
+$M \neq M'$, and they must differ in some chunk input to NH.
+Per \cite{nh} we have that the probability NH will compress these to the same value is at most
+$2^{-128}$. The input to Poly1305 is $l_P = 1 + \ceil{|T|/128} + 2\ceil{|M|/2048}$ 16-byte chunks
+long, and per \cite{poly1305} Poly1305 is $\epsilon$-almost-$\Delta$-universal with
+$\epsilon = l_P2^{-103}$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
+with $\epsilon = 2^{-128} + l_P2^{-103}$.
 
-$[|T|]_{32}$ is a 32-bit little endian encoding of the length of the tweak in bits; we
-require that $0 \leq |T| < 2^{32}$.
-$v$ is the least integer $\geq 0$ such that $n$ divides $32 + |T| + v$, and we define:
-\begin{align*}
-\encode &: \{0,1\}^* \times \{0,1\}^* \rightarrow \{0,1\}^* \\
-\encode(T, L) &= [|T|]_{32} || T || 0^v || L
-\end{align*}
-
-
+If we limit our HPolyNHC attacker to at most $q$ queries each of which uses a tweak of length at
+at most $l_T$ and a message of length at most $l_M$, their distinguishing advantage
+is therefore at most
+$( 2^{-128} + (1 + \ceil{l_T/128} + 2\ceil{(l_M - 128)/2048})2^{-103})\binom{q}{2}
+ + 3(2^{-n})\binom{q}{2}
++ \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
++ \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')]$.
 
 Version: \texttt{\input{work/git.tex}}
 \end{document}
