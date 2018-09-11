@@ -21,15 +21,24 @@ def parseperf(fn):
         if m:
             yield (m.group(1), m.group(2), float(m.group(3)))
 
-def interesting(cipher):
-    for prefix in ['NH', 'Poly1305', 'ChaCha', 'HPolyNHC', 'Speck128', 'NOEKEON', 'XTEA', 'AES']:
-        if cipher.startswith(prefix):
-            return True
-    return False
+def gen_blockciphers():
+    yield from ["NOEKEON", "XTEA"]
+    for l in [128, 256]:
+        yield from [f"Speck128/{l}", f"AES-{l}"]
+
+def gen_interesting():
+    yield from ['NH', 'Poly1305']
+    for b in gen_blockciphers():
+       yield f"{b}-XTS"
+    for r in [8, 12, 20]:
+        yield f"ChaCha{r}"
+        yield f"HPolyNHC-XChaCha{r}-AES"
+
+interesting = set(gen_interesting())
 
 def readperf(table, bufsize, fn):
     for cipher, dirn, cpb in parseperf(fn):
-        if not interesting(cipher):
+        if cipher not in interesting:
             continue
         cm = table.setdefault(cipher, {})
         bm = cm.setdefault(dirn, {})
