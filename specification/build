@@ -27,8 +27,8 @@ import fetchhash
 import formattv
 
 def writechanged(path, content):
-    if (not path.exists()) or path.read_bytes() != content:
-        path.write_bytes(content)
+    if (not path.exists()) or path.read_text() != content:
+        path.write_text(content)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -69,23 +69,23 @@ def main():
         ttvs.rename(tvs)
 
     rp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=wd, check=True,
-        stdout=subprocess.PIPE)
+        stdout=subprocess.PIPE, errors='strict')
     gitstate = rp.stdout.strip()
     di = subprocess.run(["git", "diff-index", "--quiet", "HEAD", "--"], cwd=wd)
     if di.returncode != 0:
-        gitstate += b"+"
-    gitstate += b"\n"
+        gitstate += "+"
+    gitstate += "\n"
     writechanged(work / "git.tex", gitstate)
 
     extrainputs = []
     latex = "lualatex"
     output = "hpolyc.pdf"
-    toggle = rb"\togglefalse{iacr}"
+    toggle = r"\togglefalse{iacr}"
     if args.iacr:
         extrainputs.append(str(iacrtrans))
         latex = "xelatex"
         output = "hpolyc-iacr.pdf"
-        toggle = rb"\toggletrue{iacr}"
+        toggle = r"\toggletrue{iacr}"
 
     writechanged(work / "toggle.tex", toggle)
     env = dict(os.environ)
