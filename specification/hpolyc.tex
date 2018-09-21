@@ -13,7 +13,7 @@
 % limitations under the License.
 
 %%% script AUTHOR: Paul Crowley, Eric Biggers%%%
-%%% script TITLE: {HBSH} and {HPolyNHC}: length-preserving encryption for entry-level processors%%%
+%%% script TITLE: {HBSH} and {Adiantum}: length-preserving encryption for entry-level processors%%%
 
 \RequirePackage{etoolbox}
 \newtoggle{iacr}
@@ -85,7 +85,7 @@
 \newcommand*{\barE}{\overline{\calE}}
 \newcommand*{\barD}{\overline{\calD}}
 
-\title{{HBSH} and {HPolyNHC}: length-preserving encryption for entry-level processors}
+\title{{HBSH} and {Adiantum}: length-preserving encryption for entry-level processors}
 \iftoggle{iacr}{
     \author{Paul~Crowley \and Eric~Biggers}
     \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
@@ -120,8 +120,8 @@
     We present HBSH, a simple construction for tweakable length-preserving encryption which
     directly supports the fastest options for hashing and stream encryption for processors
     without AES or other crypto instructions, with a provable
-    quadratic advantage bound. Our composition HPolyNHC uses NH, Poly1305, XChaCha12,
-    and a single AES invocation; on an ARM Cortex-A7 processor, HPolyNHC decrypts
+    quadratic advantage bound. Our composition Adiantum uses NH, Poly1305, XChaCha12,
+    and a single AES invocation; on an ARM Cortex-A7 processor, Adiantum decrypts
     4096-byte messages at 11.8 cycles per byte, five times faster than
     AES-256-XTS, with a constant-time implementation.
 \iftoggle{iacr}{
@@ -209,9 +209,9 @@ To this end, we present the HBSH (hash, block cipher, stream cipher, hash)
 construction, which generalizes over constructions such as
 HCTR and HCH by taking an $\epsilon$-almost-$\Delta$-universal hash function and a
 nonce-accepting stream cipher
-as components. Based on this construction, our main proposal is HPolyNHC,
+as components. Based on this construction, our main proposal is Adiantum,
 which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
-AES for the single blockcipher application. HPolyNHC:
+AES for the single blockcipher application. Adiantum:
 \begin{itemize}
     \item is a tweakable, variable-input-length, super-pseudorandom permutation
     \item has a security bound quadratic in the number of queries and linear in message length
@@ -221,7 +221,7 @@ AES for the single blockcipher application. HPolyNHC:
         two if the XOR is combined with the second hash.
 \end{itemize}
 
-Without special cases or extra setup, HPolyNHC handles:
+Without special cases or extra setup, Adiantum handles:
 \begin{itemize}
     \item any message and tweak lengths within the allowed range,
     \item varying message and tweak lengths for the same keys.
@@ -296,7 +296,7 @@ on the hash function, and $\boxminus$ subtraction.
 \subsection{Block cipher}
 The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 is only invoked once no matter the size of the input, so for disk sector-sized inputs
-its performance isn't critical. HPolyNHC and HPolyC use AES-256~\cite{AES}, so $n = 128$.
+its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
 
 \subsection{Stream cipher}
 $S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
@@ -304,7 +304,7 @@ is a stream cipher which takes a nonce and produces a long random stream. In nor
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
 
-HPolyNHC and HPolyC use the XChaCha12 stream cipher. This is based on ChaCha12~\cite{chacha}, but
+Adiantum and HPolyC use the XChaCha12 stream cipher. This is based on ChaCha12~\cite{chacha}, but
 ChaCha12 only takes a 64-bit (or 96-bit~\cite{RFC7539}) nonce, which is too small for our purposes,
 so we use the
 XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20~\cite{salsa20,salsa812}
@@ -322,7 +322,7 @@ $n \leq |P| \leq l_S + n$.
 $H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
-HPolyC and HPolyNHC differ only in their choice of hash function, as described in \autoref{hashing}.
+HPolyC and Adiantum differ only in their choice of hash function, as described in \autoref{hashing}.
 In both cases, the group used for
 $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
 
@@ -377,7 +377,7 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-For HPolyNHC, the 
+For Adiantum, the
 main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
 most of which is NH's 304-byte key. 
 Another cost is the AES key schedule;
@@ -385,7 +385,7 @@ if the hash is to be calculated in parallel, it can also
 be useful to cache powers of the hash key.
 ChaCha12 has no key schedule and makes no use of
 precomputation; XChaCha12 has a ``nonce scheduling'' step that
-must be called once to compute subkeys and once for each HPolyNHC encryption or decryption.
+must be called once to compute subkeys and once for each Adiantum encryption or decryption.
 The first 16-byte block consumed by Poly1305 contains the tweak and hash lengths; where
 these are constant, the work of consuming these can be cached,
 saving one $\ZZ/(2^{130}-5)\ZZ$ multiplication (the core operation of Poly1305).
@@ -395,7 +395,7 @@ so is more key agile, but has a slower hashing stage.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
-also has these properties, HPolyNHC and HPolyC will inherit security against
+also has these properties, Adiantum and HPolyC will inherit security against
 this class of side-channel attacks.
 
 NH, Poly1305 and ChaCha12 are highly parallelizable.
@@ -457,7 +457,7 @@ instructions.
     ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support ChaCha8 and ChaCha12 \\
     Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to allow key
     powers to be computed just once per key \\
-    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HPolyNHC \\
+    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in Adiantum \\
     \mbox{AES-XTS} & Linux v4.17 & \texttt{aes-neonbs-core.S} (bit-sliced) \\
     \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
     \mbox{NOEKEON-XTS} & ours & \\
@@ -465,14 +465,14 @@ instructions.
     \end{tabular}
 \end{table}
 
-HPolyNHC is the only algorithm in \autoref{performance} which is a tweakable
+Adiantum is the only algorithm in \autoref{performance} which is a tweakable
 super-pseudorandom permutation over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
-HPolyNHC has a larger per-message overhead than XTS; both require one
-extra block cipher invocation per message, but HPolyNHC must also perform one extra
+Adiantum has a larger per-message overhead than XTS; both require one
+extra block cipher invocation per message, but Adiantum must also perform one extra
 ChaCha permutation for the XChaCha construction and one extra Poly1305 block for the tweak.
 
-We conclude that for 4096-byte sectors, \mbox{HPolyNHC-XChaCha12-AES} can perform
+We conclude that for 4096-byte sectors, \mbox{Adiantum-XChaCha12-AES} can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
 Efficient implementations of NH, Poly1305 and ChaCha are available for many
 platforms, as these algorithms are well-suited for implementation with either
@@ -617,7 +617,7 @@ Summing these distances, with these constraints the advantage distinguishing bet
 $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
-$H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since HPolyNHC and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
+$H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since Adiantum and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
 on the maximum length of the message and tweak we allow the attacker to query for, as
 discussed in \autoref{hashing}.}:
 for any $g \in \bin^n$ and
@@ -827,7 +827,7 @@ the advantage in distinguishing HBSH from a family of random permutations is at 
 \appendix
 \section{$\epsilon$A$\Delta$U functions for HBSH}\label{hashing}
 
-HPolyNHC and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function.
+Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function.
 In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|P|, |C|$.
 
 \subsection{Notation}
@@ -839,7 +839,7 @@ and $Y = \fromint_l(x)$ is the unique
 $l$-bit sequence such that $\intify(Y) \equiv x \;(\textrm{mod}\;2^l)$. $\pad_l(X) = X||0^v$ where 
 where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
 
-For both HPolyNHC and HPolyC, 
+For both Adiantum and HPolyC,
 the output group for which the $\epsilon$A$\Delta$U property applies is
 $\ZZ/2^{128}\ZZ$, so we define
 
@@ -918,7 +918,7 @@ NH has various properties
 (issues handling variable length messages, double-sized output) which mean it is generally used
 with a second stage of hashing.
 In addition the HBSH construction requires a hash function which takes two variable-length inputs.
-For HPolyNHC we define a hash function NHPoly1305 which uses NH followed by Poly1305, and so
+For Adiantum we define a hash function NHPoly1305 which uses NH followed by Poly1305, and so
 takes a $128 + 2432 = 2560$-bit key.
 We break the message into 256-byte chunks, padding the last chunk with zeroes to the
 nearest 16-byte boundary, and compress each chunk down to 32 bytes with NH.
@@ -951,7 +951,7 @@ long, and per \cite{poly1305} Poly1305 is $\epsilon$-almost-$\Delta$-universal w
 $\epsilon = 2^{-103}l_H$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
 with $\epsilon = 2^{-128} + 2^{-103}l_H$.
 
-If we limit our HPolyNHC attacker to at most $q$ queries each of which uses a tweak of length at
+If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a message of length at most $l_M$, their distinguishing advantage
 is therefore at most
 $( 2^{-128} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_M - 128)/2048}))\binom{q}{2}

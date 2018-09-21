@@ -16,7 +16,7 @@ import hbsh
 import nh
 import poly1305
 
-class HPolyNHC(hbsh.HBSH):
+class Adiantum(hbsh.HBSH):
     def _setup_variant(self):
         super()._setup_variant()
         self._nh = nh.NH()
