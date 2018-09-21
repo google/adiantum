@@ -24,6 +24,7 @@ wd = pathlib.Path(__file__).parent
 sys.path.append(str(wd / "python"))
 
 import fetchhash
+import formatperf
 import formattv
 
 def writechanged(path, content):
@@ -67,6 +68,10 @@ def main():
         jf /= "HPolyC_XChaCha12_32_AES256.json"
         formattv.write_tvs(jf, ttvs)
         ttvs.rename(tvs)
+
+    performancetex =  work / "performance.tex"
+    if not performancetex.is_file():
+        formatperf.formatperf(performancetex, wd / "performance")
 
     rp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=wd, check=True,
         stdout=subprocess.PIPE, errors='strict')
