@@ -617,16 +617,13 @@ Summing these distances, with these constraints the advantage distinguishing bet
 $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
-In what follows, we assume that $H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since HPolyNHC and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
+$H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since HPolyNHC and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
 on the maximum length of the message and tweak we allow the attacker to query for, as
 discussed in \autoref{hashing}.}:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, m) \neq (T', m')$
-the number of keys $K_H \in \mathcal{K}_H$
-such that $H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g$ is at most $\epsilon|\mathcal{K}_H|$: ie
-for a random
-$K_H \sample \mathcal{K}_H$ we have for any $(g, T, m) \neq (g', T', m')$ that
-$\prob{H_{K_H}(T, m) \boxplus g = H_{K_H}(T', m') \boxplus g'} \leq \epsilon$.
+$\probsub{K_H \sample \mathcal{K}_H}{H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g} \leq \epsilon$.
+
 We use this to bound the probability that the attacker will cause an
 ``inner collision''---a query to the inner part which doesn't meet the constraints described
 in \autoref{constraints}.
@@ -883,11 +880,10 @@ $\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
 \subsection{NH}
 
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial. One of the fastest hash functions in software is NH. 
-We use a 32-bit, unsigned, little-endian, 2-strided variant of NH
-which is efficient on our target platform. We define a word size $w = 32$, a stride $s = 2$, 
+crucial. One of the fastest hash functions in software is NH.
+We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size multiplier $u = 16$; NH is then defined over message
-lengths $\{2sw = 128, 2(2sw), \ldots, 2usw = 2048\}$ 
+lengths $\{2sw = 128, 2(2sw), \ldots, 2usw = 2048\}$
 and takes a key of length $2sw(u + r -1) = 2432$ to produce
 an output of length $2rw = 256$.
 
@@ -934,10 +930,10 @@ itself.
     \Procedure{NHPoly1305}{$K_H,T,M$}
     \State $K_0 \gets K_H[0;128]$
     \State $K_1 \gets K_H[128;2432]$
-    \State $B \gets pad_{128}(\fromint_{64}(|T|) || \fromint_{64}(|M|) || T)$
+    \State $B \gets \pad_{128}(\fromint_{64}(|T|) || \fromint_{64}(|M|) || T)$
     \If {$M \neq \lambda$}
         \State $M_0 || M_1 || \ldots || M_l \gets M$ ($|M_i|=2048$ for $i=0\ldots l-1$, $0 < |M_l| \leq 2048$)
-        \State $M_l \gets pad_{128}(M_l)$
+        \State $M_l \gets \pad_{128}(M_l)$
         \ForAll {$i \in 0\ldots l$}
             \State $B \gets B || \NH_{K_1}(M_i)$
         \EndFor
