@@ -207,8 +207,9 @@ much improved performance on such platforms.
 
 To this end, we present the HBSH (hash, block cipher, stream cipher, hash)
 construction, which generalizes over constructions such as
-HCTR and HCH by taking an $\epsilon$-almost-XOR-universal hash functions and a stream cipher
-as components. More specifically, we propose HPolyNHC,
+HCTR and HCH by taking an $\epsilon$-almost-$\Delta$-universal hash function and a
+nonce-accepting stream cipher
+as components. Based on this construction, our main proposal is HPolyNHC,
 which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
 AES for the single blockcipher application. HPolyNHC:
 \begin{itemize}
@@ -226,6 +227,9 @@ Without special cases or extra setup, HPolyNHC handles:
     \item varying message and tweak lengths for the same keys.
 \end{itemize}
 
+We also describe a simpler proposal, HPolyC, which sacrifices a little speed on large blocks
+for simplicity and greater key agility, leaving out the NH hash layer.
+
 The proof of security differs from other hash-XOR-hash modes in three ways. First,
 Poly1305 hash is not XOR universal, but universal over $\ZZ/2^{128}\ZZ$,
 so for XOR of hash values we substitute addition and subtraction in the appropriate group.
@@ -237,11 +241,13 @@ the proof is shaped around ensuring we pay the smallest multiple of this cost we
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Specification}
-HBSH divides the input into a right-hand block of $n$ bits and a left-hand block with
-the remainder of the input, and uses a stream cipher $S$ and an
+The HBSH algorithm is shown in \autoref{pseudocode}.
+HBSH takes a plaintext $P$ of at least $n$ bits and a tweak $T$,
+divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
+the remainder of the input, and generates the ciphertext $C$ using a stream cipher $S$ and an
 $\epsilon$-almost-$\Delta$-universal
 function $H$ to build an unbalanced Feistel network that includes one invocation of an
-$n$-bit block cipher $E$.
+$n$-bit block cipher $E$.  $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
 
 \begin{figure}
     \begin{floatrow}
@@ -277,18 +283,20 @@ $n$-bit block cipher $E$.
     \end{floatrow}
 \end{figure}
 
-We derive ciphertext $C$ from plaintext $P$ and tweak $T$ as shown in \autoref{pseudocode}.
-$||$ represents concatenation, and $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
-$\boxplus$ represents addition in a group which depends
-on the hash function, and $\boxminus$ subtraction. $X \arrowoplus Y$
-is the bitwise XOR of $X$ with the first $|X|$ bits of $Y$.
+\subsection{Notation}
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
-$a \in A$ then $f_a: B \rightarrow C$ and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
+$a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
+$|X|$ represents the length of $X \in \bin^{*}$ in bits.
+$Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
+$X \arrowoplus Y$ is $X \oplus Y[0;|X|]$.
+$||$ represents concatenation, and $\lambda$ the empty string.
+$\boxplus$ represents addition in a group which depends
+on the hash function, and $\boxminus$ subtraction.
 
 \subsection{Block cipher}
-The 128-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
+The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 is only invoked once no matter the size of the input, so for disk sector-sized inputs
-its performance isn't critical. HPolyNHC uses AES-256~\cite{AES}.
+its performance isn't critical. HPolyNHC and HPolyC use AES-256~\cite{AES}, so $n = 128$.
 
 \subsection{Stream cipher}
 $S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
@@ -296,12 +304,9 @@ is a stream cipher which takes a nonce and produces a long random stream. In nor
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
 
-The ChaCha12 stream cipher~\cite{chacha}
-defines a PRF which takes a 64-bit (or 96-bit~\cite{RFC7539})
-nonce and an integer stream offset and returns a 512-bit output, and
-concatenates successive outputs to define a function from key and nonce to stream
-in a seekable way.
-Since $C_M$ is larger than the ChaCha12 nonce size, HPolyNHC uses the
+HPolyNHC and HPolyC use the XChaCha12 stream cipher. This is based on ChaCha12~\cite{chacha}, but
+ChaCha12 only takes a 64-bit (or 96-bit~\cite{RFC7539}) nonce, which is too small for our purposes,
+so we use the
 XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20~\cite{salsa20,salsa812}
 to construct XChaCha12 which extends the nonce to 192 bits
 (as libsodium~\cite{xchacha20}
@@ -310,19 +315,21 @@ with ChaCha20). From here we construct a function that takes a variable-length n
 191 bits by padding with a 1 followed by zeroes:
 $S_{K_S}(C_M) = \XChaCha12_{K_S}(C_M || 1 || 0^{191-|C_M|})$. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
-therefore require that the HPolyNHC plaintext length be within the bounds
+therefore require that the plaintext length be within the bounds
 $n \leq |P| \leq l_S + n$.
 
 \subsection{Hash}
-$H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function over a group
-defined on $n$-bit strings. The fastest such hash functions are based on NH, but NH generally
-requires a second hashing stage. For HPolyNHC we combine NH with Poly1305, and the group for
-$\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$; we defer the exact specification
-of this function to \autoref{NHPoly1305}.
+$H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
+of bitstrings, yielding a group element represented as an $n$-bit string.
+
+HPolyC and HPolyNHC differ only in their choice of hash function, as described in \autoref{hashing}.
+In both cases, the group used for
+$\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
-$K_E || K_H \ldots = S_{K_S}(\lambda)$.
+$K_E || K_H \ldots = S_{K_S}(\lambda)$.\footnote{In the original
+version of this paper, HPolyC used $K_H || K_E \ldots = S_{K_S}(\lambda)$.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design}
@@ -349,7 +356,7 @@ For disk encryption, decryption performance matters most:
 reads are more frequent than writes, and reads generally affect user-perceived latency, while
 operating systems can usually perform writes asynchronously in the background.
 
-It's unusual for a construction to require three distinct building blocks.
+It's unusual for a construction to require more than two distinct building blocks.
 More commonly, a hash-XOR-hash mode will use a block cipher both on the narrow side of the
 block, and to build the stream cipher in the XOR phase (eg using CTR mode~\cite{ctr}).
 Using XChaCha12 in place of a block cipher affords a significant increase in performance;
@@ -361,7 +368,7 @@ broken into two halves. However if we were to build this using XChaCha12,
 such a construction would require four extra invocations of ChaCha per block, which would be
 a much greater cost than one block cipher invocation.
 
-HBSH does not consider an attack model in which derived keys are presented as input.
+We does not consider an attack model in which derived keys are presented as input.
 Length-preserving encryption
 which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
 attacker to submit a query with a $g$-function
@@ -370,8 +377,10 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-The main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
-most of which is NH's 304-byte key. Another cost is the AES key schedule;
+For HPolyNHC, the 
+main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
+most of which is NH's 304-byte key. 
+Another cost is the AES key schedule;
 if the hash is to be calculated in parallel, it can also
 be useful to cache powers of the hash key.
 ChaCha12 has no key schedule and makes no use of
@@ -381,11 +390,12 @@ The first 16-byte block consumed by Poly1305 contains the tweak and hash lengths
 these are constant, the work of consuming these can be cached,
 saving one $\ZZ/(2^{130}-5)\ZZ$ multiplication (the core operation of Poly1305).
 Otherwise no extra work needs to be done for differing message or tweak lengths, unless
-new powers of the hash key are needed for parallelism.
+new powers of the hash key are needed for parallelism. HPolyC does not need NH subkeys and
+so is more key agile, but has a slower hashing stage.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
-also has these properties, HPolyNHC will inherit security against
+also has these properties, HPolyNHC and HPolyC will inherit security against
 this class of side-channel attacks.
 
 NH, Poly1305 and ChaCha12 are highly parallelizable.
@@ -607,7 +617,9 @@ Summing these distances, with these constraints the advantage distinguishing bet
 $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
-In what follows, we assume that $H$ is $\epsilon$-almost-$\Delta$-universal:
+In what follows, we assume that $H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since HPolyNHC and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
+on the maximum length of the message and tweak we allow the attacker to query for, as
+discussed in \autoref{hashing}.}:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, m) \neq (T', m')$
 the number of keys $K_H \in \mathcal{K}_H$
@@ -615,9 +627,6 @@ such that $H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g$ is at most $\epsilon|\ma
 for a random
 $K_H \sample \mathcal{K}_H$ we have for any $(g, T, m) \neq (g', T', m')$ that
 $\prob{H_{K_H}(T, m) \boxplus g = H_{K_H}(T', m') \boxplus g'} \leq \epsilon$.
-Since HPolyNHC builds $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
-on the maximum length of the message and tweak we allow the attacker to query for, as
-discussed in \autoref{NHPoly1305}.
 We use this to bound the probability that the attacker will cause an
 ``inner collision''---a query to the inner part which doesn't meet the constraints described
 in \autoref{constraints}.
@@ -808,70 +817,33 @@ the first argument measures not queries but bits of output).
 
 Summing these,
 the advantage in distinguishing HBSH from a family of random permutations is at most
-$\epsilon\binom{q}{2} + 3(2^{-n})\binom{q}{2}
+
+\begin{displaymath}
+(\epsilon + 3(2^{-n}))\binom{q}{2}
 + \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
-+ \advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]$.
++ \advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]
+\end{displaymath}
 
 \printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-\section{NHPoly1305}\label{NHPoly1305}
+\section{$\epsilon$A$\Delta$U functions for HBSH}\label{hashing}
 
-Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial. One of the fastest hash functions in software is NH; however, NH has various properties
-(issues handling variable length messages, double-sized output) which mean it is generally used
-with a second stage of hashing.
-In addition, we need a hash function which takes two variable-length inputs.
-For HPolyNHC we define a hash function NHPoly1305 which uses NH followed by Poly1305.
+HPolyNHC and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function.
+In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|P|, |C|$.
 
-\subsection{NH}
+\subsection{Notation}
 
-We use a
-32-bit, unsigned, little-endian, 2-strided variant of NH which is efficient on our target platform.
+$\intify: \bin^{*} \rightarrow \ZZ$ is the
+standard little-endian map
+(ie $\intify(\lambda) = 0$, $\intify(0 || x) = 2\intify(x)$, $\intify(1 || x) = 1 + 2\intify(x)$),
+and $Y = \fromint_l(x)$ is the unique
+$l$-bit sequence such that $\intify(Y) \equiv x \;(\textrm{mod}\;2^l)$. $\pad_l(X) = X||0^v$ where 
+where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
 
-\begin{align*}
-    \NH&: \bin^{2432} \times \bigcup_{l = 1}^{16} \bin^{128l}
-    \rightarrow \bin^{256}
-\\
-    \NH(K, m) &= \eta(K[0;2048], m) | \eta(K[128;2048], m)
-    | \eta(K[256;2048], m) | \eta(K[384;2048], m)
-\\
-    \eta&: \bin^{2048} \times \bigcup_{l = 1}^{16} \bin^{128l}
-    \rightarrow \bin^{64}
-\\
-    \eta(K, m) &= \fromint_{64}\left[
-    \sum_{i = 0}^{|m|/128 -1}
-    \kappa(K[128i;128], m[128i;128])
-    \right]
-\\
-    \kappa&: \bin^{128} \times \bin^{128} \rightarrow \ZZ
-\\
-    \kappa(K, m) &= \sum_{i \in {0,32}} \xi(K[i;32], m[i;32]) * \xi(K[i + 64;32], m[i + 64;32])
-\\
-    \xi&: \bin^{32} \times \bin^{32} \rightarrow \ZZ
-\\
-    \xi(K, m) &= (\intify(K) + \intify(m)) \mod 2^{32}
-\end{align*}
-Here $m[a;l]$ refers to the subsequence of $m$ of length $l$ starting at $a$, $\intify$ maps a
-sequence of bits to an integer in little-endian fashion, and $y = \fromint_l(x)$ is the unique
-$l$-bit sequence such that $\intify(y) \equiv x \;(\textrm{mod}\;2^l)$.
-\cite{nh} shows that for equal-length
-messages this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{64}\ZZ)^4$
-with $\epsilon = 2^{-128}$.
-
-\subsection{Poly1305}
-
-Where we refer to Poly1305 here, we mean specifically the $\epsilon$A$\Delta$U polynomial function
-$\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^n$
-based on the finite field $\ZZ/(2^{130}-5)\ZZ$, which is defined in \cite{poly1305}
-and used to build a MAC which combines this function with the use of AES.
-RFC 7539~\cite{RFC7539} takes this
-$\epsilon$A$\Delta$U polynomial function and
-uses it without AES to build an AEAD mode based on ChaCha20.
-Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
-$2^{22}$ keys and the effective keyspace is $2^{106}$.
-The output group for which the $\epsilon$A$\Delta$U property applies is
+For both HPolyNHC and HPolyC, 
+the output group for which the $\epsilon$A$\Delta$U property applies is
 $\ZZ/2^{128}\ZZ$, so we define
 
 \begin{align*}
@@ -879,14 +851,79 @@ $\ZZ/2^{128}\ZZ$, so we define
     x \boxminus y &= \fromint_{128}(\intify(x) - \intify(y)) \\
 \end{align*}
 
+\subsection{Poly1305}
+
+\cite{poly1305} uses polynomials over the finite field $\ZZ/(2^{130}-5)\ZZ$
+to define a function we call
+$\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$,
+and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any 
+$g \in \bin^{128}$ and any distinct messages $m, m'$ where $|m|, |m'| \leq L$, 
+$\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(m') \boxminus H_{K_H}(m) = g} \leq 2^{-103}\ceil{L/128}$.
+In that paper this function is used to build a MAC based on AES, while in 
+RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
+Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
+$2^{22}$ keys and the effective keyspace is $2^{106}$.
+
 Many Poly1305 libraries
-take parameters $K || g, m$ and return $g \boxplus \Polydjb_K(m)$; where subtraction
+take parameters $K_H || g, m$ and return $g \boxplus \Polydjb_{K_H}(m)$; where subtraction
 is needed we use bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
-\subsection{NHPoly1305}
-Putting these together, we define a hash function NHPoly1305 with a $128 + 2432 = 2560$-bit key
-which takes two variable-length parameters as required by the HBSH construction.
+\subsection{HPolyC hashing}
+HPolyC was the HBSH construction that the first revision of this paper presented, which used
+Poly1305 together with an injective encoding function.
+It is simple, fast, and highly key agile. We require that $0 \leq |T| < 2^{32}$ and define
+\begin{align*}
+H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{n}(\intify_{32}(|T|) || T) || L)
+\end{align*}
+
+Thus if for all queries $|T| \leq l_T$ and $|P|, |C| \leq l_M$ then 
+$\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
+
+\subsection{NH}
+
+Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
+crucial. One of the fastest hash functions in software is NH. 
+We use a 32-bit, unsigned, little-endian, 2-strided variant of NH
+which is efficient on our target platform. We define a word size $w = 32$, a stride $s = 2$, 
+a number of rounds $r = 4$ and an input size multiplier $u = 16$; NH is then defined over message
+lengths $\{2sw = 128, 2(2sw), \ldots, 2usw = 2048\}$ 
+and takes a key of length $2sw(u + r -1) = 2432$ to produce
+an output of length $2rw = 256$.
+
+\begin{algorithmic}[0]
+    \Procedure{NH}{$K, M$}
+    \State $h \gets \lambda$
+    \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
+        \State $p \gets 0$
+        \For {$j \gets 0, 2sw, \ldots, |M|-2sw$}
+            \For {$k \gets 0, w, \ldots, w(s-1)$}
+                \State $a_0 \gets \intify(K[i+j+k;w])$
+                \State $a_1 \gets \intify(K[i+j+k+sw;w])$
+                \State $b_0 \gets \intify(M[j+k;w])$
+                \State $b_1 \gets \intify(M[j+k+sw;w])$
+                \State $p \gets p + (a_0 + b_0)(a_1 + b_1)$
+            \EndFor
+        \EndFor
+        \State $h \gets h || \fromint_{2w}(p)$
+    \EndFor
+    \State \textbf{return} $h$
+    \EndProcedure
+\end{algorithmic}
+
+
+\cite{nh} shows that for equal-length
+messages this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{2w}\ZZ)^r$
+with $\epsilon = 2^{-wr}$.
+
+\subsection{NHPoly1305}\label{NHPoly1305}
+
+NH has various properties
+(issues handling variable length messages, double-sized output) which mean it is generally used
+with a second stage of hashing.
+In addition the HBSH construction requires a hash function which takes two variable-length inputs.
+For HPolyNHC we define a hash function NHPoly1305 which uses NH followed by Poly1305, and so
+takes a $128 + 2432 = 2560$-bit key.
 We break the message into 256-byte chunks, padding the last chunk with zeroes to the
 nearest 16-byte boundary, and compress each chunk down to 32 bytes with NH.
 We then hash with Poly1305 first the lengths of the tweak and the message, followed by the tweak,
@@ -894,22 +931,16 @@ followed by padding to a Poly1305 boundary, followed by the NH-compressed chunks
 itself.
 
 \begin{algorithmic}[0]
-    \Procedure{NHPoly1305}{$(K_H,T,M)$}
+    \Procedure{NHPoly1305}{$K_H,T,M$}
     \State $K_0 \gets K_H[0;128]$
     \State $K_1 \gets K_H[128;2432]$
-    \State $B \gets \fromint_{64}(|T|) || \fromint_{64}(|M|) || T$
-    \If {$|B| \mod 128 \neq 0$}
-        \State $B \gets B || 0^{128 - (|B| \mod 128)}$
-    \EndIf
+    \State $B \gets pad_{128}(\fromint_{64}(|T|) || \fromint_{64}(|M|) || T)$
     \If {$M \neq \lambda$}
         \State $M_0 || M_1 || \ldots || M_l \gets M$ ($|M_i|=2048$ for $i=0\ldots l-1$, $0 < |M_l| \leq 2048$)
-        \If {$|M_l| \mod 128 \neq 0$}
-            \State $M_l \gets M_l || 0^{128 - (|M_l| \mod 128)}$
-        \EndIf
+        \State $M_l \gets pad_{128}(M_l)$
         \ForAll {$i \in 0\ldots l$}
-            \State $B_i \gets \NH_{K_1}(M_i)$
+            \State $B \gets B || \NH_{K_1}(M_i)$
         \EndFor
-        \State $B \gets B || B_0 || B_1 || \ldots || B_l$
     \EndIf
     \State \textbf{return} $\Polydjb_{K_0}(B)$
     \EndProcedure
@@ -919,10 +950,10 @@ For distinct pairs $(T,M) \neq (T', M')$, we have that if $|T| \neq |T'|$, $|M| 
 $T \neq T'$, then the inputs to Poly1305 will differ. If none of these hold then we have that
 $M \neq M'$, and they must differ in some chunk input to NH.
 Per \cite{nh} we have that the probability NH will compress these to the same value is at most
-$2^{-128}$. The input to Poly1305 is $l_P = 1 + \ceil{|T|/128} + 2\ceil{|M|/2048}$ 16-byte chunks
+$2^{-128}$. The input to Poly1305 is $l_H = 1 + \ceil{|T|/128} + 2\ceil{|M|/2048}$ 16-byte chunks
 long, and per \cite{poly1305} Poly1305 is $\epsilon$-almost-$\Delta$-universal with
-$\epsilon = l_P2^{-103}$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
-with $\epsilon = 2^{-128} + 2^{-103}l_P$.
+$\epsilon = 2^{-103}l_H$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
+with $\epsilon = 2^{-128} + 2^{-103}l_H$.
 
 If we limit our HPolyNHC attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a message of length at most $l_M$, their distinguishing advantage
