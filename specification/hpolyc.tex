@@ -53,7 +53,7 @@
 \usepackage[style=alphabetic,backend=biber]{biblatex}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage[logic,probability,advantage,adversary,landau]{cryptocode}
+\usepackage[logic,probability,advantage,adversary,landau,sets,operators]{cryptocode}
 \usepackage{algpseudocode}
 
 \usepackage{tikz}
@@ -62,7 +62,6 @@
 \usepackage{longtable}
 
 \DeclareMathOperator{\GF}{GF}
-\DeclareMathOperator{\encode}{encode}
 \DeclareMathOperator{\XChaCha12}{XChaCha12}
 \DeclareMathOperator{\HBSH}{HBSH}
 \DeclareMathOperator{\Polydjb}{Poly1305}
@@ -71,7 +70,7 @@
 \DeclareMathOperator{\NH}{NH}
 \DeclareMathOperator{\intify}{int}
 \DeclareMathOperator{\fromint}{fromint}
-\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\pad}{pad}
 
 \addbibresource{bib.bib}
 
@@ -134,6 +133,7 @@
 }
 \end{abstract}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 Two aspects of disk encryption make it a challenge for cryptography.  First,
 performance is critical; every extra cycle is a worse user experience, and on a mobile device
@@ -227,7 +227,7 @@ Without special cases or extra setup, HPolyNHC handles:
 \end{itemize}
 
 The proof of security differs from other hash-XOR-hash modes in three ways. First,
-Poly1305 hash is not XOR universal, but universal over $\mathbb{Z}/2^{128}\mathbb{Z}$,
+Poly1305 hash is not XOR universal, but universal over $\ZZ/2^{128}\ZZ$,
 so for XOR of hash values we substitute addition and subtraction in the appropriate group.
 Second, using the XSalsa20 construction~\cite{xsalsa}, we can directly
 build a stream cipher which takes a 192-bit nonce to generate a stream, simplifying
@@ -235,6 +235,7 @@ the second Feistel operation and associated proof, as well as subkey generation.
 Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
 the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Specification}
 HBSH divides the input into a right-hand block of $n$ bits and a left-hand block with
 the remainder of the input, and uses a stream cipher $S$ and an
@@ -285,12 +286,12 @@ Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$ and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 
 \subsection{Block cipher}
-The 128-bit block cipher $E: \mathcal{K}_E \times \{0,1\}^n \rightarrow \{0,1\}^n$
+The 128-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 is only invoked once no matter the size of the input, so for disk sector-sized inputs
 its performance isn't critical. HPolyNHC uses AES-256~\cite{AES}.
 
 \subsection{Stream cipher}
-$S: \mathcal{K}_S \times (\lambda \cup \{0,1\}^n) \rightarrow \{0,1\}^{l_S}$
+$S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
 is a stream cipher which takes a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
@@ -316,13 +317,14 @@ $n \leq |P| \leq l_S + n$.
 $H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function over a group
 defined on $n$-bit strings. The fastest such hash functions are based on NH, but NH generally
 requires a second hashing stage. For HPolyNHC we combine NH with Poly1305, and the group for
-$\boxplus$ and $\boxminus$ is $\mathbb{Z}/2^{128}\mathbb{Z}$; we defer the exact specification
+$\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$; we defer the exact specification
 of this function to \autoref{NHPoly1305}.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
 $K_E || K_H \ldots = S_{K_S}(\lambda)$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design}
 Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
 it all. A secure SPRP must have the same property in the reverse direction;
@@ -377,7 +379,7 @@ precomputation; XChaCha12 has a ``nonce scheduling'' step that
 must be called once to compute subkeys and once for each HPolyNHC encryption or decryption.
 The first 16-byte block consumed by Poly1305 contains the tweak and hash lengths; where
 these are constant, the work of consuming these can be cached,
-saving one $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$ multiplication (the core operation of Poly1305).
+saving one $\ZZ/(2^{130}-5)\ZZ$ multiplication (the core operation of Poly1305).
 Otherwise no extra work needs to be done for differing message or tweak lengths, unless
 new powers of the hash key are needed for parallelism.
 
@@ -393,6 +395,7 @@ which requires at least three.
 We put the ``special'' block on the right so that in typical uses the bulk encryption has
 the best alignment for fast operations.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performance}
 
 In \autoref{performance} we
@@ -469,6 +472,7 @@ For a greater margin of security at a slower speed, ChaCha20 can
 be used instead of ChaCha12; the same stream cipher
 must be used for key derivation as for the Feistel function.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Security reduction}
 HBSH is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
 succeeds if they distinguish it from a family of independent random permutations indexed by
@@ -477,7 +481,7 @@ input length and tweak, given access to both encryption and decryption oracles.
 Given keys $K_S$, $K_H$, $K_E$, HBSH is the conjugation of an inner transform by an outer:
 \begin{align*}
     \HBSH:
-    \{0,1\}^* &\times \{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n \\
+    \bin^* &\times \bin^l \times \bin^n \rightarrow \bin^l \times \bin^n \\
     \HBSH_{T} &= \phi^{-1}_{K_H, T}
     \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T} \\
     \theta_{e, s}(P_L, P_M) &= (P_L \arrowoplus s(e(P_M)), e(P_M)) \\
@@ -505,7 +509,7 @@ the length of input and tweak.
 
 \begin{align*}
 \calE, \calD:
-\{0,1\}^* &\times \{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n \\
+\bin^* &\times \bin^l \times \bin^n \rightarrow \bin^l \times \bin^n \\
 (C_L, C_R) &\leftarrow \calE_T(P_L, P_R) \\
 (P_L, P_R) &\leftarrow \calD_T(C_L, C_R) \\
 \end{align*}
@@ -548,7 +552,7 @@ functions, those functions are independent unless stated otherwise.
 
 \xprmtitle{innerpart}{notweak}: Ignore the tweak: let
 $\barE, \barD$ be random length-preserving function families from
-$\{0,1\}^l \times \{0,1\}^n \rightarrow \{0,1\}^l \times \{0,1\}^n$
+$\bin^l \times \bin^n \rightarrow \bin^l \times \bin^n$
 and let $\calE_T = \barE$ and $\calD_T = \barD$ for all $T$.
 Since by the above constraints, for each random function the second argument in every query
 is still always distinct, every output of the appropriate length is equally
@@ -557,9 +561,9 @@ likely as before, and this is indistinguishable from \xprm{innerpart}{randinner}
 \xprmtitle{innerpart}{doublerf}: Use a Feistel network in which the stream cipher
 nonce includes both $P_M$ and $C_M$.
 \begin{itemize}
-    \item $F_S: \{0,1\}^{2n} \rightarrow \{0,1\}^{l_S}$ is a random
+    \item $F_S: \bin^{2n} \rightarrow \bin^{l_S}$ is a random
     function
-    \item $F_E, F_D: \{0,1\}^n \rightarrow \{0,1\}^n$ are random functions
+    \item $F_E, F_D: \bin^n \rightarrow \bin^n$ are random functions
     \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || F_E(P_M)), F_E(P_M))$
     \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(F_D(C_M) || C_M), F_D(C_M))$
 \end{itemize}
@@ -571,8 +575,8 @@ likely as before, and this is indistinguishable from
 
 \xprmtitle{innerpart}{rpswitch}: Substitute a random permutation for the pair of random functions.
 \begin{itemize}
-    \item $F_S: \{0,1\}^{2n} \rightarrow \{0,1\}^{l_S}$ is a random function as before
-    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $F_S: \bin^{2n} \rightarrow \bin^{l_S}$ is a random function as before
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
     \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || \pi(P_M)), \pi(P_M))$
     \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(\pi^{-1}(C_M) || C_M), \pi^{-1}(C_M))$
     ie $\calD_T = \calE_T^{-1}$
@@ -584,8 +588,8 @@ $2^{-n}\binom{q}{2}$.
 \xprmtitle{innerpart}{halfrf}: Replace the two-argument $F_S$ with
 a single-argument version which uses only $C_M$.
 \begin{itemize}
-    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
-    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation as before
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation as before
     \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(\pi(P_M)), \pi(P_M))$
     ie $\calE_T = \theta_{\pi, F_S}$
     \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(C_M), \pi^{-1}(C_M))$
@@ -604,12 +608,12 @@ $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
 In what follows, we assume that $H$ is $\epsilon$-almost-$\Delta$-universal:
-for any $g \in \{0,1\}^n$ and
+for any $g \in \bin^n$ and
 any two distinct messages $(T, m) \neq (T', m')$
 the number of keys $K_H \in \mathcal{K}_H$
 such that $H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g$ is at most $\epsilon|\mathcal{K}_H|$: ie
 for a random
-$K_H \xleftarrow{\$} \mathcal{K}_H$ we have for any $(g, T, m) \neq (g', T', m')$ that
+$K_H \sample \mathcal{K}_H$ we have for any $(g, T, m) \neq (g', T', m')$ that
 $\prob{H_{K_H}(T, m) \boxplus g = H_{K_H}(T', m') \boxplus g'} \leq \epsilon$.
 Since HPolyNHC builds $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
 on the maximum length of the message and tweak we allow the attacker to query for, as
@@ -624,7 +628,7 @@ both the subsequent queries
 $\calE_T(P_L, P_R)$ and $\calD_T(C_L, C_R)$ would be forbidden. Again, we consider a
 computationally unbounded attacker.
 
-A hash key $K_H \xleftarrow{\$} \mathcal{K}_H$ is chosen at random, and for each query we define
+A hash key $K_H \sample \mathcal{K}_H$ is chosen at random, and for each query we define
 \begin{itemize}
     \item $P_M = P_R \boxplus H_{K_H}(T, P_L)$
     \item $C_M = C_R \boxplus H_{K_H}(T, C_L)$
@@ -690,8 +694,8 @@ as per the first experiment in \autoref{innerpart}, \xprm{innerpart}{randinner}.
 Substitute this with the last experiment, \xprm{innerpart}{halfrf}:
 
 \begin{itemize}
-    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
-    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1} = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T}$
 \end{itemize}
@@ -730,7 +734,7 @@ Since pointless queries are forbidden, the advantage in distinguishing this from
 per section C of~\cite{cmc}.
 
 \xprmtitle{composition}{randinner}: $\calE'$ and $\calD'$ are families of random functions.
-Choose a hash key $K_H \xleftarrow{\$} \mathcal{K}_H$,
+Choose a hash key $K_H \sample \mathcal{K}_H$,
 and conjugate the random functions by Feistel calls to the hash function:
 
 \begin{itemize}
@@ -745,9 +749,9 @@ this is indistinguishable from \xprm{composition}{randomfuncs}.
 
 \xprmtitle{composition}{halfrf}: Substitute \xprm{innerpart}{halfrf} for \xprm{innerpart}{randinner}.
 \begin{itemize}
-    \item $K_H \xleftarrow{\$} \mathcal{K}_H$
-    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
-    \item $\pi: \{0,1\}^n \rightarrow \{0,1\}^n$ is a random permutation
+    \item $K_H \sample \mathcal{K}_H$
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
 \end{itemize}
@@ -760,11 +764,11 @@ The advantage in distinguishing from \xprm{composition}{randinner}
 is at most the sum of the collision probability and the no-collision advantage, which is
 $(\epsilon + 2(2^{-n}))\binom{q}{2}$.
 
-\xprmtitle{composition}{block}: Choose a random $K_E \xleftarrow{\$} \mathcal{K}_E$ and
+\xprmtitle{composition}{block}: Choose a random $K_E \sample \mathcal{K}_E$ and
 substitute a block cipher $E_{K_E}$ for $\pi$.
 \begin{itemize}
-    \item $K_H \xleftarrow{\$} \mathcal{K}_H$, $K_E \xleftarrow{\$} \mathcal{K}_E$
-    \item $F_S: \{0,1\}^n \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $K_H \sample \mathcal{K}_H$, $K_E \sample \mathcal{K}_E$
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
 \end{itemize}
@@ -778,7 +782,7 @@ $t' = t + \bigO{\sum_i |P^i| + |T^i|}$.
 $K_E$, $K_H$:
 
 \begin{itemize}
-    \item $F_S: (\lambda \cup \{0,1\}^n) \rightarrow \{0,1\}^{l_S}$ is a random function
+    \item $F_S: (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$ is a random function
     \item $K_E || K_H || \ldots = F_S(\lambda)$
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
@@ -786,11 +790,11 @@ $K_E$, $K_H$:
 
 This is indistinguishable from \xprm{composition}{block}.
 
-\xprmtitle{composition}{xchacha}: Choose a random $K_S \xleftarrow{\$} \mathcal{K}_S$ and
+\xprmtitle{composition}{xchacha}: Choose a random $K_S \sample \mathcal{K}_S$ and
 substitute a stream cipher $S_{K_S}$ for the random function $F_S$
 
 \begin{itemize}
-    \item $K_S \xleftarrow{\$} \mathcal{K}_S$
+    \item $K_S \sample \mathcal{K}_S$
     \item $K_E || K_H || \ldots = S_{K_S}(\lambda)$
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T}$
     \item $\calD_T = \calE_T^{-1}$
@@ -810,6 +814,7 @@ $\epsilon\binom{q}{2} + 3(2^{-n})\binom{q}{2}
 
 \printbibliography
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
 \section{NHPoly1305}\label{NHPoly1305}
 
@@ -826,25 +831,25 @@ We use a
 32-bit, unsigned, little-endian, 2-strided variant of NH which is efficient on our target platform.
 
 \begin{align*}
-    \NH&: \{0,1\}^{2432} \times \bigcup_{l = 1}^{16} \{0,1\}^{128l}
-    \rightarrow \{0,1\}^{256}
+    \NH&: \bin^{2432} \times \bigcup_{l = 1}^{16} \bin^{128l}
+    \rightarrow \bin^{256}
 \\
     \NH(K, m) &= \eta(K[0;2048], m) | \eta(K[128;2048], m)
     | \eta(K[256;2048], m) | \eta(K[384;2048], m)
 \\
-    \eta&: \{0,1\}^{2048} \times \bigcup_{l = 1}^{16} \{0,1\}^{128l}
-    \rightarrow \{0,1\}^{64}
+    \eta&: \bin^{2048} \times \bigcup_{l = 1}^{16} \bin^{128l}
+    \rightarrow \bin^{64}
 \\
     \eta(K, m) &= \fromint_{64}\left[
     \sum_{i = 0}^{|m|/128 -1}
     \kappa(K[128i;128], m[128i;128])
     \right]
 \\
-    \kappa&: \{0,1\}^{128} \times \{0,1\}^{128} \rightarrow \mathbb{Z}
+    \kappa&: \bin^{128} \times \bin^{128} \rightarrow \ZZ
 \\
     \kappa(K, m) &= \sum_{i \in {0,32}} \xi(K[i;32], m[i;32]) * \xi(K[i + 64;32], m[i + 64;32])
 \\
-    \xi&: \{0,1\}^{32} \times \{0,1\}^{32} \rightarrow \mathbb{Z}
+    \xi&: \bin^{32} \times \bin^{32} \rightarrow \ZZ
 \\
     \xi(K, m) &= (\intify(K) + \intify(m)) \mod 2^{32}
 \end{align*}
@@ -852,14 +857,14 @@ Here $m[a;l]$ refers to the subsequence of $m$ of length $l$ starting at $a$, $\
 sequence of bits to an integer in little-endian fashion, and $y = \fromint_l(x)$ is the unique
 $l$-bit sequence such that $\intify(y) \equiv x \;(\textrm{mod}\;2^l)$.
 \cite{nh} shows that for equal-length
-messages this function is $\epsilon$-almost-$\Delta$-universal on $(\mathbb{Z}/2^{64}\mathbb{Z})^4$
+messages this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{64}\ZZ)^4$
 with $\epsilon = 2^{-128}$.
 
 \subsection{Poly1305}
 
 Where we refer to Poly1305 here, we mean specifically the $\epsilon$A$\Delta$U polynomial function
-$\Polydjb: \{0,1\}^{128} \times \{0,1\}^* \rightarrow \{0,1\}^n$
-based on the finite field $\mathbb{Z}/(2^{130}-5)\mathbb{Z}$, which is defined in \cite{poly1305}
+$\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^n$
+based on the finite field $\ZZ/(2^{130}-5)\ZZ$, which is defined in \cite{poly1305}
 and used to build a MAC which combines this function with the use of AES.
 RFC 7539~\cite{RFC7539} takes this
 $\epsilon$A$\Delta$U polynomial function and
@@ -867,7 +872,7 @@ uses it without AES to build an AEAD mode based on ChaCha20.
 Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
 $2^{22}$ keys and the effective keyspace is $2^{106}$.
 The output group for which the $\epsilon$A$\Delta$U property applies is
-$\mathbb{Z}/2^{128}\mathbb{Z}$, so we define
+$\ZZ/2^{128}\ZZ$, so we define
 
 \begin{align*}
     x \boxplus y &= \fromint_{128}(\intify(x) + \intify(y)) \\
