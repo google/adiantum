@@ -874,9 +874,9 @@ $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 \subsection{HPolyC hashing}
 HPolyC was the HBSH construction that the first revision of this paper presented, which used
 Poly1305 together with an injective encoding function.
-It is simple, fast, and highly key agile. We require that $0 \leq |T| < 2^{32}$ and define
+It is simple, fast, and highly key agile. We require that $|T| < 2^{32}$ and define
 \begin{align*}
-H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{n}(\intify_{32}(|T|) || T) || M)
+H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || M)
 \end{align*}
 
 Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
@@ -885,81 +885,82 @@ $\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
 \subsection{NH}
 
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial. One of the fastest hash functions in software is NH.
+crucial. One of the fastest such functions in software is NH.
 We define a word size $w = 32$, a stride $s = 2$,
-a number of rounds $r = 4$ and an input size multiplier $u = 16$; NH is then defined over message
-lengths $\{2sw = 128, 2(2sw), \ldots, 2usw = 2048\}$
-and takes a key of length $2sw(u + r -1) = 2432$ to produce
-an output of length $2rw = 256$.
+a number of rounds $r = 4$ and an input size multiplier $u = 16$.
+
+NH is then defined over message
+lengths divisible by $2sw = 128$
+and takes a key of length $2sw(u + r -1) = 2432$, processing the message
+in $2usw = 2048$-bit chunks to produce
+an output of size $2rw\ceil{|M|/2usw}$.
 
 \begin{algorithmic}[0]
     \Procedure{NH}{$K, M$}
     \State $h \gets \lambda$
-    \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
-        \State $p \gets 0$
-        \For {$j \gets 0, 2sw, \ldots, |M|-2sw$}
-            \For {$k \gets 0, w, \ldots, w(s-1)$}
-                \State $a_0 \gets \intify(K[i+j+k;w])$
-                \State $a_1 \gets \intify(K[i+j+k+sw;w])$
-                \State $b_0 \gets \intify(M[j+k;w])$
-                \State $b_1 \gets \intify(M[j+k+sw;w])$
-                \State $p \gets p + (a_0 + b_0)(a_1 + b_1)$
+    \While {$M \neq \lambda$}
+        \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
+            \State $p \gets 0$
+            \For {$j \gets 0, 2sw, \ldots, \min{(|M|, 2usw)}-2sw$}
+                \For {$k \gets 0, w, \ldots, w(s-1)$}
+                    \State $a_0 \gets \intify(K[i+j+k;w])$
+                    \State $a_1 \gets \intify(K[i+j+k+sw;w])$
+                    \State $b_0 \gets \intify(M[j+k;w])$
+                    \State $b_1 \gets \intify(M[j+k+sw;w])$
+                    \State $p \gets p + (a_0 + b_0)(a_1 + b_1)$
+                \EndFor
             \EndFor
+            \State $h \gets h || \fromint_{2w}(p)$
         \EndFor
-        \State $h \gets h || \fromint_{2w}(p)$
-    \EndFor
+        \If {$|M| \leq 2usw$}
+            \State $M \gets \lambda$
+        \Else
+            \State $M \gets M[2usw;|M| - 2usw]$
+        \EndIf
+    \EndWhile
     \State \textbf{return} $h$
     \EndProcedure
 \end{algorithmic}
 
+\cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{2w}\ZZ)^r$.
 
-\cite{nh} shows that for equal-length
-messages this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{2w}\ZZ)^r$
-with $\epsilon = 2^{-wr}$.
+NH has several
+inconvenient properties that require a second hashing stage to address:
+\begin{itemize}
+    \item NH's $\epsilon$A$\Delta$U property holds only over equal-length inputs
+    \item NH accepts only inputs whose length is a multiple of $2sw$ bits
+    \item The output size varies with the input size
+    \item $\epsilon = 2^{-wr}$, but the smallest nonempty output is $2wr$ bits, twice as large
+        as necessary for this $\epsilon$ value.
+\end{itemize}
 
 \subsection{Adiantum hashing}
 
-NH has various properties
-(issues handling variable length messages, double-sized output) which mean it is generally used
-with a second stage of hashing.
-In addition the HBSH construction requires a hash function which takes two variable-length inputs.
 For Adiantum we use NH followed by Poly1305; this
-takes a $128 + 2432 = 2560$-bit key.
-We break the message into 256-byte chunks, padding the last chunk with zeroes to the
-nearest 16-byte boundary, and compress each chunk down to 32 bytes with NH.
-We then hash with Poly1305 first the lengths of the tweak and the message, followed by the tweak,
-followed by padding to a Poly1305 boundary, followed by the NH-compressed chunks of the message
-itself.
+takes a $128 + 2432 = 2560$-bit key. We require that $|T|, |M| < 2^{64}$.
 
 \begin{algorithmic}[0]
     \Procedure{H}{$K_H,T,M$}
     \State $K_0 \gets K_H[0;128]$
     \State $K_1 \gets K_H[128;2432]$
-    \State $B \gets \pad_{128}(\fromint_{64}(|T|) || \fromint_{64}(|M|) || T)$
-    \If {$M \neq \lambda$}
-        \State $M_0 || M_1 || \ldots || M_l \gets M$ ($|M_i|=2048$ for $i=0\ldots l-1$, $0 < |M_l| \leq 2048$)
-        \State $M_l \gets \pad_{128}(M_l)$
-        \For {$i \gets 0\ldots l$}
-            \State $B \gets B || \NH_{K_1}(M_i)$
-        \EndFor
-    \EndIf
-    \State \textbf{return} $\Polydjb_{K_0}(B)$
+    \State $B \gets \fromint_{64}(|T|) || \fromint_{64}(|M|)$
+    \State \textbf{return} $\Polydjb_{K_0}(B || \pad_{128}(T) || \NH_{K_1}(\pad_{128}(M)))$
     \EndProcedure
 \end{algorithmic}
 
 For distinct pairs $(T,M) \neq (T', M')$, we have that if $|T| \neq |T'|$, $|M| \neq |M'|$, or
 $T \neq T'$, then the inputs to Poly1305 will differ. If none of these hold then we have that
-$M \neq M'$, and they must differ in some chunk input to NH.
-Per \cite{nh} we have that the probability NH will compress these to the same value is at most
+$|M| = |M'|$ but $M \neq M'$;
+per \cite{nh} we have that the probability NH will compress these to the same value is at most
 $2^{-128}$. The input to Poly1305 is $l_H = 1 + \ceil{|T|/128} + 2\ceil{|M|/2048}$ 16-byte chunks
 long, and per \cite{poly1305} Poly1305 is $\epsilon$-almost-$\Delta$-universal with
 $\epsilon = 2^{-103}l_H$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
 with $\epsilon = 2^{-128} + 2^{-103}l_H$.
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
-at most $l_T$ and a message of length at most $l_M$, their distinguishing advantage
+at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, their distinguishing advantage
 is therefore at most
-$( 2^{-128} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_M - 128)/2048}))\binom{q}{2}
+$( 2^{-128} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_P - 128)/2048}))\binom{q}{2}
  + 3(2^{-n})\binom{q}{2}
 + \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
 + \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')]$.
