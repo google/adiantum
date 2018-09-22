@@ -288,6 +288,8 @@ Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 $|X|$ represents the length of $X \in \bin^{*}$ in bits.
 $Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
+$\pad_l(X) = X||0^v$
+where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
 $X \arrowoplus Y$ is $X \oplus Y[0;|X|]$.
 $||$ represents concatenation, and $\lambda$ the empty string.
 $\boxplus$ represents addition in a group which depends
@@ -313,13 +315,14 @@ to construct XChaCha12 which extends the nonce to 192 bits
 and Monocypher~\cite{monocypher} do
 with ChaCha20). From here we construct a function that takes a variable-length nonce of up to
 191 bits by padding with a 1 followed by zeroes:
-$S_{K_S}(C_M) = \XChaCha12_{K_S}(C_M || 1 || 0^{191-|C_M|})$. For a
+$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
 therefore require that the plaintext length be within the bounds
 $n \leq |P| \leq l_S + n$.
 
 \subsection{Hash}
-$H_{K_H}$ is a $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
+$H: \mathcal{K}_S \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
+is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
 HPolyC and Adiantum differ only in their choice of hash function, as described in \autoref{hashing}.
@@ -379,7 +382,7 @@ included in the input.
 
 For Adiantum, the
 main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
-most of which is NH's 304-byte key. 
+most of which is NH's 304-byte key.
 Another cost is the AES key schedule;
 if the hash is to be calculated in parallel, it can also
 be useful to cache powers of the hash key.
@@ -621,8 +624,8 @@ $H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since Adiantum and HPolyC b
 on the maximum length of the message and tweak we allow the attacker to query for, as
 discussed in \autoref{hashing}.}:
 for any $g \in \bin^n$ and
-any two distinct messages $(T, m) \neq (T', m')$
-$\probsub{K_H \sample \mathcal{K}_H}{H_{K_H}(T, m) \boxminus H_{K_H}(T', m') = g} \leq \epsilon$.
+any two distinct messages $(T, M) \neq (T', M')$,
+$\probsub{K_H \sample \mathcal{K}_H}{H_{K_H}(T, M) \boxminus H_{K_H}(T', M') = g} \leq \epsilon$.
 
 We use this to bound the probability that the attacker will cause an
 ``inner collision''---a query to the inner part which doesn't meet the constraints described
@@ -703,7 +706,7 @@ Substitute this with the last experiment, \xprm{innerpart}{halfrf}:
     \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
     \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
     \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
-    \item $\calD_T = \calE_T^{-1} = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T} = \calE_T^{-1}$
 \end{itemize}
 
 Given any attacker for this experiment,
@@ -827,17 +830,19 @@ the advantage in distinguishing HBSH from a family of random permutations is at 
 \appendix
 \section{$\epsilon$A$\Delta$U functions for HBSH}\label{hashing}
 
-Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function.
-In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|P|, |C|$.
+Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
+$H_{K_H}(T, M)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|M|$.
+If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext length of
+$|T| \leq l_T$, $|P|, |C| \leq l_P$
+then the bounds on queries to $H$ will be $|T| \leq l_T$, $|M| \leq l_M = l_P - n$.
 
 \subsection{Notation}
 
 $\intify: \bin^{*} \rightarrow \ZZ$ is the
 standard little-endian map
-(ie $\intify(\lambda) = 0$, $\intify(0 || x) = 2\intify(x)$, $\intify(1 || x) = 1 + 2\intify(x)$),
-and $Y = \fromint_l(x)$ is the unique
-$l$-bit sequence such that $\intify(Y) \equiv x \;(\textrm{mod}\;2^l)$. $\pad_l(X) = X||0^v$ where 
-where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
+(ie $\intify(\lambda) = 0$, $\intify(0 || X) = 2\intify(X)$, $\intify(1 || X) = 1 + 2\intify(X)$),
+and $X = \fromint_l(y)$ is the unique
+$l$-bit sequence such that $\intify(X) \equiv y \;(\textrm{mod}\;2^l)$.
 
 For both Adiantum and HPolyC,
 the output group for which the $\epsilon$A$\Delta$U property applies is
@@ -853,16 +858,16 @@ $\ZZ/2^{128}\ZZ$, so we define
 \cite{poly1305} uses polynomials over the finite field $\ZZ/(2^{130}-5)\ZZ$
 to define a function we call
 $\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$,
-and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any 
-$g \in \bin^{128}$ and any distinct messages $m, m'$ where $|m|, |m'| \leq L$, 
-$\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(m') \boxminus H_{K_H}(m) = g} \leq 2^{-103}\ceil{L/128}$.
-In that paper this function is used to build a MAC based on AES, while in 
+and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any
+$g \in \bin^{128}$ and any distinct messages $M, M'$ where $|M|, |M'| \leq l$,
+$\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^{-103}\ceil{l/128}$.
+In that paper this function is used to build a MAC based on AES, while in
 RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
 Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
 $2^{22}$ keys and the effective keyspace is $2^{106}$.
 
 Many Poly1305 libraries
-take parameters $K_H || g, m$ and return $g \boxplus \Polydjb_{K_H}(m)$; where subtraction
+take parameters $K_H || g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
 is needed we use bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
@@ -871,10 +876,10 @@ HPolyC was the HBSH construction that the first revision of this paper presented
 Poly1305 together with an injective encoding function.
 It is simple, fast, and highly key agile. We require that $0 \leq |T| < 2^{32}$ and define
 \begin{align*}
-H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{n}(\intify_{32}(|T|) || T) || L)
+H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{n}(\intify_{32}(|T|) || T) || M)
 \end{align*}
 
-Thus if for all queries $|T| \leq l_T$ and $|P|, |C| \leq l_M$ then 
+Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
 $\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
 
 \subsection{NH}
@@ -912,13 +917,13 @@ an output of length $2rw = 256$.
 messages this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{2w}\ZZ)^r$
 with $\epsilon = 2^{-wr}$.
 
-\subsection{NHPoly1305}\label{NHPoly1305}
+\subsection{Adiantum hashing}
 
 NH has various properties
 (issues handling variable length messages, double-sized output) which mean it is generally used
 with a second stage of hashing.
 In addition the HBSH construction requires a hash function which takes two variable-length inputs.
-For Adiantum we define a hash function NHPoly1305 which uses NH followed by Poly1305, and so
+For Adiantum we use NH followed by Poly1305; this
 takes a $128 + 2432 = 2560$-bit key.
 We break the message into 256-byte chunks, padding the last chunk with zeroes to the
 nearest 16-byte boundary, and compress each chunk down to 32 bytes with NH.
@@ -927,14 +932,14 @@ followed by padding to a Poly1305 boundary, followed by the NH-compressed chunks
 itself.
 
 \begin{algorithmic}[0]
-    \Procedure{NHPoly1305}{$K_H,T,M$}
+    \Procedure{H}{$K_H,T,M$}
     \State $K_0 \gets K_H[0;128]$
     \State $K_1 \gets K_H[128;2432]$
     \State $B \gets \pad_{128}(\fromint_{64}(|T|) || \fromint_{64}(|M|) || T)$
     \If {$M \neq \lambda$}
         \State $M_0 || M_1 || \ldots || M_l \gets M$ ($|M_i|=2048$ for $i=0\ldots l-1$, $0 < |M_l| \leq 2048$)
         \State $M_l \gets \pad_{128}(M_l)$
-        \ForAll {$i \in 0\ldots l$}
+        \For {$i \gets 0\ldots l$}
             \State $B \gets B || \NH_{K_1}(M_i)$
         \EndFor
     \EndIf
