@@ -13,7 +13,7 @@
 % limitations under the License.
 
 %%% script AUTHOR: Paul Crowley, Eric Biggers%%%
-%%% script TITLE: {HBSH} and {Adiantum}: length-preserving encryption for entry-level processors%%%
+%%% script TITLE: {HBSH}, {Adiantum} and {HPolyC}: length-preserving encryption for entry-level processors%%%
 
 \RequirePackage{etoolbox}
 \newtoggle{iacr}
@@ -85,7 +85,7 @@
 \newcommand*{\barE}{\overline{\calE}}
 \newcommand*{\barD}{\overline{\calD}}
 
-\title{{HBSH} and {Adiantum}: length-preserving encryption for entry-level processors}
+\title{{HBSH}, {Adiantum}, and {HPolyC}: length-preserving encryption for entry-level processors}
 \iftoggle{iacr}{
     \author{Paul~Crowley \and Eric~Biggers}
     \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
@@ -123,10 +123,10 @@
     quadratic advantage bound. Our composition Adiantum uses NH, Poly1305, XChaCha12,
     and a single AES invocation; on an ARM Cortex-A7 processor, Adiantum decrypts
     4096-byte messages at 11.8 cycles per byte, five times faster than
-    AES-256-XTS, with a constant-time implementation.
+    AES-256-XTS, with a constant-time implementation; the simpler HPolyC is slower but offers
+    greater key agility.
 \iftoggle{iacr}{
 }{
-
     This paper: \url{https://ia.cr/2018/720} \\
     Source: \url{https://github.com/google/hpolyc} \\
     Email: \href{mailto:paulcrowley@google.com,ebiggers@google.com}{\{paulcrowley,ebiggers\}@google.com}
@@ -885,7 +885,7 @@ $\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
 \subsection{NH}
 
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial. One of the fastest such functions in software is NH.
+crucial. One of the fastest such functions in software is NH~\cite{nh}.
 We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size multiplier $u = 16$.
 
@@ -922,17 +922,16 @@ an output of size $2rw\ceil{|M|/2usw}$.
     \EndProcedure
 \end{algorithmic}
 
-\cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal on $(\ZZ/2^{2w}\ZZ)^r$.
-
-NH has several
-inconvenient properties that require a second hashing stage to address:
+NH's speed comes with several inconvenent properties:
 \begin{itemize}
-    \item NH's $\epsilon$A$\Delta$U property holds only over equal-length inputs
-    \item NH accepts only inputs whose length is a multiple of $2sw$ bits
-    \item The output size varies with the input size
+    \item \cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
+        holds only over equal-length inputs
     \item $\epsilon = 2^{-wr}$, but the smallest nonempty output is $2wr$ bits, twice as large
-        as necessary for this $\epsilon$ value.
+        as necessary for this $\epsilon$ value
+    \item NH accepts only inputs whose length is a multiple of $2sw$ bits
+    \item The output size varies with the input size; a large compression ratio requires a large key.
 \end{itemize}
+A second hashing stage is used to handle these issues.
 
 \subsection{Adiantum hashing}
 
@@ -960,8 +959,7 @@ with $\epsilon = 2^{-128} + 2^{-103}l_H$.
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, their distinguishing advantage
 is therefore at most
-$( 2^{-128} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_P - 128)/2048}))\binom{q}{2}
- + 3(2^{-n})\binom{q}{2}
+$( 2^{-126} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_P - 128)/2048}))\binom{q}{2}
 + \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
 + \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')]$.
 
