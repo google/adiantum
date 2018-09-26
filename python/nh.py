@@ -38,7 +38,7 @@ class NH(cipher.Cipher):
             'passes': 4,
             'word_bytes': w32._word_bytes,
             'stride': 2,
-            'unitcount': 16}
+            'unitcount': 64}
 
     def lengths(self):
         v = self.variant
