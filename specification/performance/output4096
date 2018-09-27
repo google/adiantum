@@ -1,60 +1,5 @@
 make: 'cipherbench' is up to date.
-[  1%] /data/local/tmp/cipherbench
-[  3%] /data/local/tmp/cipherbench
-[  5%] /data/local/tmp/cipherbench
-[  7%] /data/local/tmp/cipherbench
-[  9%] /data/local/tmp/cipherbench
-[ 10%] /data/local/tmp/cipherbench
-[ 12%] /data/local/tmp/cipherbench
-[ 14%] /data/local/tmp/cipherbench
-[ 16%] /data/local/tmp/cipherbench
-[ 18%] /data/local/tmp/cipherbench
-[ 20%] /data/local/tmp/cipherbench
-[ 21%] /data/local/tmp/cipherbench
-[ 23%] /data/local/tmp/cipherbench
-[ 25%] /data/local/tmp/cipherbench
-[ 27%] /data/local/tmp/cipherbench
-[ 29%] /data/local/tmp/cipherbench
-[ 31%] /data/local/tmp/cipherbench
-[ 32%] /data/local/tmp/cipherbench
-[ 34%] /data/local/tmp/cipherbench
-[ 36%] /data/local/tmp/cipherbench
-[ 38%] /data/local/tmp/cipherbench
-[ 40%] /data/local/tmp/cipherbench
-[ 42%] /data/local/tmp/cipherbench
-[ 43%] /data/local/tmp/cipherbench
-[ 45%] /data/local/tmp/cipherbench
-[ 47%] /data/local/tmp/cipherbench
-[ 49%] /data/local/tmp/cipherbench
-[ 51%] /data/local/tmp/cipherbench
-[ 52%] /data/local/tmp/cipherbench
-[ 54%] /data/local/tmp/cipherbench
-[ 56%] /data/local/tmp/cipherbench
-[ 58%] /data/local/tmp/cipherbench
-[ 60%] /data/local/tmp/cipherbench
-[ 62%] /data/local/tmp/cipherbench
-[ 63%] /data/local/tmp/cipherbench
-[ 65%] /data/local/tmp/cipherbench
-[ 67%] /data/local/tmp/cipherbench
-[ 69%] /data/local/tmp/cipherbench
-[ 71%] /data/local/tmp/cipherbench
-[ 73%] /data/local/tmp/cipherbench
-[ 74%] /data/local/tmp/cipherbench
-[ 76%] /data/local/tmp/cipherbench
-[ 78%] /data/local/tmp/cipherbench
-[ 80%] /data/local/tmp/cipherbench
-[ 82%] /data/local/tmp/cipherbench
-[ 84%] /data/local/tmp/cipherbench
-[ 85%] /data/local/tmp/cipherbench
-[ 87%] /data/local/tmp/cipherbench
-[ 89%] /data/local/tmp/cipherbench
-[ 91%] /data/local/tmp/cipherbench
-[ 93%] /data/local/tmp/cipherbench
-[ 94%] /data/local/tmp/cipherbench
-[ 96%] /data/local/tmp/cipherbench
-[ 98%] /data/local/tmp/cipherbench
-[100%] /data/local/tmp/cipherbench
-cipherbench: 1 file pushed. 1.1 MB/s (3587484 bytes in 3.168s)
+cipherbench: 1 file pushed. 1.2 MB/s (2709672 bytes in 2.131s)
 Unable to open '/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor' for reading: No such file or directory
 Unable to open '/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor' for reading: No such file or directory
 Unable to open '/sys/devices/system/cpu/cpu3/cpufreq/scaling_governor' for reading: No such file or directory
@@ -66,158 +11,170 @@ Benchmark parameters:
 	bufsize		4096
 	ntries		25
 
-AES-128-XTS encryption (generic)              84.837 cpb (14031 KB/s)
-AES-128-XTS decryption (generic)              129.812 cpb (9170 KB/s)
-AES-128-XTS encryption (NEON)                 36.236 cpb (32850 KB/s)
-AES-128-XTS decryption (NEON)                 42.958 cpb (27711 KB/s)
+Adiantum-XChaCha20-AES encryption (generic)   40.528 cpb (29371 KB/s)
+Adiantum-XChaCha20-AES decryption (generic)   40.688 cpb (29257 KB/s)
+Adiantum-XChaCha20-AES encryption (NEON)      14.996 cpb (79381 KB/s)
+Adiantum-XChaCha20-AES decryption (NEON)      15.141 cpb (78620 KB/s)
 
-AES-256-XTS encryption (generic)              112.935 cpb (10540 KB/s)
-AES-256-XTS decryption (generic)              177.506 cpb (6706 KB/s)
-AES-256-XTS encryption (NEON)                 49.201 cpb (24194 KB/s)
-AES-256-XTS decryption (NEON)                 58.883 cpb (20216 KB/s)
+Adiantum-XChaCha12-AES encryption (generic)   32.243 cpb (36919 KB/s)
+Adiantum-XChaCha12-AES decryption (generic)   32.401 cpb (36740 KB/s)
+Adiantum-XChaCha12-AES encryption (NEON)      10.826 cpb (109961 KB/s)
+Adiantum-XChaCha12-AES decryption (NEON)      10.982 cpb (108392 KB/s)
 
-ChaCha20 encryption (generic)                 29.479 cpb (40381 KB/s)
-ChaCha20 decryption (generic)                 29.479 cpb (40381 KB/s)
-ChaCha20 encryption (NEON)                    11.260 cpb (105718 KB/s)
-ChaCha20 decryption (NEON)                    11.261 cpb (105713 KB/s)
+Adiantum-XChaCha8-AES encryption (generic)    28.124 cpb (42327 KB/s)
+Adiantum-XChaCha8-AES decryption (generic)    28.281 cpb (42092 KB/s)
+Adiantum-XChaCha8-AES encryption (NEON)        8.829 cpb (134826 KB/s)
+Adiantum-XChaCha8-AES decryption (NEON)        8.979 cpb (132573 KB/s)
 
-ChaCha20-MEM encryption (generic)             32.779 cpb (36315 KB/s)
-ChaCha20-MEM decryption (generic)             28.666 cpb (41526 KB/s)
-ChaCha20-MEM encryption (NEON)                12.233 cpb (97308 KB/s)
-ChaCha20-MEM decryption (NEON)                12.468 cpb (95475 KB/s)
+AES-128-XTS encryption (generic)              100.654 cpb (11826 KB/s)
+AES-128-XTS decryption (generic)              129.459 cpb (9195 KB/s)
+AES-128-XTS encryption (NEON)                 36.258 cpb (32830 KB/s)
+AES-128-XTS decryption (NEON)                 42.933 cpb (27727 KB/s)
 
-ChaCha12 encryption (generic)                 20.649 cpb (57649 KB/s)
-ChaCha12 decryption (generic)                 20.649 cpb (57649 KB/s)
-ChaCha12 encryption (NEON)                     7.172 cpb (165981 KB/s)
-ChaCha12 decryption (NEON)                     7.172 cpb (165981 KB/s)
+AES-256-XTS encryption (generic)              138.806 cpb (8575 KB/s)
+AES-256-XTS decryption (generic)              180.330 cpb (6601 KB/s)
+AES-256-XTS encryption (NEON)                 49.251 cpb (24169 KB/s)
+AES-256-XTS decryption (NEON)                 58.885 cpb (20215 KB/s)
 
-ChaCha12-MEM encryption (generic)             23.826 cpb (49962 KB/s)
-ChaCha12-MEM decryption (generic)             21.279 cpb (55942 KB/s)
-ChaCha12-MEM encryption (NEON)                 7.989 cpb (149006 KB/s)
-ChaCha12-MEM decryption (NEON)                 8.108 cpb (146814 KB/s)
+ChaCha20 encryption (generic)                 24.300 cpb (48986 KB/s)
+ChaCha20 decryption (generic)                 24.300 cpb (48986 KB/s)
+ChaCha20 encryption (NEON)                    11.160 cpb (106663 KB/s)
+ChaCha20 decryption (NEON)                    11.160 cpb (106664 KB/s)
 
-ChaCha8 encryption (generic)                  16.260 cpb (73208 KB/s)
-ChaCha8 decryption (generic)                  16.260 cpb (73209 KB/s)
-ChaCha8 encryption (NEON)                      5.139 cpb (231620 KB/s)
-ChaCha8 decryption (NEON)                      5.139 cpb (231623 KB/s)
+ChaCha20-MEM encryption (generic)             24.874 cpb (47856 KB/s)
+ChaCha20-MEM decryption (generic)             27.283 cpb (43631 KB/s)
+ChaCha20-MEM encryption (NEON)                12.262 cpb (97083 KB/s)
+ChaCha20-MEM decryption (NEON)                12.489 cpb (95315 KB/s)
 
-ChaCha8-MEM encryption (generic)              19.335 cpb (61567 KB/s)
-ChaCha8-MEM decryption (generic)              17.647 cpb (67454 KB/s)
-ChaCha8-MEM encryption (NEON)                  5.895 cpb (201945 KB/s)
-ChaCha8-MEM decryption (NEON)                  5.975 cpb (199216 KB/s)
+ChaCha12 encryption (generic)                 16.157 cpb (73678 KB/s)
+ChaCha12 decryption (generic)                 16.157 cpb (73678 KB/s)
+ChaCha12 encryption (NEON)                     7.086 cpb (167992 KB/s)
+ChaCha12 decryption (NEON)                     7.086 cpb (167994 KB/s)
 
-CHAM128/128-XTS encryption (generic)          58.306 cpb (20416 KB/s)
-CHAM128/128-XTS decryption (generic)          55.742 cpb (21355 KB/s)
-CHAM128/128-XTS encryption (NEON)             20.766 cpb (57325 KB/s)
-CHAM128/128-XTS decryption (NEON)             20.832 cpb (57143 KB/s)
+ChaCha12-MEM encryption (generic)             16.600 cpb (71710 KB/s)
+ChaCha12-MEM decryption (generic)             18.007 cpb (66109 KB/s)
+ChaCha12-MEM encryption (NEON)                 8.065 cpb (147604 KB/s)
+ChaCha12-MEM decryption (NEON)                 8.197 cpb (145218 KB/s)
 
-CHAM128/256-XTS encryption (generic)          66.764 cpb (17829 KB/s)
-CHAM128/256-XTS decryption (generic)          63.821 cpb (18652 KB/s)
+ChaCha8 encryption (generic)                  12.079 cpb (98551 KB/s)
+ChaCha8 decryption (generic)                  12.079 cpb (98551 KB/s)
+ChaCha8 encryption (NEON)                      5.063 cpb (235131 KB/s)
+ChaCha8 decryption (NEON)                      5.063 cpb (235128 KB/s)
 
-Chaskey-LTS-XTS encryption (generic)          24.263 cpb (49062 KB/s)
-Chaskey-LTS-XTS decryption (generic)          30.328 cpb (39250 KB/s)
-Chaskey-LTS-XTS encryption (NEON)             11.050 cpb (107728 KB/s)
-Chaskey-LTS-XTS decryption (NEON)             11.185 cpb (106423 KB/s)
+ChaCha8-MEM encryption (generic)              12.474 cpb (95428 KB/s)
+ChaCha8-MEM decryption (generic)              13.379 cpb (88975 KB/s)
+ChaCha8-MEM encryption (NEON)                  5.973 cpb (199306 KB/s)
+ChaCha8-MEM decryption (NEON)                  6.059 cpb (196479 KB/s)
 
-Adiantum-XChaCha20-AES encryption (generic)   59.835 cpb (19894 KB/s)
-Adiantum-XChaCha20-AES decryption (generic)   60.093 cpb (19809 KB/s)
-Adiantum-XChaCha20-AES encryption (NEON)      15.676 cpb (75939 KB/s)
-Adiantum-XChaCha20-AES decryption (NEON)      16.124 cpb (73825 KB/s)
+CHAM128/128-XTS encryption (generic)          53.018 cpb (22452 KB/s)
+CHAM128/128-XTS decryption (generic)          48.090 cpb (24753 KB/s)
+CHAM128/128-XTS encryption (NEON)             20.780 cpb (57285 KB/s)
+CHAM128/128-XTS decryption (NEON)             20.780 cpb (57286 KB/s)
 
-Adiantum-XChaCha12-AES encryption (generic)   50.850 cpb (23410 KB/s)
-Adiantum-XChaCha12-AES decryption (generic)   51.098 cpb (23296 KB/s)
-Adiantum-XChaCha12-AES encryption (NEON)      11.673 cpb (101979 KB/s)
-Adiantum-XChaCha12-AES decryption (NEON)      11.751 cpb (101302 KB/s)
+CHAM128/256-XTS encryption (generic)          63.546 cpb (18732 KB/s)
+CHAM128/256-XTS decryption (generic)          51.311 cpb (23199 KB/s)
 
-Adiantum-XChaCha8-AES encryption (generic)    46.351 cpb (25682 KB/s)
-Adiantum-XChaCha8-AES decryption (generic)    46.608 cpb (25540 KB/s)
-Adiantum-XChaCha8-AES encryption (NEON)        9.438 cpb (126134 KB/s)
-Adiantum-XChaCha8-AES decryption (NEON)        9.662 cpb (123209 KB/s)
+Chaskey-LTS-XTS encryption (generic)          12.134 cpb (98104 KB/s)
+Chaskey-LTS-XTS decryption (generic)          16.384 cpb (72656 KB/s)
+Chaskey-LTS-XTS encryption (NEON)             11.047 cpb (107753 KB/s)
+Chaskey-LTS-XTS decryption (NEON)             11.032 cpb (107903 KB/s)
 
-LEA-128-XTS encryption (generic)              42.510 cpb (28003 KB/s)
-LEA-128-XTS decryption (generic)              38.125 cpb (31223 KB/s)
-LEA-128-XTS encryption (NEON)                 15.374 cpb (77430 KB/s)
-LEA-128-XTS decryption (NEON)                 16.300 cpb (73031 KB/s)
+HPolyC-XChaCha20-AES encryption (generic)     45.289 cpb (26284 KB/s)
+HPolyC-XChaCha20-AES decryption (generic)     45.465 cpb (26182 KB/s)
+HPolyC-XChaCha20-AES encryption (NEON)        17.939 cpb (66357 KB/s)
+HPolyC-XChaCha20-AES decryption (NEON)        18.096 cpb (65782 KB/s)
 
-LEA-192-XTS encryption (generic)              50.644 cpb (23505 KB/s)
-LEA-192-XTS decryption (generic)              45.704 cpb (26045 KB/s)
-LEA-192-XTS encryption (NEON)                 18.408 cpb (64666 KB/s)
-LEA-192-XTS decryption (NEON)                 19.419 cpb (61301 KB/s)
+HPolyC-XChaCha12-AES encryption (generic)     37.030 cpb (32146 KB/s)
+HPolyC-XChaCha12-AES decryption (generic)     37.199 cpb (32000 KB/s)
+HPolyC-XChaCha12-AES encryption (NEON)        13.784 cpb (86361 KB/s)
+HPolyC-XChaCha12-AES decryption (NEON)        13.946 cpb (85356 KB/s)
 
-LEA-256-XTS encryption (generic)              55.431 cpb (21475 KB/s)
-LEA-256-XTS decryption (generic)              49.931 cpb (23840 KB/s)
-LEA-256-XTS encryption (NEON)                 20.782 cpb (57280 KB/s)
-LEA-256-XTS decryption (NEON)                 21.934 cpb (54272 KB/s)
+HPolyC-XChaCha8-AES encryption (generic)      32.887 cpb (36197 KB/s)
+HPolyC-XChaCha8-AES decryption (generic)      33.042 cpb (36027 KB/s)
+HPolyC-XChaCha8-AES encryption (NEON)         11.788 cpb (100984 KB/s)
+HPolyC-XChaCha8-AES decryption (NEON)         11.944 cpb (99662 KB/s)
 
-NH hashing (generic)                          13.476 cpb (88335 KB/s)
-NH hashing (NEON)                              1.492 cpb (797664 KB/s)
+LEA-128-XTS encryption (generic)              26.500 cpb (44921 KB/s)
+LEA-128-XTS decryption (generic)              26.438 cpb (45026 KB/s)
+LEA-128-XTS encryption (NEON)                 15.292 cpb (77845 KB/s)
+LEA-128-XTS decryption (NEON)                 16.132 cpb (73791 KB/s)
 
-NOEKEON-XTS encryption (generic)              51.043 cpb (23321 KB/s)
-NOEKEON-XTS decryption (generic)              51.054 cpb (23316 KB/s)
-NOEKEON-XTS encryption (NEON)                 26.954 cpb (44164 KB/s)
-NOEKEON-XTS decryption (NEON)                 27.039 cpb (44025 KB/s)
+LEA-192-XTS encryption (generic)              40.075 cpb (29704 KB/s)
+LEA-192-XTS decryption (generic)              40.325 cpb (29520 KB/s)
+LEA-192-XTS encryption (NEON)                 18.354 cpb (64857 KB/s)
+LEA-192-XTS decryption (NEON)                 19.341 cpb (61547 KB/s)
 
-Poly1305 hashing (generic)                    10.435 cpb (114082 KB/s)
-Poly1305 hashing (NEON)                        2.947 cpb (403941 KB/s)
+LEA-256-XTS encryption (generic)              44.974 cpb (26468 KB/s)
+LEA-256-XTS decryption (generic)              45.362 cpb (26241 KB/s)
+LEA-256-XTS encryption (NEON)                 20.636 cpb (57685 KB/s)
+LEA-256-XTS decryption (NEON)                 21.769 cpb (54683 KB/s)
 
-RC5-64/12/128-XTS encryption (generic)        38.787 cpb (30690 KB/s)
-RC5-64/12/128-XTS decryption (generic)        39.428 cpb (30191 KB/s)
-RC5-64/12/128-XTS encryption (NEON)           14.127 cpb (84266 KB/s)
-RC5-64/12/128-XTS decryption (NEON)           15.933 cpb (74714 KB/s)
+NH hashing (generic)                           7.218 cpb (164921 KB/s)
+NH hashing (NEON)                              1.308 cpb (910050 KB/s)
 
-RC5-128/12/256-XTS encryption (generic)       64.844 cpb (18357 KB/s)
-RC5-128/12/256-XTS decryption (generic)       66.480 cpb (17906 KB/s)
-RC5-128/12/256-XTS encryption (NEON)          14.212 cpb (83761 KB/s)
-RC5-128/12/256-XTS decryption (NEON)          15.863 cpb (75043 KB/s)
+NOEKEON-XTS encryption (generic)              36.805 cpb (32343 KB/s)
+NOEKEON-XTS decryption (generic)              36.432 cpb (32674 KB/s)
+NOEKEON-XTS encryption (NEON)                 26.925 cpb (44211 KB/s)
+NOEKEON-XTS decryption (NEON)                 26.913 cpb (44231 KB/s)
 
-RC5-64/20/128-XTS encryption (generic)        50.827 cpb (23420 KB/s)
-RC5-64/20/128-XTS decryption (generic)        51.452 cpb (23136 KB/s)
-RC5-64/20/128-XTS encryption (NEON)           22.131 cpb (53787 KB/s)
-RC5-64/20/128-XTS decryption (NEON)           25.042 cpb (47536 KB/s)
+Poly1305 hashing (generic)                    10.017 cpb (118838 KB/s)
+Poly1305 hashing (NEON)                        2.943 cpb (404543 KB/s)
 
-RC5-128/20/256-XTS encryption (generic)       96.017 cpb (12397 KB/s)
-RC5-128/20/256-XTS decryption (generic)       98.650 cpb (12066 KB/s)
-RC5-128/20/256-XTS encryption (NEON)          22.288 cpb (53409 KB/s)
-RC5-128/20/256-XTS decryption (NEON)          25.033 cpb (47552 KB/s)
+RC5-64/12/128-XTS encryption (generic)        18.312 cpb (65007 KB/s)
+RC5-64/12/128-XTS decryption (generic)        23.823 cpb (49968 KB/s)
+RC5-64/12/128-XTS encryption (NEON)           14.079 cpb (84548 KB/s)
+RC5-64/12/128-XTS decryption (NEON)           15.783 cpb (75424 KB/s)
 
-RC6-XTS encryption (generic)                  39.745 cpb (29951 KB/s)
-RC6-XTS decryption (generic)                  39.618 cpb (30047 KB/s)
-RC6-XTS encryption (NEON)                     20.627 cpb (57709 KB/s)
-RC6-XTS decryption (NEON)                     23.532 cpb (50586 KB/s)
+RC5-128/12/256-XTS encryption (generic)       43.834 cpb (27156 KB/s)
+RC5-128/12/256-XTS decryption (generic)       50.165 cpb (23729 KB/s)
+RC5-128/12/256-XTS encryption (NEON)          14.157 cpb (84086 KB/s)
+RC5-128/12/256-XTS decryption (NEON)          15.758 cpb (75540 KB/s)
 
-Sparx128/128-XTS encryption (generic)         164.864 cpb (7220 KB/s)
-Sparx128/128-XTS decryption (generic)         183.907 cpb (6472 KB/s)
-Sparx128/128-XTS encryption (NEON)            28.143 cpb (42298 KB/s)
-Sparx128/128-XTS decryption (NEON)            28.506 cpb (41759 KB/s)
+RC5-64/20/128-XTS encryption (generic)        28.348 cpb (41992 KB/s)
+RC5-64/20/128-XTS decryption (generic)        36.857 cpb (32297 KB/s)
+RC5-64/20/128-XTS encryption (NEON)           22.054 cpb (53977 KB/s)
+RC5-64/20/128-XTS decryption (NEON)           24.882 cpb (47842 KB/s)
 
-Speck128/128-XTS encryption (generic)         49.280 cpb (24155 KB/s)
-Speck128/128-XTS decryption (generic)         50.718 cpb (23471 KB/s)
-Speck128/128-XTS encryption (NEON)            15.045 cpb (79122 KB/s)
-Speck128/128-XTS decryption (NEON)            15.086 cpb (78908 KB/s)
+RC5-128/20/256-XTS encryption (generic)       70.985 cpb (16769 KB/s)
+RC5-128/20/256-XTS decryption (generic)       81.312 cpb (14639 KB/s)
+RC5-128/20/256-XTS encryption (NEON)          22.208 cpb (53601 KB/s)
+RC5-128/20/256-XTS decryption (NEON)          24.871 cpb (47863 KB/s)
 
-Speck128/256-XTS encryption (generic)         51.828 cpb (22968 KB/s)
-Speck128/256-XTS decryption (generic)         53.392 cpb (22295 KB/s)
-Speck128/256-XTS encryption (NEON)            15.871 cpb (75005 KB/s)
-Speck128/256-XTS decryption (NEON)            15.867 cpb (75023 KB/s)
+RC6-XTS encryption (generic)                  26.899 cpb (44255 KB/s)
+RC6-XTS decryption (generic)                  33.093 cpb (35971 KB/s)
+RC6-XTS encryption (NEON)                     20.499 cpb (58071 KB/s)
+RC6-XTS decryption (NEON)                     23.354 cpb (50972 KB/s)
 
-Speck64/128-XTS encryption (generic)          39.313 cpb (30279 KB/s)
-Speck64/128-XTS decryption (generic)          45.693 cpb (26052 KB/s)
-Speck64/128-XTS encryption (NEON)             12.625 cpb (94290 KB/s)
-Speck64/128-XTS decryption (NEON)             12.965 cpb (91813 KB/s)
+Sparx128/128-XTS encryption (generic)         158.568 cpb (7507 KB/s)
+Sparx128/128-XTS decryption (generic)         172.825 cpb (6887 KB/s)
+Sparx128/128-XTS encryption (NEON)            28.147 cpb (42292 KB/s)
+Sparx128/128-XTS decryption (NEON)            28.420 cpb (41886 KB/s)
 
-Threefish-256 encryption (generic)            72.380 cpb (16446 KB/s)
-Threefish-256 decryption (generic)            82.727 cpb (14389 KB/s)
-Threefish-256 encryption (NEON)               22.549 cpb (52792 KB/s)
-Threefish-256 decryption (NEON)               22.629 cpb (52605 KB/s)
+Speck128/128-XTS encryption (generic)         36.962 cpb (32205 KB/s)
+Speck128/128-XTS decryption (generic)         36.586 cpb (32537 KB/s)
+Speck128/128-XTS encryption (NEON)            15.011 cpb (79303 KB/s)
+Speck128/128-XTS decryption (NEON)            15.011 cpb (79301 KB/s)
 
-Threefish-512 encryption (generic)            95.733 cpb (12434 KB/s)
-Threefish-512 decryption (generic)            100.388 cpb (11857 KB/s)
+Speck128/256-XTS encryption (generic)         39.096 cpb (30448 KB/s)
+Speck128/256-XTS decryption (generic)         38.721 cpb (30743 KB/s)
+Speck128/256-XTS encryption (NEON)            15.833 cpb (75186 KB/s)
+Speck128/256-XTS decryption (NEON)            15.833 cpb (75185 KB/s)
 
-XTEA-XTS encryption (generic)                 108.963 cpb (10924 KB/s)
-XTEA-XTS decryption (generic)                 101.063 cpb (11778 KB/s)
-XTEA-XTS encryption (NEON)                    28.756 cpb (41396 KB/s)
-XTEA-XTS decryption (NEON)                    28.834 cpb (41284 KB/s)
+Speck64/128-XTS encryption (generic)          16.437 cpb (72421 KB/s)
+Speck64/128-XTS decryption (generic)          23.187 cpb (51339 KB/s)
+Speck64/128-XTS encryption (NEON)             12.601 cpb (94466 KB/s)
+Speck64/128-XTS decryption (NEON)             12.812 cpb (92910 KB/s)
 
-Unable to open '/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor' for reading: No such file or directory
-Unable to open '/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor' for reading: No such file or directory
-Unable to open '/sys/devices/system/cpu/cpu3/cpufreq/scaling_governor' for reading: No such file or directory
+Threefish-256 encryption (generic)            50.935 cpb (23370 KB/s)
+Threefish-256 decryption (generic)            54.059 cpb (22020 KB/s)
+Threefish-256 encryption (NEON)               22.549 cpb (52791 KB/s)
+Threefish-256 decryption (NEON)               22.548 cpb (52793 KB/s)
+
+Threefish-512 encryption (generic)            67.470 cpb (17643 KB/s)
+Threefish-512 decryption (generic)            71.880 cpb (16560 KB/s)
+
+XTEA-XTS encryption (generic)                 78.775 cpb (15111 KB/s)
+XTEA-XTS decryption (generic)                 74.775 cpb (15919 KB/s)
+XTEA-XTS encryption (NEON)                    28.625 cpb (41586 KB/s)
+XTEA-XTS decryption (NEON)                    28.655 cpb (41542 KB/s)
+

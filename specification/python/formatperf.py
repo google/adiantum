@@ -32,6 +32,7 @@ def gen_interesting():
        yield f"{b}-XTS"
     for r in [8, 12, 20]:
         yield f"ChaCha{r}"
+        yield f"HPolyC-XChaCha{r}-AES"
         yield f"Adiantum-XChaCha{r}-AES"
 
 interesting = set(gen_interesting())
