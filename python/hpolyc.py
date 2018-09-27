@@ -18,7 +18,7 @@ import poly1305
 class HPolyC(hbsh.HBSH):
     def _setup_key(self, key):
         self._stream_key = key
-        r, self._block_key = self._setup_key_helper([16, 32])
+        self._block_key, r = self._setup_key_helper([32, 16])
         self._polyr = poly1305.read_r(r)
 
     def _hash(self, tweak, msg):
