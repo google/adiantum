@@ -887,12 +887,12 @@ $\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
 crucial. One of the fastest such functions in software is NH~\cite{nh}.
 We define a word size $w = 32$, a stride $s = 2$,
-a number of rounds $r = 4$ and an input size multiplier $u = 16$.
+a number of rounds $r = 4$ and an input size multiplier $u = 64$.
 
 NH is then defined over message
 lengths divisible by $2sw = 128$
-and takes a key of length $2sw(u + r -1) = 2432$, processing the message
-in $2usw = 2048$-bit chunks to produce
+and takes a key of length $2sw(u + r -1) = 8576$, processing the message
+in $2usw = 8192$-bit chunks to produce
 an output of size $2rw\ceil{|M|/2usw}$.
 
 \begin{algorithmic}[0]
@@ -935,33 +935,44 @@ A second hashing stage is used to handle these issues.
 
 \subsection{Adiantum hashing}
 
-For Adiantum we use NH followed by Poly1305; this
-takes a $128 + 2432 = 2560$-bit key. We require that $|T|, |M| < 2^{64}$.
+For Adiantum we use NH followed by Poly1305 to consume the message. In addition, we avoid
+encoding and padding issues by using multiple Poly1305 keys for different tasks.
+In all this takes a $128 + 128 + 8576 = 8832$-bit key.
 
 \begin{algorithmic}[0]
     \Procedure{H}{$K_H,T,M$}
-    \State $K_0 \gets K_H[0;128]$
-    \State $K_1 \gets K_H[128;2432]$
-    \State $B \gets \fromint_{64}(|T|) || \fromint_{64}(|M|)$
-    \State \textbf{return} $\Polydjb_{K_0}(B || \pad_{128}(T) || \NH_{K_1}(\pad_{128}(M)))$
+    \State $K_T \gets K_H[0;128]$
+    \State $K_M \gets K_H[128;128]$
+    \State $K_N \gets K_H[256;8576]$
+    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|M|) || T)$
+    \State $H_M \gets \Polydjb_{K_M}(\NH_{K_N}(\pad_{128}(M)))$
+    \State \textbf{return} $H_T \boxplus H_M$
     \EndProcedure
 \end{algorithmic}
 
-For distinct pairs $(T,M) \neq (T', M')$, we have that if $|T| \neq |T'|$, $|M| \neq |M'|$, or
-$T \neq T'$, then the inputs to Poly1305 will differ. If none of these hold then we have that
-$|M| = |M'|$ but $M \neq M'$;
-per \cite{nh} we have that the probability NH will compress these to the same value is at most
-$2^{-128}$. The input to Poly1305 is $l_H = 1 + \ceil{|T|/128} + 2\ceil{|M|/2048}$ 16-byte chunks
-long, and per \cite{poly1305} Poly1305 is $\epsilon$-almost-$\Delta$-universal with
-$\epsilon = 2^{-103}l_H$. Our composition is therefore $\epsilon$-almost-$\Delta$-universal
-with $\epsilon = 2^{-128} + 2^{-103}l_H$.
+For distinct pairs $(T,M) \neq (T', M')$, we have that if $|M| \neq |M'|$ or $T \neq T'$,
+then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
+Otherwise $|M| = |M'|$ but $M \neq M'$;
+per \cite{nh} the probability NH will compress these to the same value is at most
+$2^{-128}$. If they do not collide, the $256\ceil{|M|/2048}$-bit input to Poly1305 with key $K_M$
+will differ. Since the sum of two $\epsilon$A$\Delta$U with independent keys is also
+$\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
+this composition is  $\epsilon$A$\Delta$U, with:
+
+\begin{align*}
+\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_M/2048})/128}  \\
+&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_M/2048})
+\end{align*}
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, their distinguishing advantage
-is therefore at most
-$( 2^{-126} + 2^{-103}(1 + \ceil{l_T/128} + 2\ceil{(l_P - 128)/2048}))\binom{q}{2}
-+ \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
-+ \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')]$.
+is therefore at most:
+
+\begin{align*}
+&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/2048}))\binom{q}{2} \\
++& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')] \\
+\end{align*}
 
 Version: \texttt{\input{work/git.tex}}
 \end{document}
