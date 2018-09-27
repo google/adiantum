@@ -127,6 +127,7 @@
     greater key agility.
 \iftoggle{iacr}{
 }{
+
     This paper: \url{https://ia.cr/2018/720} \\
     Source: \url{https://github.com/google/hpolyc} \\
     Email: \href{mailto:paulcrowley@google.com,ebiggers@google.com}{\{paulcrowley,ebiggers\}@google.com}
@@ -215,7 +216,6 @@ AES for the single blockcipher application. Adiantum:
 \begin{itemize}
     \item is a tweakable, variable-input-length, super-pseudorandom permutation
     \item has a security bound quadratic in the number of queries and linear in message length
-    \item is key agile
     \item is highly parallelizable
     \item needs only three passes over the bulk of the data, or
         two if the XOR is combined with the second hash.
@@ -331,8 +331,8 @@ $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
-$K_E || K_H \ldots = S_{K_S}(\lambda)$.\footnote{In the original
-version of this paper, HPolyC used $K_H || K_E \ldots = S_{K_S}(\lambda)$.}
+$K_E || K_H || \ldots = S_{K_S}(\lambda)$.\footnote{In the original
+version of this paper, HPolyC used $K_H || K_E || \ldots = S_{K_S}(\lambda)$.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design}
@@ -381,8 +381,8 @@ applied in this domain is an open problem. Users must take care to protect the k
 included in the input.
 
 For Adiantum, the
-main cost of a new key is the call to XChaCha12 to calculate the 336 bytes of subkey needed,
-most of which is NH's 304-byte key.
+main cost of a new key is the call to XChaCha12 to calculate the 1136 bytes of subkey needed,
+most of which is NH's 1072-byte key.
 Another cost is the AES key schedule;
 if the hash is to be calculated in parallel, it can also
 be useful to cache powers of the hash key.
@@ -394,12 +394,14 @@ these are constant, the work of consuming these can be cached,
 saving one $\ZZ/(2^{130}-5)\ZZ$ multiplication (the core operation of Poly1305).
 Otherwise no extra work needs to be done for differing message or tweak lengths, unless
 new powers of the hash key are needed for parallelism. HPolyC does not need NH subkeys and
-so is more key agile, but has a slower hashing stage.
+so is much more key agile, but has a slower hashing stage for large inputs.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
 also has these properties, Adiantum and HPolyC will inherit security against
-this class of side-channel attacks.
+this class of side-channel attacks. We considered using UMAC directly rather than our combination
+of NH and Poly1305, but it is not naturally constant-time and a constant-time implementation
+would be noticeably slower.
 
 NH, Poly1305 and ChaCha12 are highly parallelizable.
 The stream cipher and second hash stages can also be run in combination for a total
@@ -407,6 +409,9 @@ of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
 which requires at least three.
 We put the ``special'' block on the right so that in typical uses the bulk encryption has
 the best alignment for fast operations.
+
+``Adiantum'' is the genus of maidenhair fern, which in the language of flowers signifies
+sincerity and discretion.~\cite{fleurs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performance}
@@ -468,12 +473,12 @@ instructions.
     \end{tabular}
 \end{table}
 
-Adiantum is the only algorithm in \autoref{performance} which is a tweakable
-super-pseudorandom permutation over the entire sector.  We expect any AES-based
+Adiantum and HPolyC are the only algorithms in \autoref{performance} that are tweakable
+super-pseudorandom permutations over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
 Adiantum has a larger per-message overhead than XTS; both require one
 extra block cipher invocation per message, but Adiantum must also perform one extra
-ChaCha permutation for the XChaCha construction and one extra Poly1305 block for the tweak.
+ChaCha permutation for the XChaCha construction.
 
 We conclude that for 4096-byte sectors, \mbox{Adiantum-XChaCha12-AES} can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
@@ -785,7 +790,7 @@ substitute a block cipher $E_{K_E}$ for $\pi$.
 By the standard argument
 for such a substitution, the advantage for this substitution is at most
 $\advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]$ where $t$ is a time bound on the attacker and
-$t' = t + \bigO{\sum_i |P^i| + |T^i|}$.
+$t' = t + \bigO{\sum_i \left( |P^i| + |T^i| \right)}$.
 
 \xprmtitle{composition}{xrf}: Use the random function $F_S$ to derive the keys
 $K_E$, $K_H$:
@@ -888,7 +893,7 @@ Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
 \subsection{NH}
 
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial. One of the fastest such functions in software is NH~\cite{nh}.
+crucial for large inputs. One of the fastest such functions in software is NH~\cite{nh}.
 We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size multiplier $u = 64$.
 
@@ -902,24 +907,21 @@ an output of size $2rw\ceil{|M|/2usw}$.
     \Procedure{NH}{$K, M$}
     \State $h \gets \lambda$
     \While {$M \neq \lambda$}
+        \State $l \gets \min{(|M|, 2usw)}$
         \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
             \State $p \gets 0$
-            \For {$j \gets 0, 2sw, \ldots, \min{(|M|, 2usw)}-2sw$}
+            \For {$j \gets 0, 2sw, \ldots, l-2sw$}
                 \For {$k \gets 0, w, \ldots, w(s-1)$}
                     \State $a_0 \gets \intify(K[i+j+k;w])$
                     \State $a_1 \gets \intify(K[i+j+k+sw;w])$
                     \State $b_0 \gets \intify(M[j+k;w])$
                     \State $b_1 \gets \intify(M[j+k+sw;w])$
-                    \State $p \gets p + (a_0 + b_0)(a_1 + b_1)$
+                    \State $p \gets p + ((a_0 + b_0) \bmod 2^w)((a_1 + b_1) \bmod 2^w)$
                 \EndFor
             \EndFor
             \State $h \gets h || \fromint_{2w}(p)$
         \EndFor
-        \If {$|M| \leq 2usw$}
-            \State $M \gets \lambda$
-        \Else
-            \State $M \gets M[2usw;|M| - 2usw]$
-        \EndIf
+        \State $M \gets M[l;|M| - l]$
     \EndWhile
     \State \textbf{return} $h$
     \EndProcedure
