@@ -13,7 +13,7 @@
 % limitations under the License.
 
 %%% script AUTHOR: Paul Crowley, Eric Biggers%%%
-%%% script TITLE: {Adiantum}, {HPolyC} and {HBSH}: length-preserving encryption for entry-level processors%%%
+%%% script TITLE: {Adiantum}: length-preserving encryption for entry-level processors%%%
 
 \RequirePackage{etoolbox}
 \newtoggle{iacr}
@@ -85,7 +85,7 @@
 \newcommand*{\barE}{\overline{\calE}}
 \newcommand*{\barD}{\overline{\calD}}
 
-\title{{Adiantum}, {HPolyC} and {HBSH}: length-preserving encryption for entry-level processors}
+\title{{Adiantum}: length-preserving encryption for entry-level processors}
 \iftoggle{iacr}{
     \author{Paul~Crowley \and Eric~Biggers}
     \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
@@ -389,12 +389,9 @@ be useful to cache powers of the hash key.
 ChaCha12 has no key schedule and makes no use of
 precomputation; XChaCha12 has a ``nonce scheduling'' step that
 must be called once to compute subkeys and once for each Adiantum encryption or decryption.
-The first 16-byte block consumed by Poly1305 contains the tweak and hash lengths; where
-these are constant, the work of consuming these can be cached,
-saving one $\ZZ/(2^{130}-5)\ZZ$ multiplication (the core operation of Poly1305).
-Otherwise no extra work needs to be done for differing message or tweak lengths, unless
+Almost no extra work needs to be done for differing message or tweak lengths, unless
 new powers of the hash key are needed for parallelism. HPolyC does not need NH subkeys and
-so is much more key agile, but has a slower hashing stage for large inputs.
+so is much more key agile, but its hashing stage is slower on large inputs.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
