@@ -812,17 +812,17 @@ substitute a stream cipher $S_{K_S}$ for the random function $F_S$
 This is HBSH. Taking into account the $|K_E| + |K_H|$-bit
 query to $S_{K_S}$ to derive $K_E$, $K_H$,
 by the standard argument the advantage for this substitution is at most
-$\advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]$ (where
-the first argument measures not queries but bits of output).
+$\advantage{\mathrm{prf}}{S_{K_S}}[\left(|K_E| + |K_H| + \sum_i \left(|P^i|-n\right), t'\right)]$
+where the first argument measures not queries but bits of output.
 
 Summing these,
 the advantage in distinguishing HBSH from a family of random permutations is at most
 
-\begin{displaymath}
-(\epsilon + 3(2^{-n}))\binom{q}{2}
-+ \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]
-+ \advantage{\mathrm{prf}}{S_{K_S}}[(|K_E| + |K_H| + \sum_i |P^i|-n, t')]
-\end{displaymath}
+\begin{align*}
+& (\epsilon + 3(2^{-n}))\binom{q}{2} \\
++& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[\left(|K_E| + |K_H| + \sum_i \left(|P^i|-n\right), t'\right)]
+\end{align*}
 
 \printbibliography
 
@@ -879,8 +879,11 @@ It is simple, fast, and highly key agile. We require that $|T| < 2^{32}$ and def
 H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || M)
 \end{align*}
 
-Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
-$\epsilon = 2^{-103}(\ceil{((32 + l_T)/128} + \ceil{(l_M/128})$.
+Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
+
+\begin{displaymath}
+\epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_M/128})
+\end{displaymath}
 
 \subsection{NH}
 
@@ -971,7 +974,7 @@ is therefore at most:
 \begin{align*}
 &( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/2048}))\binom{q}{2} \\
 +& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
-+& \advantage{\mathrm{prf}}{S_{K_S}}[(2816 + q(l_M - 128), t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
 \end{align*}
 
 Version: \texttt{\input{work/git.tex}}
