@@ -84,12 +84,12 @@ def main():
 
     extrainputs = []
     latex = "lualatex"
-    output = "hpolyc.pdf"
+    output = "adiantum.pdf"
     toggle = r"\togglefalse{iacr}"
     if args.iacr:
         extrainputs.append(str(iacrtrans))
         latex = "xelatex"
-        output = "hpolyc-iacr.pdf"
+        output = "adiantum-iacr.pdf"
         toggle = r"\toggletrue{iacr}"
 
     writechanged(work / "toggle.tex", toggle)
@@ -100,7 +100,7 @@ def main():
             "-O", str(work / "latex.out"),
             "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
-            "hpolyc.tex"],
+            "adiantum.tex"],
         cwd=wd, check=True, env=env)
 
 if __name__ == "__main__":
