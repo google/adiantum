@@ -65,7 +65,6 @@
 \DeclareMathOperator{\XChaCha12}{XChaCha12}
 \DeclareMathOperator{\HBSH}{HBSH}
 \DeclareMathOperator{\Polydjb}{Poly1305}
-\DeclareMathOperator{\NHPoly}{NHPoly1305}
 
 \DeclareMathOperator{\NH}{NH}
 \DeclareMathOperator{\intify}{int}
@@ -121,10 +120,10 @@
     directly supports the fastest options for hashing and stream encryption for processors
     without AES or other crypto instructions, with a provable
     quadratic advantage bound. Our composition Adiantum uses NH, Poly1305, XChaCha12,
-    and a single AES invocation; on an ARM Cortex-A7 processor, Adiantum decrypts
-    4096-byte messages at 11.8 cycles per byte, five times faster than
-    AES-256-XTS, with a constant-time implementation; the simpler HPolyC is slower but offers
-    greater key agility.
+    and a single AES invocation. On an ARM Cortex-A7 processor, Adiantum decrypts
+    4096-byte messages at 11 cycles per byte, five times faster than
+    AES-256-XTS, with a constant-time implementation. We also define HPolyC which is
+    simpler and has excellent key agility at 14 cycles per byte.
 \iftoggle{iacr}{
 }{
 
@@ -241,13 +240,13 @@ the proof is shaped around ensuring we pay the smallest multiple of this cost we
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Specification}
-The HBSH algorithm is shown in \autoref{pseudocode}.
-HBSH takes a plaintext $P$ of at least $n$ bits and a tweak $T$,
-divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
-the remainder of the input, and generates the ciphertext $C$ using a stream cipher $S$ and an
-$\epsilon$-almost-$\Delta$-universal
-function $H$ to build an unbalanced Feistel network that includes one invocation of an
-$n$-bit block cipher $E$.  $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
+The HBSH construction is shown in \autoref{pseudocode}. It uses a stream cipher $S$, an
+$\epsilon$-almost-$\Delta$-universal function $H$, and an $n$-bit block cipher $E$.
+From plaintext $P$ of at least $n$ bits and a tweak $T$,
+it generates a ciphertext $C$ of the same length as $P$.
+HBSH divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
+the remainder of the input, and applies an unbalanced Feistel network.
+$P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
 
 \begin{figure}
     \begin{floatrow}
@@ -286,12 +285,11 @@ $n$-bit block cipher $E$.  $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
 \subsection{Notation}
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
+$||$ represents concatenation, and $\lambda$ the empty string.
 $|X|$ represents the length of $X \in \bin^{*}$ in bits.
 $Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
-$\pad_l(X) = X||0^v$
-where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
 $X \arrowoplus Y$ is $X \oplus Y[0;|X|]$.
-$||$ represents concatenation, and $\lambda$ the empty string.
+$\pad_l(X) = X||0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
 $\boxplus$ represents addition in a group which depends
 on the hash function, and $\boxminus$ subtraction.
 
@@ -302,7 +300,7 @@ its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $
 
 \subsection{Stream cipher}
 $S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
-is a stream cipher which takes a nonce and produces a long random stream. In normal use
+is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
 
@@ -326,8 +324,8 @@ is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pa
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
 HPolyC and Adiantum differ only in their choice of hash function, as described in \autoref{hashing}.
-In both cases, the group used for
-$\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
+In both cases, the group used for $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
+The value of $\epsilon$ depends on bounds on the input lengths, as set out in that appendix.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
@@ -360,8 +358,9 @@ reads are more frequent than writes, and reads generally affect user-perceived l
 operating systems can usually perform writes asynchronously in the background.
 
 It's unusual for a construction to require more than two distinct building blocks.
-More commonly, a hash-XOR-hash mode will use a block cipher both on the narrow side of the
-block, and to build the stream cipher in the XOR phase (eg using CTR mode~\cite{ctr}).
+More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
+(eg using CTR mode~\cite{ctr})
+as well as using it directly on the narrow side of the block.
 Using XChaCha12 in place of a block cipher affords a significant increase in performance;
 however it cannot easily be substituted in the narrow side of the cipher.
 \cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
@@ -380,24 +379,21 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-For Adiantum, the
-main cost of a new key is the call to XChaCha12 to calculate the 1136 bytes of subkey needed,
-most of which is NH's 1072-byte key.
-Another cost is the AES key schedule;
-if the hash is to be calculated in parallel, it can also
-be useful to cache powers of the hash key.
+By choosing a 1k block size for NH, we sacrifice key agility to gain speed. HPolyC
+has much greater key agility; the main cost of a new key is the AES key schedule.
 ChaCha12 has no key schedule and makes no use of
 precomputation; XChaCha12 has a ``nonce scheduling'' step that
 must be called once to compute subkeys and once for each Adiantum encryption or decryption.
-Almost no extra work needs to be done for differing message or tweak lengths, unless
-new powers of the hash key are needed for parallelism. HPolyC does not need NH subkeys and
-so is much more key agile, but its hashing stage is slower on large inputs.
+No extra work needs to be done for differing message or tweak lengths, unless
+new powers of the hash key are needed for parallelism.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
 also has these properties, Adiantum and HPolyC will inherit security against
-this class of side-channel attacks. We considered using UMAC directly rather than our combination
-of NH and Poly1305, but it is not naturally constant-time and a constant-time implementation
+this class of side-channel attacks. We considered using UMAC~\cite{rfc4418} directly
+rather than our combination
+of NH and Poly1305, but available implementations are not constant-time
+and a constant-time implementation
 would be noticeably slower.
 
 NH, Poly1305 and ChaCha12 are highly parallelizable.
@@ -622,16 +618,18 @@ Summing these distances, with these constraints the advantage distinguishing bet
 $2^{-n}\binom{q}{2}$.
 
 \subsection{Collision finding}\label{collision}
-$H$ is $\epsilon$-almost-$\Delta$-universal\footnote{Since Adiantum and HPolyC build $H_{K_H}$ using a polynomial hash, the value of $\epsilon$ will depend
-on the maximum length of the message and tweak we allow the attacker to query for, as
-discussed in \autoref{hashing}.}:
+We now bound the probability that the attacker will cause an
+``inner collision''---a query to the inner part which doesn't meet the constraints described
+in \autoref{constraints}.
+
+We assume $H$ is $\epsilon$-almost-$\Delta$-universal:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, M) \neq (T', M')$,
 $\probsub{K_H \sample \mathcal{K}_H}{H_{K_H}(T, M) \boxminus H_{K_H}(T', M') = g} \leq \epsilon$.
-
-We use this to bound the probability that the attacker will cause an
-``inner collision''---a query to the inner part which doesn't meet the constraints described
-in \autoref{constraints}.
+Adiantum and HPolyC differ only in the choice of $H$ function, and we defer the
+description of these functions and their $\epsilon$A$\Delta$U property to \autoref{hashing},
+noting here that for both, the value of $\epsilon$ will depend
+on the maximum length of the message and tweak we allow the attacker to query for.
 
 From here on, we forbid only ``pointless queries'': after either of the queries
 $(C_L, C_R) \leftarrow \calE_T(P_L, P_R)$ or $(P_L, P_R) \leftarrow \calD_T(C_L, C_R)$,
@@ -673,12 +671,10 @@ $\epsilon\binom{q}{2}$.
 
 Note that we don't assume that probabilities are independent here;
 for any events $A$, $B$ we have that $\prob{A \vee B} \leq \prob{A} + \prob{B}$, with
-equality if $A$, $B$ are disjoint. Here distjointness means that the attacker can
-choose queries such that no key causes more than one pair to succeed, making full use of
-the assumption on each query that previous queries have failed.
+equality if $A$, $B$ are disjoint.
 
 \xprmtitle{collision}{keystart}: As with \xprm{collision}{keyend}, but
-choose the key at the start of the experiment. This
+choose the hash key at the start of the experiment. This
 does not change the probability of success.
 
 \xprmtitle{collision}{earlystop}: As with \xprm{collision}{keystart}, but
@@ -711,7 +707,7 @@ Substitute this with the last experiment, \xprm{innerpart}{halfrf}:
     \item $\calD_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T} = \calE_T^{-1}$
 \end{itemize}
 
-Given any attacker for this experiment,
+Given any attacker against \xprm{collision}{halfrf},
 we construct a distinguisher between \xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf} as
 follows: we choose a random $K_H$, and use our oracle for the inner part as $\theta$.
 We report 1 if the attacker succeeds in generating an inner collision.
@@ -844,7 +840,7 @@ $\intify: \bin^{*} \rightarrow \ZZ$ is the
 standard little-endian map
 (ie $\intify(\lambda) = 0$, $\intify(0 || X) = 2\intify(X)$, $\intify(1 || X) = 1 + 2\intify(X)$),
 and $X = \fromint_l(y)$ is the unique
-$l$-bit sequence such that $\intify(X) \equiv y \;(\textrm{mod}\;2^l)$.
+$l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$.
 
 For both Adiantum and HPolyC,
 the output group for which the $\epsilon$A$\Delta$U property applies is
@@ -876,7 +872,7 @@ $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 \subsection{HPolyC hashing}
 HPolyC was the HBSH construction that the first revision of this paper presented, which used
 Poly1305 together with an injective encoding function.
-It is simple, fast, and highly key agile. We require that $|T| < 2^{32}$ and define
+It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
 \begin{align*}
 H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || M)
 \end{align*}
@@ -930,15 +926,15 @@ NH's speed comes with several inconvenent properties:
         holds only over equal-length inputs
     \item $\epsilon = 2^{-wr}$, but the smallest nonempty output is $2wr$ bits, twice as large
         as necessary for this $\epsilon$ value
-    \item NH accepts only inputs whose length is a multiple of $2sw$ bits
     \item The output size varies with the input size; a large compression ratio requires a large key.
 \end{itemize}
 A second hashing stage is used to handle these issues.
 
 \subsection{Adiantum hashing}
 
-For Adiantum we use NH followed by Poly1305 to consume the message. In addition, we avoid
-encoding and padding issues by using multiple Poly1305 keys for different tasks.
+For Adiantum we use NH followed by Poly1305 to hash the message.
+To avoid encoding and padding issues, we hash the message length and tweak with
+a separate Poly1305 key.
 In all this takes a $128 + 128 + 8576 = 8832$-bit key.
 
 \begin{algorithmic}[0]
@@ -957,7 +953,7 @@ then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
 Otherwise $|M| = |M'|$ but $M \neq M'$;
 per \cite{nh} the probability NH will compress these to the same value is at most
 $2^{-128}$. If they do not collide, the $256\ceil{|M|/2048}$-bit input to Poly1305 with key $K_M$
-will differ. Since the sum of two $\epsilon$A$\Delta$U with independent keys is also
+will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
 $\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
 this composition is  $\epsilon$A$\Delta$U, with:
 
