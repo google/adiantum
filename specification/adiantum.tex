@@ -931,7 +931,7 @@ On our target platform, this
 is the largest $w$ with good support for a $\bin^w \times \bin^w \rightarrow \bin^{2w}$
 multiply operation. The stride is the smallest which allows us to vectorize the hash
 without rearranging data; a larger stride increases register pressure to no benefit. We choose
-$r=4$ since we need $\epsilon = 2^{-wr} \leq 2^{128}$, and $u = 64$ to get a compression ratio
+$r=4$ since we need $\epsilon = 2^{-wr} \leq 2^{-128}$, and $u = 64$ to get a compression ratio
 of $2usw/2wr = 32$ and so minimize the work for the next hashing stage.
 
 NH's speed comes with several inconvenient properties:
