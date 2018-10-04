@@ -379,38 +379,26 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-For the choice of $\epsilon$A$\Delta$U hash function, NH is over twice as fast
-as Poly1305 but requires a much longer key and generally is only suitable for
-use as a ``first-level'' hash.  However, key agility is not critical for disk
-encryption.  We therefore base Adiantum's $\epsilon$A$\Delta$U hash function on
-NH and Poly1305 rather than Poly1305 alone.  NH is also easier and less
-error-prone to implement than Poly1305, especially when a vectorized
-implementation is needed; using a relatively large NH block size of 1K greatly
-reduces the amount of data passed to Poly1305, which makes Poly1305 performance
-less critical and allows a straightforward C implementation of Poly1305 to
-suffice, rather than a more complex vectorized implementation.
-
-To make NH fast on ARM processors, we choose a word size of 32 bits (ie each
-multiplication takes two 32-bit words and produces a 64-bit product) and a
-stride of 2.  This is the largest word size where all needed arithmetic is
-supported natively by the CPU.  A smaller word size would require more passes,
-yet each pass would be no faster; a larger word size would also be slower due to
-the use of non-native arithmetic on large integers.  A smaller stride would
-require extra instructions to rearrange the data for vectorized multiplications;
-a larger stride would create more register pressure, require more data padding,
-and wouldn't benefit ARM NEON which supports multiplying at most two pairs of
-32-bit words at once into 64-bit products.
-
-We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
-custom combination of NH and Poly1305.  However, available UHASH implementations
+Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
+crucial for large blocks. One of the fastest such functions in software is NH~\cite{nh}, and
+it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
+combined with a second hashing stage, and for this purpose we use Poly1305. The 1k block size
+used for NH means that we can use a simple, portable implementation of Poly1305 without a great
+cost in speed.  We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
+custom combination of NH and Poly1305; however, available UHASH implementations
 are not constant-time, and a constant-time implementation would be significantly
 slower.
 
-Applications that need greater key agility may instead use HPolyC.  The main
-cost of a new HPolyC key is the AES key schedule.  ChaCha12 has no key schedule
+For the 4k blocks of disk encryption,
+the 1k NH key size has only a small impact on key agility. Applications
+that need high key agility even on small blocks may instead use HPolyC, which
+uses Poly1305 directly. For this a vectorized Poly1305 implementation is important.  The main
+cost of a new HPolyC key is a single XChaCha12 invocation to generate subkeys.
+ChaCha12 has no key schedule
 and makes no use of precomputation; XChaCha12 has a ``nonce scheduling'' step
 that must be called once to compute subkeys and once for each encryption or
-decryption.  No extra work is required for differing message or tweak lengths.
+decryption.  No extra work is required for differing message or tweak lengths for either Adiantum
+or HPolyC.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
@@ -437,9 +425,7 @@ processor supports the NEON vector instruction set, but not the ARM cryptographi
 extensions; it is used in many smartphones and smartwatches, especially low-end
 devices, and is representative of the kind of platform we mean to target.
 Where the figures are within 2\%, a single row is shown for both encryption and
-decryption.  All figures are for sequential encryptions/decryptions with the key
-already set, as for disk encryption the time to set the key is not especially
-important.
+decryption.
 
 \begin{table}
     \caption{Performance on ARM Cortex-A7}
@@ -495,9 +481,6 @@ instructions.
 Adiantum and HPolyC are the only algorithms in \autoref{performance} that are tweakable
 super-pseudorandom permutations over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
-Adiantum and HPolyC have a larger per-message overhead than XTS; all three
-require one extra block cipher invocation per message, but Adiantum and HPolyC
-must also perform one extra ChaCha permutation for the XChaCha construction.
 
 We conclude that for 4096-byte sectors, \mbox{Adiantum-XChaCha12-AES} can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
@@ -909,10 +892,8 @@ Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
 \epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_M/128})
 \end{displaymath}
 
-\subsection{NH}
+\subsection{NH}\label{nh}
 
-Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial for large inputs. One of the fastest such functions in software is NH~\cite{nh}.
 We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size multiplier $u = 64$.
 
@@ -946,13 +927,20 @@ an output of size $2rw\ceil{|M|/2usw}$.
     \EndProcedure
 \end{algorithmic}
 
+On our target platform, this
+is the largest $w$ with good support for a $\bin^w \times \bin^w \rightarrow \bin^{2w}$
+multiply operation. The stride is the smallest which allows us to vectorize the hash
+without rearranging data; a larger stride increases register pressure to no benefit. We choose
+$r=4$ since we need $\epsilon = 2^{-wr} \leq 2^{128}$, and $u = 64$ to get a compression ratio
+of $2usw/2wr = 32$ and so minimize the work for the next hashing stage.
+
 NH's speed comes with several inconvenient properties:
 \begin{itemize}
     \item \cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
         holds only over equal-length inputs
     \item $\epsilon = 2^{-wr}$, but the smallest nonempty output is $2wr$ bits, twice as large
         as necessary for this $\epsilon$ value
-    \item The output size varies with the input size; a large compression ratio requires a large key.
+    \item The output size varies with the input size.
 \end{itemize}
 A second hashing stage is used to handle these issues.
 
