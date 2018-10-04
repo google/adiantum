@@ -319,7 +319,7 @@ therefore require that the plaintext length be within the bounds
 $n \leq |P| \leq l_S + n$.
 
 \subsection{Hash}
-$H: \mathcal{K}_S \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
+$H: \mathcal{K}_H \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
@@ -370,7 +370,7 @@ broken into two halves. However if we were to build this using XChaCha12,
 such a construction would require four extra invocations of ChaCha per block, which would be
 a much greater cost than one block cipher invocation.
 
-We does not consider an attack model in which derived keys are presented as input.
+We do not consider an attack model in which derived keys are presented as input.
 Length-preserving encryption
 which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
 attacker to submit a query with a $g$-function
@@ -379,22 +379,43 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
-By choosing a 1k block size for NH, we sacrifice key agility to gain speed. HPolyC
-has much greater key agility; the main cost of a new key is the AES key schedule.
-ChaCha12 has no key schedule and makes no use of
-precomputation; XChaCha12 has a ``nonce scheduling'' step that
-must be called once to compute subkeys and once for each Adiantum encryption or decryption.
-No extra work needs to be done for differing message or tweak lengths, unless
-new powers of the hash key are needed for parallelism.
+For the choice of $\epsilon$A$\Delta$U hash function, NH is over twice as fast
+as Poly1305 but requires a much longer key and generally is only suitable for
+use as a ``first-level'' hash.  However, key agility is not critical for disk
+encryption.  We therefore base Adiantum's $\epsilon$A$\Delta$U hash function on
+NH and Poly1305 rather than Poly1305 alone.  NH is also easier and less
+error-prone to implement than Poly1305, especially when a vectorized
+implementation is needed; using a relatively large NH block size of 1K greatly
+reduces the amount of data passed to Poly1305, which makes Poly1305 performance
+less critical and allows a straightforward C implementation of Poly1305 to
+suffice, rather than a more complex vectorized implementation.
+
+To make NH fast on ARM processors, we choose a word size of 32 bits (ie each
+multiplication takes two 32-bit words and produces a 64-bit product) and a
+stride of 2.  This is the largest word size where all needed arithmetic is
+supported natively by the CPU.  A smaller word size would require more passes,
+yet each pass would be no faster; a larger word size would also be slower due to
+the use of non-native arithmetic on large integers.  A smaller stride would
+require extra instructions to rearrange the data for vectorized multiplications;
+a larger stride would create more register pressure, require more data padding,
+and wouldn't benefit ARM NEON which supports multiplying at most two pairs of
+32-bit words at once into 64-bit products.
+
+We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
+custom combination of NH and Poly1305.  However, available UHASH implementations
+are not constant-time, and a constant-time implementation would be significantly
+slower.
+
+Applications that need greater key agility may instead use HPolyC.  The main
+cost of a new HPolyC key is the AES key schedule.  ChaCha12 has no key schedule
+and makes no use of precomputation; XChaCha12 has a ``nonce scheduling'' step
+that must be called once to compute subkeys and once for each encryption or
+decryption.  No extra work is required for differing message or tweak lengths.
 
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
 also has these properties, Adiantum and HPolyC will inherit security against
-this class of side-channel attacks. We considered using UMAC~\cite{rfc4418} directly
-rather than our combination
-of NH and Poly1305, but available implementations are not constant-time
-and a constant-time implementation
-would be noticeably slower.
+this class of side-channel attacks.
 
 NH, Poly1305 and ChaCha12 are highly parallelizable.
 The stream cipher and second hash stages can also be run in combination for a total
@@ -403,8 +424,8 @@ which requires at least three.
 We put the ``special'' block on the right so that in typical uses the bulk encryption has
 the best alignment for fast operations.
 
-``Adiantum'' is the genus of maidenhair fern, which in the language of flowers signifies
-sincerity and discretion.~\cite{fleurs}
+``Adiantum'' is the genus of the maidenhair fern, which in the language of
+flowers (floriography) signifies sincerity and discretion.~\cite{fleurs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performance}
@@ -414,8 +435,11 @@ show performance on an ARM \mbox{Cortex-A7}
 processor in the Snapdragon 400 chipset running at \mbox{1.19 GHz}.  This
 processor supports the NEON vector instruction set, but not the ARM cryptographic
 extensions; it is used in many smartphones and smartwatches, especially low-end
-or older devices, and is representative of the kind of platform we mean to target.
-Where the figures are within 2\%, a single row is shown for both encryption and decryption.
+devices, and is representative of the kind of platform we mean to target.
+Where the figures are within 2\%, a single row is shown for both encryption and
+decryption.  All figures are for sequential encryptions/decryptions with the key
+already set, as for disk encryption the time to set the key is not especially
+important.
 
 \begin{table}
     \caption{Performance on ARM Cortex-A7}
@@ -455,10 +479,12 @@ instructions.
     \begin{tabular}{llp{7cm}}
         Algorithm & Source & Notes \\
     \hline
-    ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support ChaCha8 and ChaCha12 \\
+    ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support
+        ChaCha8 and ChaCha12; also applied optimizations from \texttt{cryptodev}
+        commit a1b22a5f45fe8841 \\
     Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to allow key
     powers to be computed just once per key \\
-    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in Adiantum \\
+    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HBSH \\
     \mbox{AES-XTS} & Linux v4.17 & \texttt{aes-neonbs-core.S} (bit-sliced) \\
     \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
     \mbox{NOEKEON-XTS} & ours & \\
@@ -469,9 +495,9 @@ instructions.
 Adiantum and HPolyC are the only algorithms in \autoref{performance} that are tweakable
 super-pseudorandom permutations over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
-Adiantum has a larger per-message overhead than XTS; both require one
-extra block cipher invocation per message, but Adiantum must also perform one extra
-ChaCha permutation for the XChaCha construction.
+Adiantum and HPolyC have a larger per-message overhead than XTS; all three
+require one extra block cipher invocation per message, but Adiantum and HPolyC
+must also perform one extra ChaCha permutation for the XChaCha construction.
 
 We conclude that for 4096-byte sectors, \mbox{Adiantum-XChaCha12-AES} can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
@@ -550,7 +576,7 @@ attackers in~\autoref{composition}.
 In what follows we use a standard concrete security hybrid argument per~\cite{concrete,games}:
 for a fixed class of attacker, distinguishing advantage obeys the triangle inequality and
 forms a pseudometric space. We consider a
-sequence of experiments, bound the distingushing advantage between successive
+sequence of experiments, bound the distinguishing advantage between successive
 experiments, and thereby
 prove an advantage bound for a distinguisher between the first and the last experiment
 which is the sum of the advantage bound between each successive experiment.
@@ -652,7 +678,7 @@ either
 \end{itemize}
 We do not consider a query such that $C_M^i = P_M^j$ (or vice versa) a win.
 
-Here we are considering not distingushing probability but success probability; we
+Here we are considering not distinguishing probability but success probability; we
 show a bound on success probability for the first experiment, and for each subsequent experiment
 we bound the increase in success probability over the previous experiment.
 
@@ -866,7 +892,7 @@ $2^{22}$ keys and the effective keyspace is $2^{106}$.
 
 Many Poly1305 libraries
 take parameters $K_H || g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
-is needed we use bitwise inversion and the identity
+is needed we suggest using bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
 \subsection{HPolyC hashing}
@@ -920,7 +946,7 @@ an output of size $2rw\ceil{|M|/2usw}$.
     \EndProcedure
 \end{algorithmic}
 
-NH's speed comes with several inconvenent properties:
+NH's speed comes with several inconvenient properties:
 \begin{itemize}
     \item \cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
         holds only over equal-length inputs
@@ -952,14 +978,14 @@ For distinct pairs $(T,M) \neq (T', M')$, we have that if $|M| \neq |M'|$ or $T 
 then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
 Otherwise $|M| = |M'|$ but $M \neq M'$;
 per \cite{nh} the probability NH will compress these to the same value is at most
-$2^{-128}$. If they do not collide, the $256\ceil{|M|/2048}$-bit input to Poly1305 with key $K_M$
+$2^{-128}$. If they do not collide, the $256\ceil{|M|/8192}$-bit input to Poly1305 with key $K_M$
 will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
 $\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
 this composition is  $\epsilon$A$\Delta$U, with:
 
 \begin{align*}
-\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_M/2048})/128}  \\
-&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_M/2048})
+\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_M/8192})/128}  \\
+&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_M/8192})
 \end{align*}
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
@@ -967,7 +993,7 @@ at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, their distingu
 is therefore at most:
 
 \begin{align*}
-&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/2048}))\binom{q}{2} \\
+&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192}))\binom{q}{2} \\
 +& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
 +& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
 \end{align*}
