@@ -325,9 +325,11 @@ $H: \mathcal{K}_H \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
-HPolyC and Adiantum differ only in their choice of hash function, as described in \autoref{hashing}.
+HPolyC and Adiantum differ only in their choice of hash function.
+HPolyC is based on Poly1305, while Adiantum uses both Poly1305 and NH; specifically unsigned 4-level NH[32, 256], with some reordering for fast vectorization.
 In both cases, the group used for $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
-The value of $\epsilon$ depends on bounds on the input lengths, as set out in that appendix.
+The value of $\epsilon$ depends on bounds on the input lengths. For full details, see
+\autoref{hashing}.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
@@ -351,7 +353,9 @@ a multiple of the block size of the underlying primitive.
 \cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
 a simple attack with two plaintexts and one ciphertext distinguishes it. A single block cipher call
 in the narrow part of the unbalanced network suffices to frustrate this attack; the
-larger the block, the smaller the relative cost of this call.
+larger the block, the smaller the relative cost of this call. If the plaintext is exactly $n$ bits
+long, the stream cipher is not used, and the construction becomes
+$C = E_{K_E}(P \boxplus H_{K_H}(T, \lambda)) \boxminus H_{K_H}(T, \lambda)$.
 Compared to HCTR~\cite{hctr} or HCH~\cite{hch}, we sacrifice
 symmetry of encryption with decryption in return for
 the ability to run the block cipher and stream cipher in parallel when decrypting.
@@ -458,7 +462,8 @@ We used the fastest constant-time implementation of each algorithm we were able
 to find or write for the platform; see \autoref{implementation}.  In every case
 except \texttt{aes\_ti.c},
 the performance-critical parts were written in assembly language using NEON
-instructions.
+instructions. Our tests complete processing of each message before starting the next, so latency
+of a single message in cycles is the product of message size and cpb.
 
 \begin{table}
     \caption{Implementations}
