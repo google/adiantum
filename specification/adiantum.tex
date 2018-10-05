@@ -388,15 +388,15 @@ included in the input.
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
 crucial for large blocks. One of the fastest such functions in software is NH~\cite{nh}, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
-combined with a second hashing stage, and for this purpose we use Poly1305. The 1k block size
+combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size
 used for NH means that we can use a simple, portable implementation of Poly1305 without a great
 cost in speed.  We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
 custom combination of NH and Poly1305; however, available UHASH implementations
 are not constant-time, and a constant-time implementation would be significantly
 slower.
 
-For the 4k blocks of disk encryption,
-the 1k NH key size has only a small impact on key agility. Applications
+For the 4KiB blocks of disk encryption,
+the ~1KiB NH key size has only a small impact on key agility. Applications
 that need high key agility even on small blocks may instead use HPolyC, which
 uses Poly1305 directly. For this a vectorized Poly1305 implementation is important.  The main
 cost of a new HPolyC key is a single XChaCha12 invocation to generate subkeys.
