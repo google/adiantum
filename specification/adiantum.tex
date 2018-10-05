@@ -824,6 +824,7 @@ where the first argument measures not queries but bits of output.
 
 Summing these,
 the advantage in distinguishing HBSH from a family of random permutations is at most
+\label{hbshadvantage}
 
 \begin{align*}
 & (\epsilon + 3(2^{-n}))\binom{q}{2} \\
@@ -895,19 +896,19 @@ Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
 \subsection{NH}\label{nh}
 
 We define a word size $w = 32$, a stride $s = 2$,
-a number of rounds $r = 4$ and an input size multiplier $u = 64$.
+a number of rounds $r = 4$ and an input size $u = 8192$ such that $2sw$ divides $u$.
 
 NH is then defined over message
 lengths divisible by $2sw = 128$
-and takes a key of length $2sw(u + r -1) = 8576$, processing the message
-in $2usw = 8192$-bit chunks to produce
-an output of size $2rw\ceil{|M|/2usw}$.
+and takes a $u + 2sw(r -1) = 8576$-bit key, processing the message
+in $u$-bit chunks to produce
+an output of size $2rw\ceil{|M|/u}$; we call this ratio $2rw/u = 32$ the "compression ratio".
 
 \begin{algorithmic}[0]
     \Procedure{NH}{$K, M$}
     \State $h \gets \lambda$
     \While {$M \neq \lambda$}
-        \State $l \gets \min{(|M|, 2usw)}$
+        \State $l \gets \min{(|M|, u)}$
         \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
             \State $p \gets 0$
             \For {$j \gets 0, 2sw, \ldots, l-2sw$}
@@ -931,14 +932,14 @@ On our target platform, this
 is the largest $w$ with good support for a $\bin^w \times \bin^w \rightarrow \bin^{2w}$
 multiply operation. The stride is the smallest which allows us to vectorize the hash
 without rearranging data; a larger stride increases register pressure to no benefit. We choose
-$r=4$ since we need $\epsilon = 2^{-wr} \leq 2^{128}$, and $u = 64$ to get a compression ratio
-of $2usw/2wr = 32$ and so minimize the work for the next hashing stage.
+$r=4$ since we need $\epsilon = 2^{-rw} \leq 2^{-128}$, and a large $u$ for a high compression ratio
+which reduces the work for the next hashing stage.
 
 NH's speed comes with several inconvenient properties:
 \begin{itemize}
     \item \cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
         holds only over equal-length inputs
-    \item $\epsilon = 2^{-wr}$, but the smallest nonempty output is $2wr$ bits, twice as large
+    \item $\epsilon = 2^{-rw}$, but the smallest nonempty output is $2rw$ bits, twice as large
         as necessary for this $\epsilon$ value
     \item The output size varies with the input size.
 \end{itemize}
@@ -977,8 +978,8 @@ this composition is  $\epsilon$A$\Delta$U, with:
 \end{align*}
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
-at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, their distinguishing advantage
-is therefore at most:
+at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, then per the result
+of~\autoref{hbshadvantage} their distinguishing advantage is therefore at most:
 
 \begin{align*}
 &( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192}))\binom{q}{2} \\
