@@ -951,8 +951,9 @@ an output of size $2rw\ceil{|M|/u}$; we call this ratio $2rw/u = 32$ the "compre
 On our target platform, this
 is the largest $w$ with good support for a $\bin^w \times \bin^w \rightarrow \bin^{2w}$
 multiply operation. The stride is the smallest which allows us to vectorize the hash
-without rearranging data; a larger stride increases register pressure to no benefit. We choose
-$r=4$ since we need $\epsilon = 2^{-rw} \leq 2^{-128}$, and a large $u$ for a high compression ratio
+without rearranging data. We choose
+$r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match HPolyC,
+and a large $u$ for a high compression ratio
 which reduces the work for the next hashing stage.
 
 NH's speed comes with several inconvenient properties:
@@ -1006,6 +1007,24 @@ of~\autoref{hbshadvantage} their distinguishing advantage is therefore at most:
 +& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
 +& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
 \end{align*}
+
+Assuming that the block and stream ciphers are strong, this is dominated by the term for
+internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192})\binom{q}{2}$.
+How many messages can be safely encrypted with the mode will therefore vary with message and
+tweak length. For example, if Adiantum is used to encrypt 4KiB sectors with 32 byte tweaks,
+then $\Polydjb_{K_M}$ processes 8 blocks, and the above is approximately $2^{-101}q^2$;
+we give some examples below:
+
+\begin{tabular}{lllp{7cm}}
+    Bytes & Advantage & Time to encrypt \\
+    \hline
+    512GiB & $2^{-47}$ & 80 minutes  \\
+    $2^{55}$ & $2^{-15}$ & 11 years \\
+    $2^{59}$ & 0.8\% & 175 years &
+\end{tabular}
+
+With these message and tweak lengths
+we would recommend encrypting no more than $2^{55}$ bytes with a single key.
 
 Version: \texttt{\input{work/git.tex}}
 \end{document}
