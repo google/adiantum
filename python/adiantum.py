@@ -39,7 +39,7 @@ class Adiantum(hbsh.HBSH):
         return ht + hm
 
     def test_input_lengths(self):
-        for tlen in 0, 12, 17:
+        for tlen in 0, 12, 17, 32:
             for mlen in 16, 31, 128, 512:
                 for m in "plaintext", "ciphertext":
                     yield {"key": 32, "tweak": tlen, m: mlen}
