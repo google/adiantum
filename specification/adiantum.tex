@@ -326,10 +326,12 @@ is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pa
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
 HPolyC and Adiantum differ only in their choice of hash function.
-HPolyC is based on Poly1305, while Adiantum uses both Poly1305 and NH; specifically unsigned 4-level NH[32, 256], with some reordering for fast vectorization.
+HPolyC is based on Poly1305, while Adiantum uses both Poly1305 and NH;
+specifically unsigned 4-level NH[32, 256],
+with some reordering for fast vectorization.
 In both cases, the group used for $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
-The value of $\epsilon$ depends on bounds on the input lengths. For full details, see
-\autoref{hashing}.
+The value of $\epsilon$ depends on bounds on the input lengths.
+We defer full details to \autoref{hashing}.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
@@ -489,15 +491,24 @@ Adiantum and HPolyC are the only algorithms in \autoref{performance} that are tw
 super-pseudorandom permutations over the entire sector.  We expect any AES-based
 construction to that end to be significantly slower than \mbox{AES-XTS}.
 
-We conclude that for 4096-byte sectors, \mbox{Adiantum-XChaCha12-AES} can perform
+We conclude that for 4096-byte sectors, Adiantum
+(aka \mbox{Adiantum-XChaCha12-AES}) can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
 Efficient implementations of NH, Poly1305 and ChaCha are available for many
 platforms, as these algorithms are well-suited for implementation with either
 general-purpose scalar instructions or with general-purpose vector instructions
 such as NEON or AVX2.
+
 For a greater margin of security at a slower speed, ChaCha20 can
 be used instead of ChaCha12; the same stream cipher
-must be used for key derivation as for the Feistel function.
+must be used for key derivation as for the Feistel function. Similarly, one could substitute
+NOEKEON in place of AES-256 to make defense against timing attacks easier and improve performance.
+This may weaken security against a brute-force attack since NOEKEON has only a 128-bit key, though
+it's not obvious how to mount such an attack when the hashing and stream cipher keys are unknown.
+Note that this is a different axis of security than success probability; if my phone falls into
+the hands of attackers, I'm much more alarmed if there is an attack that needs
+(say) $2^{64}$ work and always succeeds than if there's an attack
+that needs negligible work and succeeds with probability $2^{-64}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Security reduction}
@@ -505,7 +516,9 @@ HBSH is a tweakable, variable-input-length, secure pseudorandom permutation: an 
 succeeds if they distinguish it from a family of independent random permutations indexed by
 input length and tweak, given access to both encryption and decryption oracles.
 
-Given keys $K_S$, $K_H$, $K_E$, HBSH is the conjugation of an inner transform by an outer:
+$K_E$ and $K_H$ are derived from $K_S$:
+$K_E || K_H || \ldots = S_{K_S}(\lambda)$. HBSH is then
+the conjugation of an inner transform by an outer:
 \begin{align*}
     \HBSH:
     \bin^* &\times \bin^l \times \bin^n \rightarrow \bin^l \times \bin^n \\
