@@ -948,13 +948,17 @@ an output of size $2rw\ceil{|M|/u}$; we call this ratio $2rw/u = 32$ the "compre
     \EndProcedure
 \end{algorithmic}
 
-On our target platform, this
-is the largest $w$ with good support for a $\bin^w \times \bin^w \rightarrow \bin^{2w}$
-multiply operation. The stride is the smallest which allows us to vectorize the hash
-without rearranging data. We choose
-$r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match HPolyC,
-and a large $u$ for a high compression ratio
-which reduces the work for the next hashing stage.
+This is the largest $w$ where common vector instruction sets (NEON on ARM; SSE2
+and AVX2 on x86) natively support the needed $\bin^w \times \bin^w \rightarrow
+\bin^{2w}$ multiply operation.  The stride $s=2$ is the smallest which allows us
+to vectorize the hash without rearranging data on ARM32 NEON, our primary target
+platform; we found that increasing this to $s=4$ (like in UMAC~\cite{rfc4418})
+would increase complexity, the required padding amount, and register pressure
+with no benefit to ARM32 and would require the AVX2 implementation to permute
+words across 128-bit ``lanes'' which is slow on some processors.  We choose
+$r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match HPolyC, and a
+large $u$ for a high compression ratio which reduces the work for the next
+hashing stage.
 
 NH's speed comes with several inconvenient properties:
 \begin{itemize}
