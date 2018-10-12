@@ -294,7 +294,7 @@ on the hash function, and $\boxminus$ subtraction.
 
 \subsection{Block cipher}
 The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
-is only invoked once no matter the size of the input, so for disk sector-sized inputs
+is only invoked once no matter the size of the input, so for disk-sector-sized inputs
 its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
 
 \subsection{Stream cipher}
@@ -303,14 +303,13 @@ is a stream cipher which takes a key and a nonce and produces a long random stre
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
 is distinct from all $n$-bit strings.
 
-Adiantum and HPolyC use the XChaCha12 stream cipher. This is based on ChaCha12~\cite{chacha}, but
-ChaCha12 only takes a 64-bit (or 96-bit~\cite{RFC7539}) nonce, which is too small for our purposes,
-so we use the
-XSalsa20 construction~\cite{xsalsa} initially proposed for Salsa20~\cite{salsa20,salsa812}
-to construct XChaCha12 which extends the nonce to 192 bits
-(as libsodium~\cite{xchacha20}
-and Monocypher~\cite{monocypher} do
-with ChaCha20). From here we construct a function that takes a variable-length nonce of up to
+Adiantum and HPolyC use the XChaCha12 stream cipher. The ChaCha~\cite{chacha}
+stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
+a ChaCha20 variant with a 96-bit nonce, but we need a 128-bit nonce.
+The XSalsa20 construction~\cite{xsalsa}
+proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
+applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
+We then construct a function that takes a variable-length nonce of up to
 191 bits by padding with a 1 followed by zeroes:
 $S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$. For a
 given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
@@ -420,9 +419,9 @@ the best alignment for fast operations.
 flowers (floriography) signifies sincerity and discretion.~\cite{fleurs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Performance}
+\section{Performance}\label{performance}
 
-In \autoref{performance} we
+In \autoref{performancetable} we
 show performance on an ARM \mbox{Cortex-A7}
 processor in the Snapdragon 400 chipset running at \mbox{1.19 GHz}.  This
 processor supports the NEON vector instruction set, but not the ARM cryptographic
@@ -433,7 +432,7 @@ decryption.
 
 \begin{table}
     \caption{Performance on ARM Cortex-A7}
-    \label{performance}
+    \label{performancetable}
     \centering
     \begin{tabular}{lrr}
         Algorithm &
@@ -501,10 +500,10 @@ must be used for key derivation as for the Feistel function. Similarly, one coul
 NOEKEON in place of AES-256 to make defense against timing attacks easier and improve performance.
 This may weaken security against a brute-force attack since NOEKEON has only a 128-bit key, though
 it's not obvious how to mount such an attack when the hashing and stream cipher keys are unknown.
-Note that this is a different axis of security than success probability; if my phone falls into
-the hands of attackers, I'm much more alarmed if there is an attack that needs
-(say) $2^{64}$ work and always succeeds than if there's an attack
-that needs negligible work and succeeds with probability $2^{-64}$.
+Note that this is a different axis of security than success probability; an
+attack that needs (say) $2^{40}$ work and always succeeds is a much bigger
+problem than than an attack that needs negligible work and succeeds with
+probability $2^{-40}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Security reduction}
@@ -914,7 +913,7 @@ Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
 We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size $u = 8192$ such that $2sw$ divides $u$.
 
-NH\cite{umac1,umac2,rfc4418} is then defined over message
+NH~\cite{umac1,umac2,rfc4418} is then defined over message
 lengths divisible by $2sw = 128$
 and takes a $u + 2sw(r -1) = 8576$-bit key, processing the message
 in $u$-bit chunks to produce
@@ -946,15 +945,11 @@ an output of size $2rw\ceil{|M|/u}$; we call this ratio $2rw/u = 32$ the ``compr
 
 This is the largest $w$ where common vector instruction sets (NEON on ARM; SSE2
 and AVX2 on x86) natively support the needed $\bin^w \times \bin^w \rightarrow
-\bin^{2w}$ multiply operation.  The stride $s=2$ is the smallest which allows us
-to vectorize the hash without rearranging data on ARM32 NEON, our primary target
-platform; we found that increasing this to $s=4$ (like in UMAC~\cite{rfc4418})
-would increase complexity, the required padding amount, and register pressure
-with no benefit to ARM32 and would require the AVX2 implementation to permute
-words across 128-bit ``lanes'' which is slow on some processors.  We choose
-$r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match HPolyC, and a
-large $u$ for a high compression ratio which reduces the work for the next
-hashing stage.
+\bin^{2w}$ multiply operation.  The stride $s=2$ improves vectorization on
+ARM32 NEON; larger strides were slower or no faster on every platform we tested
+on. We choose $r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match
+HPolyC, and a large $u$ for a high compression ratio which reduces the work for
+the next hashing stage.
 
 NH's speed comes with several inconvenient properties:
 \begin{itemize}
@@ -1008,25 +1003,27 @@ of~\autoref{hbshadvantage} their distinguishing advantage is therefore at most:
 +& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
 \end{align*}
 
-Assuming that the block and stream ciphers are strong, this is dominated by the term for
-internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192})\binom{q}{2}$.
-How many messages can be safely encrypted with the mode will therefore vary with message and
-tweak length. For example, if Adiantum is used to encrypt 4KiB sectors with 32 byte tweaks,
-then $\Polydjb_{K_M}$ processes 8 blocks, and the above is approximately $2^{-101}q^2$;
-we give some examples below:
+Assuming that the block and stream ciphers are strong, this is dominated by the
+term for internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P -
+128)/8192})\binom{q}{2}$. How many messages can be safely encrypted with the
+mode will therefore vary with message and tweak length. For example, if Adiantum
+is used to encrypt 4KiB sectors with 32 byte tweaks, then $\Polydjb_{K_M}$
+processes 8 blocks, and the above is approximately $2^{-101}q^2$. With these
+message and tweak lengths we would recommend encrypting no more than $2^{55}$
+bytes with a single key. Generating the ciphertext to mount such an attack could
+be very time-consuming, and this is work that can only be done on the device
+that has the key; extrapolating from performance figures in
+\autoref{performance}:
 
 \vspace{0.3cm}
-\begin{tabular}{lllp{7cm}}
-    Bytes & Advantage & Time to encrypt \\
+\begin{tabular}{llll}
+    Bytes of ciphertext & Advantage & Time on device (single-threaded) \\
     \hline
     512GiB & $2^{-47}$ & 80 minutes  \\
     $2^{55}$ & $2^{-15}$ & 11 years \\
     $2^{59}$ & 0.8\% & 175 years &
 \end{tabular}
 \vspace{0.3cm}
-
-With these message and tweak lengths
-we would recommend encrypting no more than $2^{55}$ bytes with a single key.
 
 \vspace*{\fill}
 Version: \texttt{\input{work/git.tex}}
