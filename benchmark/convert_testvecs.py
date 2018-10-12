@@ -53,26 +53,12 @@ def write_testvec_structs(f, declaration, entries):
         f.write("\t},\n")
     f.write(f"}};\n\n")
 
-def choose(n, k):
-    "k distinct integers 0 <= x < n, sorted"
-    t = n - k + 1
-    d = []
-    for _ in range(k):
-        r = random.randrange(t + len(d))
-        if r < t:
-            d.append(r)
-        else:
-            d.append(d[r - t])
-    d.sort()
-    return [i + v for i, v in enumerate(d)]
-
 def partition_int(length, maxparts):
     """Randomly generate 1 to maxparts integers >0 that sum to length"""
-    if length <= 0:
-        return [length]
     numsplits = random.randrange(min(length, maxparts))
-    splits = choose(length - 1, numsplits)
-    return [b - a for a, b in zip([-1] + splits, splits + [length -1])]
+    splits = random.sample(range(1, length), numsplits)
+    splits.sort()
+    return [b - a for a, b in zip([0] + splits, splits + [length])]
 
 def write_linux_testvec_hexfield(f, field_name, value):
     """Write a hex field to a Linux crypto test vector."""
