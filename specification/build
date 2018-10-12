@@ -78,18 +78,21 @@ def main():
     latex = "lualatex"
     output = "adiantum.pdf"
     toggle = r"\togglefalse{iacr}"
+    latexwork = work / "latex.out"
     if args.iacr:
         extrainputs.append(str(iacrtrans))
         latex = "xelatex"
         output = "adiantum-iacr.pdf"
         toggle = r"\toggletrue{iacr}"
+        latexwork = work / "iacr_latex.out"
+
 
     writechanged(work / "toggle.tex", toggle)
     env = dict(os.environ)
     env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
     subprocess.run([str(latexrun),
             "-o", output,
-            "-O", str(work / "latex.out"),
+            "-O", str(latexwork),
             "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
             "adiantum.tex"],
