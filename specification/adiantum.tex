@@ -122,7 +122,7 @@
 }{
 
     This paper: \url{https://ia.cr/2018/720} \\
-    Source: \url{https://github.com/google/hpolyc} \\
+    Source: \url{https://github.com/google/adiantum} \\
     Email: \href{mailto:paulcrowley@google.com,ebiggers@google.com}{\{paulcrowley,ebiggers\}@google.com}
 }
 \end{abstract}
@@ -231,6 +231,11 @@ build a stream cipher which takes a 192-bit nonce to generate a stream, simplify
 the second Feistel operation and associated proof, as well as subkey generation.
 Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
 the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
+
+\subsection{Implementation and test vectors}
+Implementations in Python, C, and ARMv7 assembly, as well as thousands of test
+vectors and the \LaTeX{} source for this paper,  are available from our source code
+repository at \url{https://github.com/google/adiantum}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Specification}
