@@ -192,7 +192,7 @@ acceptably on them.
 
 On such platforms stream ciphers such as ChaCha12~\cite{chacha} significantly
 outperform block ciphers in cycles per byte, especially with constant-time implementations.
-Similarly, absent specific processor support, hash functions such as NH~\cite{nh} and
+Similarly, absent specific processor support, hash functions such as NH~\cite{umac2} and
 Poly1305 hash~\cite{poly1305} will be much faster
 than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
 the data in a disk-sector-sized block, a hash-XOR-hash
@@ -322,13 +322,12 @@ $H: \mathcal{K}_H \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
 of bitstrings, yielding a group element represented as an $n$-bit string.
 
-HPolyC and Adiantum differ only in their choice of hash function.
-HPolyC is based on Poly1305, while Adiantum uses both Poly1305 and NH;
-specifically unsigned 4-level NH[32, 256],
-with some reordering for fast vectorization.
-In both cases, the group used for $\boxplus$ and $\boxminus$ is $\ZZ/2^{128}\ZZ$.
-The value of $\epsilon$ depends on bounds on the input lengths.
-We defer full details to \autoref{hashing}.
+HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
+based on Poly1305, while Adiantum uses both Poly1305 and NH;
+specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
+vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
+$\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
+lengths. We defer full details to \autoref{hashing}.
 
 \subsection{Key derivation}\label{keyderivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
@@ -385,7 +384,7 @@ applied in this domain is an open problem. Users must take care to protect the k
 included in the input.
 
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial for large blocks. One of the fastest such functions in software is NH~\cite{nh}, and
+crucial for large blocks. One of the fastest such functions in software is NH, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
 combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size
 used for NH means that we can use a simple, portable implementation of Poly1305 without a great
@@ -915,7 +914,7 @@ Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
 We define a word size $w = 32$, a stride $s = 2$,
 a number of rounds $r = 4$ and an input size $u = 8192$ such that $2sw$ divides $u$.
 
-NH is then defined over message
+NH\cite{umac1,umac2,rfc4418} is then defined over message
 lengths divisible by $2sw = 128$
 and takes a $u + 2sw(r -1) = 8576$-bit key, processing the message
 in $u$-bit chunks to produce
@@ -959,7 +958,7 @@ hashing stage.
 
 NH's speed comes with several inconvenient properties:
 \begin{itemize}
-    \item \cite{nh} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
+    \item \cite{umac2} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
         holds only over equal-length inputs
     \item $\epsilon = 2^{-rw}$, but the smallest nonempty output is $2rw$ bits, twice as large
         as necessary for this $\epsilon$ value
@@ -988,7 +987,7 @@ In all this takes a $128 + 128 + 8576 = 8832$-bit key.
 For distinct pairs $(T,M) \neq (T', M')$, we have that if $|M| \neq |M'|$ or $T \neq T'$,
 then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
 Otherwise $|M| = |M'|$ but $M \neq M'$;
-per \cite{nh} the probability NH will compress these to the same value is at most
+per \cite{umac2} the probability NH will compress these to the same value is at most
 $2^{-128}$. If they do not collide, the $256\ceil{|M|/8192}$-bit input to Poly1305 with key $K_M$
 will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
 $\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
