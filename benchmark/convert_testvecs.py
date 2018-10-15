@@ -53,10 +53,9 @@ def write_testvec_structs(f, declaration, entries):
         f.write("\t},\n")
     f.write(f"}};\n\n")
 
-def partition_int(length, maxparts):
-    """Randomly generate 1 to maxparts integers >0 that sum to length"""
-    numsplits = random.randrange(min(length, maxparts))
-    splits = random.sample(range(1, length), numsplits)
+def partition_int(length, parts):
+    """Randomly generate parts integers >0 that sum to length"""
+    splits = random.sample(range(1, length), parts -1)
     splits.sort()
     return [b - a for a, b in zip([0] + splits, splits + [length])]
 
@@ -68,14 +67,13 @@ def write_linux_testvec_hexfield(f, field_name, value):
     f.write(',\n')
 
 def write_scatterlist_splits(f, length, allow_also_not_np):
-    if length == 0:
+    if length < 2:
         return
-    splits = partition_int(length, 8)
-    if len(splits) > 1:
-        if allow_also_not_np:
-            f.write("\t\t.also_non_np = 1,\n")
-        f.write(f"\t\t.np\t= {len(splits)},\n")
-        f.write(f"\t\t.tap\t= {{ {', '.join(str(split) for split in splits)} }},\n")
+    splits = partition_int(length, random.randrange(2, 1 + min(length, 8)))
+    if allow_also_not_np:
+        f.write("\t\t.also_non_np = 1,\n")
+    f.write(f"\t\t.np\t= {len(splits)},\n")
+    f.write(f"\t\t.tap\t= {{ {', '.join(str(split) for split in splits)} }},\n")
 
 def write_linux_cipher_testvecs(f, cipher_name, entries):
     """Format some cipher test vectors for Linux's crypto tests."""
