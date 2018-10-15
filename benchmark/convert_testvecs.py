@@ -20,14 +20,7 @@ sys.path.append(str(topdir / "python"))
 
 import hexjson
 
-def group_string(s, l):
-    for i in range(0, len(s), l):
-        yield s[i:i+l]
-
-def c_stringify(b):
-    return '"' + ''.join(f"\\x{a:02x}" for a in b) + '"'
-
-def write_in_groups(f, prefix, separator, suffix, emptyval, values):
+def write_in_groups(f, prefix, separator, suffix, emptyval, convert, values):
     first = True
     for v in values:
         if first:
@@ -35,11 +28,23 @@ def write_in_groups(f, prefix, separator, suffix, emptyval, values):
             first = False
         else:
             f.write(separator)
-        f.write(v)
+        convert(f, v)
     if first:
         f.write(emptyval)
     else:
         f.write(suffix)
+
+def group_string(s, l):
+    for i in range(0, len(s), l):
+        yield s[i:i+l]
+
+def write_as_c_string(f, b):
+    hex = ''.join(f"\\x{a:02x}" for a in b)
+    f.write(f'"{hex}"')
+
+def write_data_field(f, prefix, separator, suffix, emptyval, value):
+    write_in_groups(f, prefix, separator, suffix, emptyval,
+        write_as_c_string, group_string(value, 8))
 
 def write_testvec_structs(f, declaration, entries):
     f.write(f"{declaration} = {{\n")
@@ -47,8 +52,7 @@ def write_testvec_structs(f, declaration, entries):
         f.write("\t{\n")
         for k, v in vec.items():
             f.write(f"\t\t.{k}\t= {{.len = {len(v)}, .data =")
-            write_in_groups(f, '\n\t\t\t', '\n\t\t\t', '\n\t\t', ' ""',
-                (c_stringify(s) for s in group_string(v, 8)))
+            write_data_field(f, '\n\t\t\t', '\n\t\t\t', '\n\t\t', ' ""', v)
             f.write('},\n')
         f.write("\t},\n")
     f.write(f"}};\n\n")
@@ -62,18 +66,22 @@ def partition_int(length, parts):
 def write_linux_testvec_hexfield(f, field_name, value):
     """Write a hex field to a Linux crypto test vector."""
     f.write(f'\t\t.{field_name}\t=')
-    write_in_groups(f, ' ', '\n\t\t\t  ', '', ' ""',
-        (c_stringify(s) for s in group_string(value, 8)))
+    write_data_field(f, ' ', '\n\t\t\t  ', '', ' ""', value)
     f.write(',\n')
+
+def write_linux_testvec_field(f, field_name, value):
+    """Write a general field to a Linux crypto test vector."""
+    f.write(f"\t\t.{field_name}\t= {value},\n")
 
 def write_scatterlist_splits(f, length, allow_also_not_np):
     if length < 2:
         return
     splits = partition_int(length, random.randrange(2, 1 + min(length, 8)))
     if allow_also_not_np:
-        f.write("\t\t.also_non_np = 1,\n")
-    f.write(f"\t\t.np\t= {len(splits)},\n")
-    f.write(f"\t\t.tap\t= {{ {', '.join(str(split) for split in splits)} }},\n")
+        write_linux_testvec_field(f, "also_non_np", 1)
+    write_linux_testvec_field(f, "np", len(splits))
+    taplist = ', '.join(str(split) for split in splits)
+    write_linux_testvec_field(f, "tap", f"{{ {taplist} }}")
 
 def write_linux_cipher_testvecs(f, cipher_name, entries):
     """Format some cipher test vectors for Linux's crypto tests."""
@@ -86,12 +94,12 @@ def write_linux_cipher_testvecs(f, cipher_name, entries):
         else:
             f.write(", {\n")
         write_linux_testvec_hexfield(f, "key", vec['input']['key'])
-        f.write(f"\t\t.klen\t= {len(vec['input']['key'])},\n")
+        write_linux_testvec_field(f, "klen", len(vec['input']['key']))
         write_linux_testvec_hexfield(f, "iv", vec['input']['tweak'])
         write_linux_testvec_hexfield(f, "ptext", vec['plaintext'])
         write_linux_testvec_hexfield(f, "ctext", vec['ciphertext'])
         length = len(vec['plaintext'])
-        f.write(f"\t\t.len\t= {length},\n")
+        write_linux_testvec_field(f, "len", length)
         write_scatterlist_splits(f, length, True)
         f.write("\t}")
     f.write('\n};\n\n')
@@ -107,15 +115,14 @@ def write_linux_hash_testvecs(f, cipher_name, entries):
         else:
             f.write(", {\n")
         write_linux_testvec_hexfield(f, "key", vec['input']['key'])
-        f.write(f"\t\t.ksize\t= {len(vec['input']['key'])},\n")
+        write_linux_testvec_field(f, "ksize", len(vec['input']['key']))
         write_linux_testvec_hexfield(f, "plaintext", vec['input']['message'])
         length = len(vec['input']['message'])
-        f.write(f"\t\t.psize\t= {length},\n")
+        write_linux_testvec_field(f, "psize", length)
         write_linux_testvec_hexfield(f, "digest", vec['hash'])
         write_scatterlist_splits(f, length, False)
         f.write("\t}")
     f.write(f"\n}};\n\n")
-
 
 def sample_adiantum_testvecs(all_vecs):
     """Select some Adiantum test vectors to include in Linux's crypto tests."""
