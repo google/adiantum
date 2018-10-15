@@ -10,6 +10,7 @@ import hpolyc
 import latindance
 import adiantum
 import nh
+import nhpoly1305
 import poly1305
 import xconstruct
 
@@ -27,6 +28,7 @@ our_test_ciphers = common_ciphers + [
     bachata.Bachata(),
     adiantum.Adiantum(),
     nh.NH(),
+    nhpoly1305.NHPoly1305(),
 ]
 
 all_ciphers = our_test_ciphers + [
