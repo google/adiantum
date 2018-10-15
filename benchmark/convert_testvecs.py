@@ -7,7 +7,6 @@
 
 """Convert JSON test vectors from ../test_vectors/ into C headers in ./testvectors/"""
 
-import argparse
 import pathlib
 import random
 import sys
@@ -200,20 +199,13 @@ def nhpoly1305_linux():
             write_linux_hash_testvec,
             sample_nhpoly1305_testvecs(hexjson.iter_unhex(vectorfile)))
 
-def parse_args():
-    p = argparse.ArgumentParser()
-    p.add_argument('--linux', action='store_true')
-    return p.parse_args()
-
 def main():
     random.seed(0)
-    args = parse_args()
     hbsh('HPolyC')
     hbsh('Adiantum')
     nh()
-    if args.linux:
-        hbsh_linux('Adiantum')
-        nhpoly1305_linux()
+    hbsh_linux('Adiantum')
+    nhpoly1305_linux()
 
 if __name__ == "__main__":
     main()
