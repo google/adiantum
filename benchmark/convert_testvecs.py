@@ -83,46 +83,38 @@ def write_scatterlist_splits(f, length, allow_also_not_np):
     taplist = ', '.join(str(split) for split in splits)
     write_linux_testvec_field(f, "tap", f"{{ {taplist} }}")
 
+def write_linux_cipher_testvec(f, vec):
+    write_linux_testvec_hexfield(f, "key", vec['input']['key'])
+    write_linux_testvec_field(f, "klen", len(vec['input']['key']))
+    write_linux_testvec_hexfield(f, "iv", vec['input']['tweak'])
+    write_linux_testvec_hexfield(f, "ptext", vec['plaintext'])
+    write_linux_testvec_hexfield(f, "ctext", vec['ciphertext'])
+    length = len(vec['plaintext'])
+    write_linux_testvec_field(f, "len", length)
+    write_scatterlist_splits(f, length, True)
+
 def write_linux_cipher_testvecs(f, cipher_name, entries):
     """Format some cipher test vectors for Linux's crypto tests."""
     f.write(f"static const struct cipher_testvec {cipher_name}_tv_template[] = {{\n")
-    first = True
-    for vec in entries:
-        if first:
-            f.write("\t{\n")
-            first = False
-        else:
-            f.write(", {\n")
-        write_linux_testvec_hexfield(f, "key", vec['input']['key'])
-        write_linux_testvec_field(f, "klen", len(vec['input']['key']))
-        write_linux_testvec_hexfield(f, "iv", vec['input']['tweak'])
-        write_linux_testvec_hexfield(f, "ptext", vec['plaintext'])
-        write_linux_testvec_hexfield(f, "ctext", vec['ciphertext'])
-        length = len(vec['plaintext'])
-        write_linux_testvec_field(f, "len", length)
-        write_scatterlist_splits(f, length, True)
-        f.write("\t}")
+    write_in_groups(f, "\t{\n", "\t}, {\n", "\t}", "",
+        write_linux_cipher_testvec, entries)
     f.write('\n};\n\n')
+
+def write_linux_hash_testvec(f, vec):
+    write_linux_testvec_hexfield(f, "key", vec['input']['key'])
+    write_linux_testvec_field(f, "ksize", len(vec['input']['key']))
+    write_linux_testvec_hexfield(f, "plaintext", vec['input']['message'])
+    length = len(vec['input']['message'])
+    write_linux_testvec_field(f, "psize", length)
+    write_linux_testvec_hexfield(f, "digest", vec['hash'])
+    write_scatterlist_splits(f, length, False)
 
 def write_linux_hash_testvecs(f, cipher_name, entries):
     """Format some hash test vectors for Linux's crypto tests."""
     f.write(f"static const struct hash_testvec {cipher_name}_tv_template[] = {{\n")
-    first = True
-    for vec in entries:
-        if first:
-            f.write("\t{\n")
-            first = False
-        else:
-            f.write(", {\n")
-        write_linux_testvec_hexfield(f, "key", vec['input']['key'])
-        write_linux_testvec_field(f, "ksize", len(vec['input']['key']))
-        write_linux_testvec_hexfield(f, "plaintext", vec['input']['message'])
-        length = len(vec['input']['message'])
-        write_linux_testvec_field(f, "psize", length)
-        write_linux_testvec_hexfield(f, "digest", vec['hash'])
-        write_scatterlist_splits(f, length, False)
-        f.write("\t}")
-    f.write(f"\n}};\n\n")
+    write_in_groups(f, "\t{\n", "\t}, {\n", "\t}", "",
+        write_linux_hash_testvec, entries)
+    f.write('\n};\n\n')
 
 def sample_adiantum_testvecs(all_vecs):
     """Select some Adiantum test vectors to include in Linux's crypto tests."""
