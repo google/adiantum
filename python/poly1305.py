@@ -61,4 +61,5 @@ class Poly1305(Mac):
     def mac(self, message, mask, key):
         r = read_r(key)
         mask = int.from_bytes(mask, byteorder='little')
-        return (poly1305_h_rbar(r, message) + mask).to_bytes(17, byteorder='little')[:16]
+        hashint = poly1305_h_rbar(r, message) + mask
+        return hashint.to_bytes(17, byteorder='little')[:16]

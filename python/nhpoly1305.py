@@ -8,7 +8,20 @@ import cipher
 import nh
 import poly1305
 
-class NHPoly1305(cipher.Cipher):
+class Hash(cipher.Cipher):
+    def make_testvector(self, input, description):
+        return {
+            'cipher': self.variant,
+            'description': description,
+            'input': input,
+            'hash': self.hash(**input),
+        }
+
+    def check_testvector(self, tv):
+        self.variant = tv['cipher']
+        assert tv['hash'] == self.hash(**tv['input'])
+
+class NHPoly1305(Hash):
     def __init__(self):
         super().__init__()
         self._nh = nh.NH()
@@ -26,18 +39,6 @@ class NHPoly1305(cipher.Cipher):
             }
         }
 
-    def make_testvector(self, input, description):
-        return {
-            'cipher': self.variant,
-            'description': description,
-            'input': input,
-            'hash': self.nhpoly1305(**input),
-        }
-
-    def check_testvector(self, tv):
-        self.variant = tv['cipher']
-        assert tv['hash'] == self.nhpoly1305(**tv['input'])
-
     def test_input_lengths(self):
         v = dict(self.lengths())
         il = self._nh.lengths()
@@ -47,7 +48,7 @@ class NHPoly1305(cipher.Cipher):
         for mlen in 0, munit, mmax, mmax + munit, 2 * mmax:
             yield {**v, "message": mlen}
 
-    def nhpoly1305(self, key, message):
+    def hash(self, key, message):
         mmax = self._nh.lengths()['messagemax']
         nh_hashes = b"".join(self._nh.nh(key[16:], message[i:i + mmax])
                              for i in range(0, len(message), mmax))
