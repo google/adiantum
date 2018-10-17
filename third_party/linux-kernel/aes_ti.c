@@ -8,7 +8,7 @@
  * published by the Free Software Foundation.
  */
 
-#include <aes_ti.h>
+#include <aes_linux.h>
 #include <errno.h>
 
 /*
@@ -165,6 +165,14 @@ static u32 subw(u32 in)
 	       (__aesti_sbox[(in >> 24) & 0xff] << 24);
 }
 
+/*
+ * Generate the AES key schedule:
+ * - round keys for forward cipher are written to ->key_enc
+ * - round keys for Equivalent Inverse Cipher are written to ->key_dec
+ *
+ * Warning: the resulting key schedule is not directly usable for
+ * aesti_encrypt() and aesti_decrypt(); use aesti_set_key() for those.
+ */
 int aesti_expand_key(struct crypto_aes_ctx *ctx, const u8 *in_key,
 			    unsigned int key_len)
 {
