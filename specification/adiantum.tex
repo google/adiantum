@@ -455,12 +455,16 @@ For comparison we evaluate against various block ciphers in XTS mode~\cite{xts}:
 AES\mbox~\cite{AES}, Speck~\cite{speck1,speck2,speck3}, NOEKEON~\cite{noekeon},
 and XTEA~\cite{xtea}. We also include the performance of ChaCha, NH,
 and Poly1305 by themselves for reference.
+
 We used the fastest constant-time implementation of each algorithm we were able
-to find or write for the platform; see \autoref{implementation}.  In every case
-except \texttt{aes\_ti.c},
-the performance-critical parts were written in assembly language using NEON
-instructions. Our tests complete processing of each message before starting the next, so latency
-of a single message in cycles is the product of message size and cpb.
+to find or write for the platform; see \autoref{implementation}.  As an
+exception, given the high difficulty of writing truly constant-time AES
+software~\cite{aes-cache-timing}, for single-block AES we tolerate an
+implementation that merely prefetches the lookup tables as a hardening measure.
+In every case the performance-critical parts were written in assembly language,
+usually using NEON instructions.  Our tests complete processing of each message
+before starting the next, so latency of a single message in cycles is the
+product of message size and cpb.
 
 \begin{table}
     \caption{Implementations}
@@ -472,9 +476,10 @@ of a single message in cycles is the product of message size and cpb.
     ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support
         ChaCha8 and ChaCha12; also applied optimizations from \texttt{cryptodev}
         commit a1b22a5f45fe8841 \\
-    Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to allow key
-    powers to be computed just once per key \\
-    \mbox{AES} & Linux v4.17 & \texttt{aes\_ti.c}, used once per message in HBSH \\
+    Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to
+        precompute key powers just once per key \\
+    \mbox{AES} & Linux v4.17 & \texttt{aes-cipher-core.S}, modified to prefetch
+        lookup tables \\
     \mbox{AES-XTS} & Linux v4.17 & \texttt{aes-neonbs-core.S} (bit-sliced) \\
     \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
     \mbox{NOEKEON-XTS} & ours & \\
