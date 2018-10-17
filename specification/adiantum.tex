@@ -115,9 +115,9 @@
     without AES or other crypto instructions, with a provable
     quadratic advantage bound. Our composition Adiantum uses NH, Poly1305, XChaCha12,
     and a single AES invocation. On an ARM Cortex-A7 processor, Adiantum decrypts
-    4096-byte messages at 11 cycles per byte, five times faster than
+    4096-byte messages at 10.6 cycles per byte, over five times faster than
     AES-256-XTS, with a constant-time implementation. We also define HPolyC which is
-    simpler and has excellent key agility at 14 cycles per byte.
+    simpler and has excellent key agility at 13.6 cycles per byte.
 \iftoggle{iacr}{
 }{
 
