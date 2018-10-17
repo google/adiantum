@@ -51,6 +51,7 @@ if host_machine.cpu_family() == 'arm'
         'src/arm/rc6-neon-core.S',
         'src/arm/speck-neon-core.S',
         'src/arm/xtea-neon-core.S',
+        '../third_party/linux-kernel/arm/aes-cipher-core.S',
         '../third_party/linux-kernel/arm/aes-neonbs-core.S',
         '../third_party/linux-kernel/arm/chacha-neon-core.S',
         '../third_party/openssl/arm/chacha-armv4.S',

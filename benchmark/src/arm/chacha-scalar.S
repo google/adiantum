@@ -31,8 +31,6 @@
 
 #include "../asm_common.h"
 
-#define __LINUX_ARM_ARCH__	7
-
 	// ChaCha state registers
 	X0	.req	r0
 	X1	.req	r1

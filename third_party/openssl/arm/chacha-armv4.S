@@ -9,7 +9,6 @@
  */
 
 #include "asm_common.h"
-#define __LINUX_ARM_ARCH__ 7
 #define IS_ENABLED(feature) 1
 
 .text

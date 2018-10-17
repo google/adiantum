@@ -23,3 +23,7 @@
 #else
 #define ENDPROC(name)
 #endif
+
+#define __LINUX_ARM_ARCH__	7
+
+#define MAX_L1_CACHE_SHIFT	7

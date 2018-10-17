@@ -1,11 +1,6 @@
+/* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Scalar fixed time AES core transform
- *
- * Copyright (C) 2017 Linaro Ltd <ard.biesheuvel@linaro.org>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Common values for AES algorithms
  */
 #pragma once
 
@@ -30,12 +25,25 @@ struct crypto_aes_ctx {
 	u32 key_length;
 };
 
+static inline int aes_nrounds(const struct crypto_aes_ctx *ctx)
+{
+	/*
+	 * AES-128: 6 + 16 / 4 = 10 rounds
+	 * AES-192: 6 + 24 / 6 = 12 rounds
+	 * AES-256: 6 + 32 / 8 = 14 rounds
+	 */
+	return 6 + ctx->key_length / 4;
+}
+
+int aesti_expand_key(struct crypto_aes_ctx *ctx, const u8 *in_key,
+		     unsigned int key_len);
+
 int aesti_set_key(struct crypto_aes_ctx *ctx, const u8 *in_key,
-			 unsigned int key_len);
+		  unsigned int key_len);
 void aesti_encrypt(const struct crypto_aes_ctx *ctx, u8 *out, const u8 *in);
 void aesti_decrypt(const struct crypto_aes_ctx *ctx, u8 *out, const u8 *in);
 
-/* WARNING: this does not create keys that are usable in aesti_*
-   but they are used to set up NEON encryption. */
-int aesti_expand_key(struct crypto_aes_ctx *ctx, const u8 *in_key,
-			    unsigned int key_len);
+#ifdef __arm__
+void __aes_arm_encrypt(const u32 *rk, int rounds, const u8 *in, u8 *out);
+void __aes_arm_decrypt(const u32 *rk, int rounds, const u8 *in, u8 *out);
+#endif
