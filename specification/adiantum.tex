@@ -9,6 +9,7 @@
 
 %!TeX spellcheck = en-US
 
+\RequirePackage{etex}
 \RequirePackage{etoolbox}
 \newtoggle{iacr}
 \input{work/toggle.tex}
@@ -33,7 +34,7 @@
     \usepackage{authblk}
     \usepackage{floatrow}
     \usepackage[svgnames]{xcolor}
-    \usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen]{hyperref}
+    \usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen,pdfencoding=unicode]{hyperref}
 
     \pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
     \renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract
@@ -856,7 +857,7 @@ the advantage in distinguishing HBSH from a family of random permutations is at 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-\section{$\epsilon$A$\Delta$U functions for HBSH}\label{hashing}
+\section{\texorpdfstring{$\epsilon$A$\Delta$U}{𝜖A∆U} functions for HBSH}\label{hashing}
 
 Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
 $H_{K_H}(T, M)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|M|$.
@@ -900,7 +901,7 @@ is needed we suggest using bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
 \subsection{HPolyC hashing}
-HPolyC was the HBSH construction that the first revision of this paper presented, which used
+HPolyC is the HBSH construction that the first revision of this paper presented, which used
 Poly1305 together with an injective encoding function.
 It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
 \begin{align*}
