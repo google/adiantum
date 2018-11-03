@@ -53,6 +53,7 @@
     }
 }
 
+\usepackage{subfiles}
 \begin{document}
 \maketitle
 \iftoggle{iacr}{
@@ -81,14 +82,14 @@
 }
 \end{abstract}
 
-\input{introduction.tex}
-\input{specification.tex}
-\input{design.tex}
-\input{performance.tex}
-\input{proof.tex}
+\subfile{introduction.tex}
+\subfile{specification.tex}
+\subfile{design.tex}
+\subfile{performance.tex}
+\subfile{proof.tex}
 \printbibliography
 \appendix
-\input{hashing.tex}
+\subfile{hashing.tex}
 
 \vspace*{\fill}
 Version: \texttt{\input{work/git.tex}}

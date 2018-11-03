@@ -6,6 +6,8 @@
 
 %!TeX spellcheck = en-US
 
+\documentclass[eprint.tex]{subfiles}
+\begin{document}
 \section{Specification}
 The HBSH construction is shown in \autoref{pseudocode}. It uses a stream cipher $S$, an
 $\epsilon$-almost-$\Delta$-universal function $H$, and an $n$-bit block cipher $E$.
@@ -100,3 +102,4 @@ lengths. We defer full details to \autoref{hashing}.
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
 $K_E || K_H || \ldots = S_{K_S}(\lambda)$.\footnote{In the original
 version of this paper, HPolyC used $K_H || K_E || \ldots = S_{K_S}(\lambda)$.}
+\end{document}

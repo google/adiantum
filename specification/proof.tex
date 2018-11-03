@@ -6,6 +6,8 @@
 
 %!TeX spellcheck = en-US
 
+\documentclass[eprint.tex]{subfiles}
+\begin{document}
 \section{Security reduction}
 HBSH is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
 succeeds if they distinguish it from a family of independent random permutations indexed by
@@ -346,3 +348,4 @@ the advantage in distinguishing HBSH from a family of random permutations is at 
 +& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
 +& \advantage{\mathrm{prf}}{S_{K_S}}[\left(|K_E| + |K_H| + \sum_i \left(|P^i|-n\right), t'\right)]
 \end{align*}
+\end{document}
