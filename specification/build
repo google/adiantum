@@ -23,10 +23,14 @@ def writechanged(path, content):
     if (not path.exists()) or path.read_text() != content:
         path.write_text(content)
 
-def main():
+def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('input', type=pathlib.Path, nargs='?')
     parser.add_argument('--iacr', action='store_true')
-    args = parser.parse_args()
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
     work = wd / "work"
     work.mkdir(parents = True, exist_ok = True)
     fetch = work / "fetch"
@@ -74,13 +78,16 @@ def main():
     gitstate += "\n"
     writechanged(work / "git.tex", gitstate)
 
-    inputfile = "eprint.tex"
+    inputfile = wd / "eprint.tex"
     extrainputs = []
     latex = "lualatex"
     if args.iacr:
-        inputfile = "iacr.tex"
+        inputfile = wd / "iacr.tex"
         extrainputs.append(str(iacrtrans))
         latex = "xelatex"
+
+    if args.input is not None:
+        inputfile = args.input
 
     env = dict(os.environ)
     env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
@@ -88,7 +95,7 @@ def main():
             "-O", str(work / "latex.out"),
             "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
-            inputfile],
+            str(inputfile)],
         cwd=wd, check=True, env=env)
 
 if __name__ == "__main__":
