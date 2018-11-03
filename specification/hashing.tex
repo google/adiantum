@@ -1,0 +1,181 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%!TeX spellcheck = en-US
+
+\section{\texorpdfstring{$\epsilon$A$\Delta$U}{𝜖A∆U} functions for HBSH}\label{hashing}
+
+Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
+$H_{K_H}(T, M)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|M|$.
+If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext length of
+$|T| \leq l_T$, $|P|, |C| \leq l_P$
+then the bounds on queries to $H$ will be $|T| \leq l_T$, $|M| \leq l_M = l_P - n$.
+
+\subsection{Notation}
+
+$\intify: \bin^{*} \rightarrow \ZZ$ is the
+standard little-endian map
+(ie $\intify(\lambda) = 0$, $\intify(0 || X) = 2\intify(X)$, $\intify(1 || X) = 1 + 2\intify(X)$),
+and $X = \fromint_l(y)$ is the unique
+$l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$.
+
+For both Adiantum and HPolyC,
+the output group for which the $\epsilon$A$\Delta$U property applies is
+$\ZZ/2^{128}\ZZ$, so we define
+
+\begin{align*}
+    x \boxplus y &= \fromint_{128}(\intify(x) + \intify(y)) \\
+    x \boxminus y &= \fromint_{128}(\intify(x) - \intify(y)) \\
+\end{align*}
+
+\subsection{Poly1305}
+
+\cite{poly1305} uses polynomials over the finite field $\ZZ/(2^{130}-5)\ZZ$
+to define a function we call
+$\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$,
+and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any
+$g \in \bin^{128}$ and any distinct messages $M, M'$ where $|M|, |M'| \leq l$,
+$\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^{-103}\ceil{l/128}$.
+In that paper this function is used to build a MAC based on AES, while in
+RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
+Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
+$2^{22}$ keys and the effective keyspace is $2^{106}$.
+
+Many Poly1305 libraries
+take parameters $K_H || g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
+is needed we suggest using bitwise inversion and the identity
+$g \boxminus g' = \neg ((\neg g) \boxplus g')$.
+
+\subsection{HPolyC hashing}
+HPolyC is the HBSH construction that the first revision of this paper presented, which used
+Poly1305 together with an injective encoding function.
+It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
+\begin{align*}
+H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || M)
+\end{align*}
+
+Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
+
+\begin{displaymath}
+\epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_M/128})
+\end{displaymath}
+
+\subsection{NH}\label{nh}
+
+We define a word size $w = 32$, a stride $s = 2$,
+a number of rounds $r = 4$ and an input size $u = 8192$ such that $2sw$ divides $u$.
+
+NH~\cite{umac1,umac2,rfc4418} is then defined over message
+lengths divisible by $2sw = 128$
+and takes a $u + 2sw(r -1) = 8576$-bit key, processing the message
+in $u$-bit chunks to produce
+an output of size $2rw\ceil{|M|/u}$; we call this ratio $u/2rw = 32$ the ``compression ratio''.
+
+\begin{algorithmic}[0]
+    \Procedure{NH}{$K, M$}
+    \State $h \gets \lambda$
+    \While {$M \neq \lambda$}
+        \State $l \gets \min{(|M|, u)}$
+        \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
+            \State $p \gets 0$
+            \For {$j \gets 0, 2sw, \ldots, l-2sw$}
+                \For {$k \gets 0, w, \ldots, w(s-1)$}
+                    \State $a_0 \gets \intify(K[i+j+k;w])$
+                    \State $a_1 \gets \intify(K[i+j+k+sw;w])$
+                    \State $b_0 \gets \intify(M[j+k;w])$
+                    \State $b_1 \gets \intify(M[j+k+sw;w])$
+                    \State $p \gets p + ((a_0 + b_0) \bmod 2^w)((a_1 + b_1) \bmod 2^w)$
+                \EndFor
+            \EndFor
+            \State $h \gets h || \fromint_{2w}(p)$
+        \EndFor
+        \State $M \gets M[l;|M| - l]$
+    \EndWhile
+    \State \textbf{return} $h$
+    \EndProcedure
+\end{algorithmic}
+
+This is the largest $w$ where common vector instruction sets (NEON on ARM; SSE2
+and AVX2 on x86) natively support the needed $\bin^w \times \bin^w \rightarrow
+\bin^{2w}$ multiply operation.  The stride $s=2$ improves vectorization on
+ARM32 NEON; larger strides were slower or no faster on every platform we tested
+on. We choose $r=4$ since we want $\epsilon = 2^{-rw} \leq 2^{-103}$ to match
+HPolyC, and a large $u$ for a high compression ratio which reduces the work for
+the next hashing stage.
+
+NH's speed comes with several inconvenient properties:
+\begin{itemize}
+    \item \cite{umac2} shows that this function is $\epsilon$-almost-$\Delta$-universal, but this
+        holds only over equal-length inputs
+    \item $\epsilon = 2^{-rw}$, but the smallest nonempty output is $2rw$ bits, twice as large
+        as necessary for this $\epsilon$ value
+    \item The output size varies with the input size.
+\end{itemize}
+A second hashing stage is used to handle these issues.
+
+\subsection{Adiantum hashing}
+
+For Adiantum we use NH followed by Poly1305 to hash the message.
+To avoid encoding and padding issues, we hash the message length and tweak with
+a separate Poly1305 key.
+In all this takes a $128 + 128 + 8576 = 8832$-bit key.
+
+\begin{algorithmic}[0]
+    \Procedure{H}{$K_H,T,M$}
+    \State $K_T \gets K_H[0;128]$
+    \State $K_M \gets K_H[128;128]$
+    \State $K_N \gets K_H[256;8576]$
+    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|M|) || T)$
+    \State $H_M \gets \Polydjb_{K_M}(\NH_{K_N}(\pad_{128}(M)))$
+    \State \textbf{return} $H_T \boxplus H_M$
+    \EndProcedure
+\end{algorithmic}
+
+For distinct pairs $(T,M) \neq (T', M')$, we have that if $|M| \neq |M'|$ or $T \neq T'$,
+then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
+Otherwise $|M| = |M'|$ but $M \neq M'$;
+per \cite{umac2} the probability NH will compress these to the same value is at most
+$2^{-128}$. If they do not collide, the $256\ceil{|M|/8192}$-bit input to Poly1305 with key $K_M$
+will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
+$\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
+this composition is  $\epsilon$A$\Delta$U, with:
+
+\begin{align*}
+\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_M/8192})/128}  \\
+&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_M/8192})
+\end{align*}
+
+If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
+at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, then per the result
+of~\autoref{hbshadvantage} their distinguishing advantage is therefore at most:
+
+\begin{align*}
+&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192}))\binom{q}{2} \\
++& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
+\end{align*}
+
+Assuming that the block and stream ciphers are strong, this is dominated by the
+term for internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P -
+128)/8192})\binom{q}{2}$. How many messages can be safely encrypted with the
+mode will therefore vary with message and tweak length. For example, if Adiantum
+is used to encrypt 4KiB sectors with 32 byte tweaks, then $\Polydjb_{K_M}$
+processes 8 blocks, and the above is approximately $2^{-101}q^2$. With these
+message and tweak lengths we would recommend encrypting no more than $2^{55}$
+bytes with a single key. Generating the ciphertext to mount such an attack could
+be very time-consuming, and this is work that can only be done on the device
+that has the key; extrapolating from performance figures in
+\autoref{performance}:
+
+\vspace{0.3cm}
+\begin{tabular}{llll}
+    Bytes of ciphertext & Advantage & Time on device (single-threaded) \\
+    \hline
+    512GiB & $2^{-47}$ & 80 minutes  \\
+    $2^{55}$ & $2^{-15}$ & 11 years \\
+    $2^{59}$ & 0.8\% & 175 years &
+\end{tabular}
+\vspace{0.3cm}

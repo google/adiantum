@@ -1,0 +1,91 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%!TeX spellcheck = en-US
+
+\section{Design}
+Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
+it all. A secure SPRP must have the same property in the reverse direction;
+a three-pass structure therefore seems natural.
+$\epsilon$A$\Delta$U functions are the fastest options for reading the plaintext in a
+cryptographically useful way, and stream ciphers are the fastest options for modifying it.
+$\epsilon$A$\Delta$Us
+are typically much faster than stream ciphers, and so the hash-XOR-hash structure emerges as
+the best option for performance. This structure also has the advantage that it naturally handles
+blocks in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
+to handle the case where the large-block size is not
+a multiple of the block size of the underlying primitive.
+
+\cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
+a simple attack with two plaintexts and one ciphertext distinguishes it. A single block cipher call
+in the narrow part of the unbalanced network suffices to frustrate this attack; the
+larger the block, the smaller the relative cost of this call. If the plaintext is exactly $n$ bits
+long, the stream cipher is not used, and the construction becomes
+$C = E_{K_E}(P \boxplus H_{K_H}(T, \lambda)) \boxminus H_{K_H}(T, \lambda)$.
+Compared to HCTR~\cite{hctr} or HCH~\cite{hch}, we sacrifice
+symmetry of encryption with decryption in return for
+the ability to run the block cipher and stream cipher in parallel when decrypting.
+For disk encryption, decryption performance matters most:
+reads are more frequent than writes, and reads generally affect user-perceived latency, while
+operating systems can usually perform writes asynchronously in the background.
+
+It's unusual for a construction to require more than two distinct building blocks.
+More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
+(eg using CTR mode~\cite{ctr})
+as well as using it directly on the narrow side of the block.
+Using XChaCha12 in place of a block cipher affords a significant increase in performance;
+however it cannot easily be substituted in the narrow side of the cipher.
+\cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
+and a stream cipher, and build a hash-XOR-hash SPRP
+with a construction that uses a four-round Feistel network over the non-bulk side of the data
+broken into two halves. However if we were to build this using XChaCha12,
+such a construction would require four extra invocations of ChaCha per block, which would be
+a much greater cost than one block cipher invocation.
+
+We do not consider an attack model in which derived keys are presented as input.
+Length-preserving encryption
+which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
+attacker to submit a query with a $g$-function
+that constructs a plaintext whose ciphertext is all zeroes.
+Whether there is a notion of KDM-security that can be
+applied in this domain is an open problem. Users must take care to protect the keys from being
+included in the input.
+
+Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
+crucial for large blocks. One of the fastest such functions in software is NH, and
+it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
+combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size
+used for NH means that we can use a simple, portable implementation of Poly1305 without a great
+cost in speed.  We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
+custom combination of NH and Poly1305; however, available UHASH implementations
+are not constant-time, and a constant-time implementation would be significantly
+slower.
+
+For the 4KiB blocks of disk encryption,
+the ~1KiB NH key size has only a small impact on key agility. Applications
+that need high key agility even on small blocks may instead use HPolyC, which
+uses Poly1305 directly. For this a vectorized Poly1305 implementation is important.  The main
+cost of a new HPolyC key is a single XChaCha12 invocation to generate subkeys.
+ChaCha12 has no key schedule
+and makes no use of precomputation; XChaCha12 has a ``nonce scheduling'' step
+that must be called once to compute subkeys and once for each encryption or
+decryption.  No extra work is required for differing message or tweak lengths for either Adiantum
+or HPolyC.
+
+NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
+constant-time and free from data-dependent lookups. So long as the block cipher implementation
+also has these properties, Adiantum and HPolyC will inherit security against
+this class of side-channel attacks.
+
+NH, Poly1305 and ChaCha12 are highly parallelizable.
+The stream cipher and second hash stages can also be run in combination for a total
+of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
+which requires at least three.
+We put the ``special'' block on the right so that in typical uses the bulk encryption has
+the best alignment for fast operations.
+
+``Adiantum'' is the genus of the maidenhair fern, which in the language of
+flowers (floriography) signifies sincerity and discretion.~\cite{fleurs}

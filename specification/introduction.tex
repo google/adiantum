@@ -1,0 +1,116 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%!TeX spellcheck = en-US
+
+\section{Introduction}
+Two aspects of disk encryption make it a challenge for cryptography.  First,
+performance is critical; every extra cycle is a worse user experience, and on a mobile device
+a reduced battery life.  Second, the ciphertext can be no larger than the plaintext: a sector-sized
+read or write to the filesystem must mean a sector-sized read or write to the underlying device,
+or performance will again suffer greatly
+(as well as, in the case of writes to flash memory, the life of the device).
+Nonce reuse is inevitable as there is nowhere to store a varying nonce, and there is no space
+for a MAC; thus standard constructions like AES-GCM are not an option and standard notions
+of semantic security are unachievable.  The best that can be done under the circumstances is
+a ``tweakable super-pseudorandom permutation'': an attacker with access to both encryption
+and decryption functions who can choose tweak and plaintext/ciphertext freely is unable to
+distinguish it from a family of independent random permutations.
+
+\subsection{History}
+
+Hasty Pudding Cipher~\cite{hpc} was a variable-input-length primitive presented to the AES contest.
+A key innovation
+was the idea of a ``spice'', which was later formalized as a ``tweak'' in~\cite{tweakable}.
+Another tweakable large-block primitive was Mercy~\cite{mercy},
+cryptanalyzed in~\cite{mercycryptanalysis}.
+
+\cite{luby-rackoff} (see also~\cite{maurer-luby-rackoff,ppdes})
+shows how to construct a pseudorandom permutation using a three-round Feistel
+network of pseudorandom functions;
+proves that this is not a secure super-pseudorandom permutation (where the adversary
+has access to decryption as well as encryption) and that four rounds suffice for this aim.
+BEAR and LION~\cite{bearlion} apply this result to an unbalanced Feistel network to build a
+large-block cipher from a hash function and a stream cipher (see also BEAST~\cite{beast}).
+
+\cite{fasterlr} shows that a universal function (here called a ``difference concentrator'')
+suffices for the first round, which~\cite{NaorReingold} extends to four-round function
+to build a super-pseudorandom permutation.
+
+More recently, proposals in this space have focused on the use of
+block ciphers. VIL mode~\cite{brvil} is a CBC-MAC based two-pass variable-input-length construction which
+is a PRP but not an SPRP. CMC mode~\cite{cmc} is a true SPRP using two passes of the block cipher;
+EME mode~\cite{eme} is similar but parallelizable, while
+EME* mode~\cite{emestar} extends EME mode to handle blocks that are not a multiple of the block
+cipher size. PEP~\cite{pep}, TET~\cite{tet}, and HEH~\cite{heh} have a mixing layer either side of
+an ECB layer.
+
+XCB~\cite{xcb} is a block-cipher based unbalanced three-round Feistel network with an
+$\epsilon$-almost-XOR-universal hash function for the first and third rounds
+(``hash-XOR-hash''),
+which uses block
+cipher invocations on the narrow side of the network to ensure that the network is an SPRP, rather
+than just a PRP; it also introduces a tweak.
+HCTR~\cite{hctr,hctr2}, HCH~\cite{hch}, and HMC~\cite{hmc} reduce this to a single
+block cipher invocation within the Feistel network.
+These proposals require
+either two AES invocations, or an AES invocation and two $\GF(2^{128})$ multiplications,
+per 128 bits of input.
+
+\subsection{Our contribution}
+On the ARM architecture, the ARMv8 Cryptography Extensions include instructions that make
+AES and $\GF(2^{128})$ multiplications much more efficient. However,
+smartphones designed for developing markets
+often use lower-end processors which
+don't support these extensions, and as a result there is no existing SPRP construction which performs
+acceptably on them.
+
+On such platforms stream ciphers such as ChaCha12~\cite{chacha} significantly
+outperform block ciphers in cycles per byte, especially with constant-time implementations.
+Similarly, absent specific processor support, hash functions such as NH~\cite{umac2} and
+Poly1305 hash~\cite{poly1305} will be much faster
+than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
+the data in a disk-sector-sized block, a hash-XOR-hash
+mode of operation relying on them should achieve
+much improved performance on such platforms.
+
+To this end, we present the HBSH (hash, block cipher, stream cipher, hash)
+construction, which generalizes over constructions such as
+HCTR and HCH by taking an $\epsilon$-almost-$\Delta$-universal hash function and a
+nonce-accepting stream cipher
+as components. Based on this construction, our main proposal is Adiantum,
+which uses a combination of NH and Poly1305 for the hashing, XChaCha12 for the stream cipher, and
+AES for the single blockcipher application. Adiantum:
+\begin{itemize}
+    \item is a tweakable, variable-input-length, super-pseudorandom permutation
+    \item has a security bound quadratic in the number of queries and linear in message length
+    \item is highly parallelizable
+    \item needs only three passes over the bulk of the data, or
+        two if the XOR is combined with the second hash.
+\end{itemize}
+
+Without special cases or extra setup, Adiantum handles:
+\begin{itemize}
+    \item any message and tweak lengths within the allowed range,
+    \item varying message and tweak lengths for the same keys.
+\end{itemize}
+
+We also describe a simpler proposal, HPolyC, which sacrifices a little speed on large blocks
+for simplicity and greater key agility, leaving out the NH hash layer.
+
+The proof of security differs from other hash-XOR-hash modes in three ways. First,
+Poly1305 hash is not XOR universal, but universal over $\ZZ/2^{128}\ZZ$,
+so for XOR of hash values we substitute addition and subtraction in the appropriate group.
+Second, using the XSalsa20 construction~\cite{xsalsa}, we can directly
+build a stream cipher which takes a 192-bit nonce to generate a stream, simplifying
+the second Feistel operation and associated proof, as well as subkey generation.
+Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
+the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
+
+\subsection{Implementation and test vectors}
+Implementations in Python, C, and ARMv7 assembly, as well as thousands of test
+vectors and the \LaTeX{} source for this paper,  are available from our source code
+repository at \url{https://github.com/google/adiantum}.

@@ -1,0 +1,348 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%!TeX spellcheck = en-US
+
+\section{Security reduction}
+HBSH is a tweakable, variable-input-length, secure pseudorandom permutation: an attacker
+succeeds if they distinguish it from a family of independent random permutations indexed by
+input length and tweak, given access to both encryption and decryption oracles.
+
+$K_E$ and $K_H$ are derived from $K_S$:
+$K_E || K_H || \ldots = S_{K_S}(\lambda)$. HBSH is then
+the conjugation of an inner transform by an outer:
+\begin{align*}
+    \HBSH:
+    \bin^* &\times \bin^l \times \bin^n \rightarrow \bin^l \times \bin^n \\
+    \HBSH_{T} &= \phi^{-1}_{K_H, T}
+    \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T} \\
+    \theta_{e, s}(P_L, P_M) &= (P_L \arrowoplus s(e(P_M)), e(P_M)) \\
+    \phi_{K_H, T}(L, R) &= (L, R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L, R) &= (L, R \boxminus H_{K_H}(T, L))
+\end{align*}
+
+These are families of length-preserving functions parameterized by the length
+$|P_L| = |L| = |C_L| = l \in \mathbb{N}$;
+for notational convenience we leave this parameter implicit.
+
+We prove a security bound for HBSH in three stages:
+\begin{itemize}
+    \item we consider distinguishers for the inner construction $\theta$ in an
+    attack model which forbids ``inner collisions'' in queries
+    \item we prove a bound on the probability of an attacker causing an inner collision
+    \item we put this together to bound the success probability of a distinguisher against
+    HBSH.
+\end{itemize}
+
+At each stage, we consider an attacker \(\adv^{\calE, \calD}\) who makes $q$ queries
+to oracles for
+two length-preserving function families which take a tweak; the attacker is always free to vary
+the length of input and tweak.
+
+\begin{align*}
+\calE, \calD:
+\bin^* &\times \bin^l \times \bin^n \rightarrow \bin^l \times \bin^n \\
+(C_L, C_R) &\leftarrow \calE_T(P_L, P_R) \\
+(P_L, P_R) &\leftarrow \calD_T(C_L, C_R) \\
+\end{align*}
+
+\subsection{Inner part}\label{innerpart}
+
+We consider an attacker trying to distinguish an idealized $\theta$ from a
+pair of families of random length-preserving functions,
+but we forbid the attacker from causing ``inner collisions'':
+having made either of the queries: \label{constraints}
+\begin{itemize}
+    \item $(C_L, C_M) \leftarrow \calE_T(P_L, P_M)$
+    \item $(P_L, P_M) \leftarrow \calD_T(C_L, C_M)$
+\end{itemize}
+both of the queries below are subsequently disallowed:
+\begin{itemize}
+    \item $\calE_\cdotp(\cdotp, P_M)$
+    \item $\calD_\cdotp(\cdotp, C_M)$
+\end{itemize}
+where $\cdotp$ represents any value. However assuming $C_M \neq P_M$, this does not disallow
+subsequent queries of the form $\calD_\cdotp(\cdotp, P_M)$ or $\calE_\cdotp(\cdotp, C_M)$
+and it's important to consider such queries at each step below. We write
+$P_M$/$C_M$ for the second argument and result to match notation used for $\theta$ elsewhere.
+At this stage, we consider computationally unbounded attackers; we'll consider resource-bounded
+attackers in~\autoref{composition}.
+
+In what follows we use a standard concrete security hybrid argument per~\cite{concrete,games}:
+for a fixed class of attacker, distinguishing advantage obeys the triangle inequality and
+forms a pseudometric space. We consider a
+sequence of experiments, bound the distinguishing advantage between successive
+experiments, and thereby
+prove an advantage bound for a distinguisher between the first and the last experiment
+which is the sum of the advantage bound between each successive experiment.
+
+\xprmtitle{innerpart}{randinner}: $\calE$ and $\calD$ are families of
+random functions. Since by our constraints above every query to each
+is distinct, every output of the
+appropriate length is equally likely. Wherever we specify that an experiment uses multiple random
+functions, those functions are independent unless stated otherwise.
+
+\xprmtitle{innerpart}{notweak}: Ignore the tweak: let
+$\barE, \barD$ be random length-preserving function families from
+$\bin^l \times \bin^n \rightarrow \bin^l \times \bin^n$
+and let $\calE_T = \barE$ and $\calD_T = \barD$ for all $T$.
+Since by the above constraints, for each random function the second argument in every query
+is still always distinct, every output of the appropriate length is equally
+likely as before, and this is indistinguishable from \xprm{innerpart}{randinner}.
+
+\xprmtitle{innerpart}{doublerf}: Use a Feistel network in which the stream cipher
+nonce includes both $P_M$ and $C_M$.
+\begin{itemize}
+    \item $F_S: \bin^{2n} \rightarrow \bin^{l_S}$ is a random
+    function
+    \item $F_E, F_D: \bin^n \rightarrow \bin^n$ are random functions
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || F_E(P_M)), F_E(P_M))$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(F_D(C_M) || C_M), F_D(C_M))$
+\end{itemize}
+Again, the constraints above ensure that for each random function,
+every query is distinct,
+every output of the appropriate length is equally
+likely as before, and this is indistinguishable from
+\xprm{innerpart}{notweak} and \xprm{innerpart}{randinner}.
+
+\xprmtitle{innerpart}{rpswitch}: Substitute a random permutation for the pair of random functions.
+\begin{itemize}
+    \item $F_S: \bin^{2n} \rightarrow \bin^{l_S}$ is a random function as before
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(P_M || \pi(P_M)), \pi(P_M))$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(\pi^{-1}(C_M) || C_M), \pi^{-1}(C_M))$
+    ie $\calD_T = \calE_T^{-1}$
+\end{itemize}
+The constraints above rule out ``pointless'' queries on $\pi$, so per section C of~\cite{cmc}
+the advantage in distinguishing this from \xprm{innerpart}{doublerf} is at most
+$2^{-n}\binom{q}{2}$.
+
+\xprmtitle{innerpart}{halfrf}: Replace the two-argument $F_S$ with
+a single-argument version which uses only $C_M$.
+\begin{itemize}
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation as before
+    \item $\calE_T(P_L, P_M) = (P_L \arrowoplus F_S(\pi(P_M)), \pi(P_M))$
+    ie $\calE_T = \theta_{\pi, F_S}$
+    \item $\calD_T(C_L, C_M) = (C_L \arrowoplus F_S(C_M), \pi^{-1}(C_M))$
+    ie $\calD_T = \theta_{\pi, F_S}^{-1}$
+\end{itemize}
+Since $\pi$ is a permutation,
+for any pair of queries $C_M = C_M'$ if and only if $P_M = P_M'$.
+This is therefore indistinguishable from \xprm{innerpart}{rpswitch}.
+This is a small upside to HBSH's asymmetry: if a symmetrical
+construction such as $F_S(P_M \oplus \pi(P_M))$ were used here instead, it would be
+distinguishable with advantage $2^{-n}\binom{q}{2}$.
+
+Summing these distances, with these constraints the advantage distinguishing between
+\xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf} is at most
+$2^{-n}\binom{q}{2}$.
+
+\subsection{Collision finding}\label{collision}
+We now bound the probability that the attacker will cause an
+``inner collision''---a query to the inner part which doesn't meet the constraints described
+in \autoref{constraints}.
+
+We assume $H$ is $\epsilon$-almost-$\Delta$-universal:
+for any $g \in \bin^n$ and
+any two distinct messages $(T, M) \neq (T', M')$,
+$\probsub{K_H \sample \mathcal{K}_H}{H_{K_H}(T, M) \boxminus H_{K_H}(T', M') = g} \leq \epsilon$.
+Adiantum and HPolyC differ only in the choice of $H$ function, and we defer the
+description of these functions and their $\epsilon$A$\Delta$U property to \autoref{hashing},
+noting here that for both, the value of $\epsilon$ will depend
+on the maximum length of the message and tweak we allow the attacker to query for.
+
+From here on, we forbid only ``pointless queries'': after either of the queries
+$(C_L, C_R) \leftarrow \calE_T(P_L, P_R)$ or $(P_L, P_R) \leftarrow \calD_T(C_L, C_R)$,
+both the subsequent queries
+$\calE_T(P_L, P_R)$ and $\calD_T(C_L, C_R)$ would be forbidden. Again, we consider a
+computationally unbounded attacker.
+
+A hash key $K_H \sample \mathcal{K}_H$ is chosen at random, and for each query we define
+\begin{itemize}
+    \item $P_M = P_R \boxplus H_{K_H}(T, P_L)$
+    \item $C_M = C_R \boxplus H_{K_H}(T, C_L)$
+\end{itemize}
+
+For query $1 \leq i \leq q$, we'll use superscripts to refer to the variables for that query, eg
+$P_M^i$, $C_M^i$. The attacker wins if there exists $i < j \leq q$ such that
+either
+\begin{itemize}
+    \item $j$ is a plaintext query (a query to $\calE$) and $P_M^i = P_M^j$ or
+    \item $j$ is a ciphertext query (a query to $\calD$) and $C_M^i = C_M^j$.
+\end{itemize}
+We do not consider a query such that $C_M^i = P_M^j$ (or vice versa) a win.
+
+Here we are considering not distinguishing probability but success probability; we
+show a bound on success probability for the first experiment, and for each subsequent experiment
+we bound the increase in success probability over the previous experiment.
+
+\xprmtitle{collision}{keyend}: Choose responses fairly at random of the appropriate length;
+once all $q$ queries are complete, choose the hash key and see if the attacker succeeded.
+
+If query $j$ is a plaintext query, the attacker knows the query and result
+for all $i < j$, and can choose plaintext values to maximize the probability of success.
+If $T^i, P_L^i = T^j, P_L^j$ then the hashes will be the same, and since pointless
+queries are forbidden we have that $P_R^i \neq P_R^j$ and therefore that
+$P_M^i \neq P_M^j$. Otherwise by the $\epsilon$A$\Delta$U property,
+$\prob{P_M^i = P_M^j} \leq \epsilon$. The same success bound holds for a ciphertext query.
+The overall probability of success
+is at most the sum of the probability of success for each pair:
+$\epsilon\binom{q}{2}$.
+
+Note that we don't assume that probabilities are independent here;
+for any events $A$, $B$ we have that $\prob{A \vee B} \leq \prob{A} + \prob{B}$, with
+equality if $A$, $B$ are disjoint.
+
+\xprmtitle{collision}{keystart}: As with \xprm{collision}{keyend}, but
+choose the hash key at the start of the experiment. This
+does not change the probability of success.
+
+\xprmtitle{collision}{earlystop}: As with \xprm{collision}{keystart}, but
+end the experiment as soon as the attacker succeeds.
+This doesn't change the success probability.
+
+\xprmtitle{collision}{randomfuncs}: Use random function families for $\calE$,
+$\calD$. Since we forbid pointless queries,
+all responses of the appropriate length are equally likely as before,
+and this doesn't change the success probability.
+
+\xprmtitle{collision}{randinner}: Use random function families for $\calE'$, $\calD'$, and define
+\begin{itemize}
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \calE_T' \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \calD_T' \circ \phi_{K_H, T}$
+\end{itemize}
+
+Since a random function composed with a bijective function is a random function,
+this doesn't change the success probability, which remains at most
+$\epsilon\binom{q}{2}$.
+
+\xprmtitle{collision}{halfrf}: The middle part of the sandwich is now a pair of random functions,
+as per the first experiment in \autoref{innerpart}, \xprm{innerpart}{randinner}.
+Substitute this with the last experiment, \xprm{innerpart}{halfrf}:
+
+\begin{itemize}
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S}^{-1} \circ \phi_{K_H, T} = \calE_T^{-1}$
+\end{itemize}
+
+Given any attacker against \xprm{collision}{halfrf},
+we construct a distinguisher between \xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf} as
+follows: we choose a random $K_H$, and use our oracle for the inner part as $\theta$.
+We report 1 if the attacker succeeds in generating an inner collision.
+We stop the experiment early if the attacker succeeds, and any query in which the attacker
+does not succeed is one that obeys the query bounds of \autoref{innerpart}.
+Therefore, the difference in success probability
+between \xprm{collision}{randinner} and \xprm{collision}{halfrf}
+for these two outer experiments can be no more than
+the advantage bound of $2^{-n}\binom{q}{2}$
+established in~\autoref{innerpart} for distinguishing between
+\xprm{innerpart}{randinner} and \xprm{innerpart}{halfrf}.
+The success
+probability for this final experiment is therefore at most
+$(\epsilon + 2^{-n})\binom{q}{2}$.
+
+\subsection{Composition}\label{composition}
+
+Finally we put these pieces together to bound the advantage of distinguishing HBSH from
+a family of random permutations. As before, the attacker can make encryption and decryption queries
+but ``pointless'' queries are forbidden; in addition, the attacker is constrained by a time
+bound $t$. We start with this experiment:
+
+\xprmtitle{composition}{permutation}: For all lengths and all $T$, $\calE_T$ is a random permutation,
+and $\calD_T = \calE_T^{-1}$. The security of a variable-length tweakable SPRP is defined by
+the advantage bound in distinguishing it from this experiment.
+
+\xprmtitle{composition}{randomfuncs}: $\calE$ and $\calD$ are
+families of random functions.
+Since pointless queries are forbidden, the advantage in distinguishing this from
+\xprm{composition}{permutation} is at most $2^{-|P|}\binom{q}{2} \leq 2^{-n}\binom{q}{2}$
+per section C of~\cite{cmc}.
+
+\xprmtitle{composition}{randinner}: $\calE'$ and $\calD'$ are families of random functions.
+Choose a hash key $K_H \sample \mathcal{K}_H$,
+and conjugate the random functions by Feistel calls to the hash function:
+
+\begin{itemize}
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \calE_T' \circ \phi_{K_H, T}$
+    \item $\calD_T = \phi^{-1}_{K_H, T} \circ \calD_T' \circ \phi_{K_H, T}$
+\end{itemize}
+
+as per the step from \xprm{collision}{randomfuncs}
+to \xprm{collision}{randinner}.
+Since a random function composed with a bijective function is a random function,
+this is indistinguishable from \xprm{composition}{randomfuncs}.
+
+\xprmtitle{composition}{halfrf}: Substitute \xprm{innerpart}{halfrf} for \xprm{innerpart}{randinner}.
+\begin{itemize}
+    \item $K_H \sample \mathcal{K}_H$
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\pi: \bin^n \rightarrow \bin^n$ is a random permutation
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{\pi, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+By \autoref{collision} the attacker's probability of causing an inner collision is at most
+$(\epsilon + 2^{-n})\binom{q}{2}$. If they do not cause a collision,
+their queries to $\theta$ meet the constraints set out in \autoref{innerpart}, which
+bounds the distinguishing advantage in this case to $2^{-n}\binom{q}{2}$.
+The advantage in distinguishing from \xprm{composition}{randinner}
+is at most the sum of the collision probability and the no-collision advantage, which is
+$(\epsilon + 2(2^{-n}))\binom{q}{2}$.
+
+\xprmtitle{composition}{block}: Choose a random $K_E \sample \mathcal{K}_E$ and
+substitute a block cipher $E_{K_E}$ for $\pi$.
+\begin{itemize}
+    \item $K_H \sample \mathcal{K}_H$, $K_E \sample \mathcal{K}_E$
+    \item $F_S: \bin^n \rightarrow \bin^{l_S}$ is a random function
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+By the standard argument
+for such a substitution, the advantage for this substitution is at most
+$\advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')]$ where $t$ is a time bound on the attacker and
+$t' = t + \bigO{\sum_i \left( |P^i| + |T^i| \right)}$.
+
+\xprmtitle{composition}{xrf}: Use the random function $F_S$ to derive the keys
+$K_E$, $K_H$:
+
+\begin{itemize}
+    \item $F_S: (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$ is a random function
+    \item $K_E || K_H || \ldots = F_S(\lambda)$
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, F_S} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+This is indistinguishable from \xprm{composition}{block}.
+
+\xprmtitle{composition}{xchacha}: Choose a random $K_S \sample \mathcal{K}_S$ and
+substitute a stream cipher $S_{K_S}$ for the random function $F_S$
+
+\begin{itemize}
+    \item $K_S \sample \mathcal{K}_S$
+    \item $K_E || K_H || \ldots = S_{K_S}(\lambda)$
+    \item $\calE_T = \phi^{-1}_{K_H, T} \circ \theta_{E_{K_E}, S_{K_S}} \circ \phi_{K_H, T}$
+    \item $\calD_T = \calE_T^{-1}$
+\end{itemize}
+
+This is HBSH. Taking into account the $|K_E| + |K_H|$-bit
+query to $S_{K_S}$ to derive $K_E$, $K_H$,
+by the standard argument the advantage for this substitution is at most
+$\advantage{\mathrm{prf}}{S_{K_S}}[\left(|K_E| + |K_H| + \sum_i \left(|P^i|-n\right), t'\right)]$
+where the first argument measures not queries but bits of output.
+
+Summing these,
+the advantage in distinguishing HBSH from a family of random permutations is at most
+\label{hbshadvantage}
+
+\begin{align*}
+& (\epsilon + 3(2^{-n}))\binom{q}{2} \\
++& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[\left(|K_E| + |K_H| + \sum_i \left(|P^i|-n\right), t'\right)]
+\end{align*}

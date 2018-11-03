@@ -1,0 +1,102 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%!TeX spellcheck = en-US
+
+\section{Specification}
+The HBSH construction is shown in \autoref{pseudocode}. It uses a stream cipher $S$, an
+$\epsilon$-almost-$\Delta$-universal function $H$, and an $n$-bit block cipher $E$.
+From plaintext $P$ of at least $n$ bits and a tweak $T$,
+it generates a ciphertext $C$ of the same length as $P$.
+HBSH divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
+the remainder of the input, and applies an unbalanced Feistel network.
+$P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
+
+\begin{figure}
+    \begin{floatrow}
+        \ffigbox{
+            \input{finalfig.tex}
+        }{
+            \caption{HBSH}\label{finalfig}
+        }
+        \ffigbox{
+            \begin{algorithmic}[0]
+                \Procedure{HBSHEncrypt}{$T,P$}
+                \State $P_L || P_R \gets P$
+                \State $P_M \gets P_R \boxplus H_{K_H}(T, P_L)$
+                \State $C_M \gets E_{K_E}(P_M)$
+                \State $C_L \gets P_L \arrowoplus S_{K_S}(C_M)$
+                \State $C_R \gets C_M \boxminus H_{K_H}(T, C_L)$
+                \State $C \gets C_L || C_R$
+                \State \textbf{return} $C$
+                \EndProcedure
+            \end{algorithmic}
+            \begin{algorithmic}[0]
+                \Procedure{HBSHDecrypt}{$T,C$}
+                \State $C_L || C_R \gets C$
+                \State $C_M \gets C_R \boxplus H_{K_H}(T, C_L)$
+                \State $P_L \gets C_L \arrowoplus S_{K_S}(C_M)$
+                \State $P_M \gets E_{K_E}^{-1}(C_M)$
+                \State $P_R \gets P_M \boxminus H_{K_H}(T, P_L)$
+                \State $P \gets P_L || P_R$
+                \State \textbf{return} $P$
+                \EndProcedure
+            \end{algorithmic}
+        }{\caption{Pseudocode for HBSH}\label{pseudocode}}
+    \end{floatrow}
+\end{figure}
+
+\subsection{Notation}
+Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
+$a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
+$||$ represents concatenation, and $\lambda$ the empty string.
+$|X|$ represents the length of $X \in \bin^{*}$ in bits.
+$Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
+$X \arrowoplus Y$ is $X \oplus Y[0;|X|]$.
+$\pad_l(X) = X||0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
+$\boxplus$ represents addition in a group which depends
+on the hash function, and $\boxminus$ subtraction.
+
+\subsection{Block cipher}
+The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
+is only invoked once no matter the size of the input, so for disk-sector-sized inputs
+its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
+
+\subsection{Stream cipher}
+$S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
+is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
+the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
+is distinct from all $n$-bit strings.
+
+Adiantum and HPolyC use the XChaCha12 stream cipher. The ChaCha~\cite{chacha}
+stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
+a ChaCha20 variant with a 96-bit nonce, but we need a 128-bit nonce.
+The XSalsa20 construction~\cite{xsalsa}
+proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
+applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
+We then construct a function that takes a variable-length nonce of up to
+191 bits by padding with a 1 followed by zeroes:
+$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$. For a
+given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
+therefore require that the plaintext length be within the bounds
+$n \leq |P| \leq l_S + n$.
+
+\subsection{Hash}
+$H: \mathcal{K}_H \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
+is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
+of bitstrings, yielding a group element represented as an $n$-bit string.
+
+HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
+based on Poly1305, while Adiantum uses both Poly1305 and NH;
+specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
+vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
+$\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
+lengths. We defer full details to \autoref{hashing}.
+
+\subsection{Key derivation}\label{keyderivation}
+HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
+$K_E || K_H || \ldots = S_{K_S}(\lambda)$.\footnote{In the original
+version of this paper, HPolyC used $K_H || K_E || \ldots = S_{K_S}(\lambda)$.}
