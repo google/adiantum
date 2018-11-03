@@ -74,28 +74,21 @@ def main():
     gitstate += "\n"
     writechanged(work / "git.tex", gitstate)
 
+    inputfile = "eprint.tex"
     extrainputs = []
     latex = "lualatex"
-    output = "adiantum.pdf"
-    toggle = r"\togglefalse{iacr}"
-    latexwork = work / "latex.out"
     if args.iacr:
+        inputfile = "iacr.tex"
         extrainputs.append(str(iacrtrans))
         latex = "xelatex"
-        output = "adiantum-iacr.pdf"
-        toggle = r"\toggletrue{iacr}"
-        latexwork = work / "iacr_latex.out"
 
-
-    writechanged(work / "toggle.tex", toggle)
     env = dict(os.environ)
     env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
     subprocess.run([str(latexrun),
-            "-o", output,
-            "-O", str(latexwork),
+            "-O", str(work / "latex.out"),
             "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
-            "adiantum.tex"],
+            inputfile],
         cwd=wd, check=True, env=env)
 
 if __name__ == "__main__":

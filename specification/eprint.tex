@@ -1,0 +1,42 @@
+% Copyright 2018 Google LLC
+%
+% Use of this source code is governed by an MIT-style
+% license that can be found in the LICENSE file or at
+% https://opensource.org/licenses/MIT.
+
+%%% script AUTHOR: Paul Crowley, Eric Biggers%%%
+%%% script TITLE: {Adiantum}: length-preserving encryption for entry-level processors%%%
+
+%!TeX spellcheck = en-US
+
+\RequirePackage{etex}
+\RequirePackage{etoolbox}
+\newtoggle{iacr}
+\togglefalse{iacr}
+\documentclass[letterpaper,luatex,11pt]{article}
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmathrm{Latin Modern Roman}
+\defaultfontfeatures{}
+\setmonofont{TeX Gyre Cursor}[Ligatures={NoCommon,NoRequired,NoContextual},Scale=0.9]
+
+\usepackage[hmargin=4cm,vmargin=3cm,nohead]{geometry}
+\usepackage{parskip}
+\usepackage[style]{abstract}
+\usepackage{titling}
+\usepackage{sectsty}
+\usepackage{authblk}
+\usepackage{floatrow}
+\usepackage[svgnames]{xcolor}
+\usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen,pdfencoding=unicode]{hyperref}
+
+\pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
+\renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract
+\allsectionsfont{\sffamily} % sf sections
+
+\raggedright
+\raggedbottom
+
+\input{shared-part.tex}
