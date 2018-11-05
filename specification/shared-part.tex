@@ -7,15 +7,13 @@
 %!TeX spellcheck = en-US
 
 \usepackage[style=alphabetic,backend=biber]{biblatex}
+\usepackage{tikz}
+\usepackage{makecell}
+\usepackage{longtable}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[logic,probability,advantage,adversary,landau,sets,operators]{cryptocode}
 \usepackage{algpseudocode}
-
-\usepackage{tikz}
-\usepackage{makecell}
-
-\usepackage{longtable}
 
 \DeclareMathOperator{\GF}{GF}
 \DeclareMathOperator{\XChaCha12}{XChaCha12}
@@ -26,8 +24,6 @@
 \DeclareMathOperator{\intify}{int}
 \DeclareMathOperator{\fromint}{fromint}
 \DeclareMathOperator{\pad}{pad}
-
-\addbibresource{bib.bib}
 
 \usetikzlibrary{positioning}
 \usetikzlibrary{groupops}
@@ -41,6 +37,8 @@
 \newcommand*{\barD}{\overline{\calD}}
 
 \renewcommand{\pcadvantagesuperstyle}[1]{#1}
+
+\addbibresource{bib.bib}
 
 \title{{Adiantum}: length-preserving encryption for entry-level processors}
 
@@ -61,7 +59,7 @@
 \def\subbib{}
 \maketitle
 \iftoggle{iacr}{
-    \keywords{strong pseudorandom permutation \and
+    \keywords{super-pseudorandom permutation \and
         variable input length \and
         tweakable encryption \and
         disk encryption}

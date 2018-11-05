@@ -68,10 +68,10 @@ is only invoked once no matter the size of the input, so for disk-sector-sized i
 its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
 
 \subsection{Stream cipher}
-$S: \mathcal{K}_S \times (\lambda \cup \bin^n) \rightarrow \bin^{l_S}$
+$S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
 is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
-is distinct from all $n$-bit strings.
+is distinct from all $n$-bit strings; thus $\lambda \cup \bin^n \subseteq \mathcal{N}$.
 
 Adiantum and HPolyC use the XChaCha12 stream cipher. The ChaCha~\cite{chacha}
 stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
@@ -82,14 +82,16 @@ applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
 We then construct a function that takes a variable-length nonce of up to
 191 bits by padding with a 1 followed by zeroes:
 $S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$. For a
-given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output; we
-therefore require that the plaintext length be within the bounds
-$n \leq |P| \leq l_S + n$.
+given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output. The left-hand side
+of the plaintext or ciphertext is thus drawn from the space
+$\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$
+and the space of HBSH plaintexts and ciphertexts
+$\mathcal{M} = \bigcup_{i=0}^{l_S}\bin^{i + n}$.
 
 \subsection{Hash}
-$H: \mathcal{K}_H \times \bin^{*} \times \bin^{*} \rightarrow \bin^n$
-is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function on pairs
-of bitstrings, yielding a group element represented as an $n$-bit string.
+$H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
+is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function
+yielding a group element represented as an $n$-bit string.
 
 HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
 based on Poly1305, while Adiantum uses both Poly1305 and NH;
