@@ -9,11 +9,10 @@
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
 \section{Security reduction}
+\subsection{Definitions}
 HBSH mode relies on a two-input $\epsilon$-almost-$\Delta$-universal function and
 block and stream cipher primitives, and we define their security properties
 as follows. In what follows we draw on definitions used in \cite{hctr2}.
-
-\subsection{Definitions}
 
 We require the hash function
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
@@ -307,7 +306,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
         } \\
         =& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
-        \geq & \prod_i 2^{-|P^i|} \\
+        \geq & \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}\\
     \end{align*}
 \end{proof}
 

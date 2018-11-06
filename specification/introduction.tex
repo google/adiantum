@@ -103,15 +103,6 @@ Without special cases or extra setup, Adiantum handles:
 We also describe a simpler proposal, HPolyC, which sacrifices a little speed on large blocks
 for simplicity and greater key agility, leaving out the NH hash layer.
 
-The proof of security differs from other hash-XOR-hash modes in three ways. First,
-Poly1305 hash is not XOR universal, but universal over $\ZZ/2^{128}\ZZ$,
-so for XOR of hash values we substitute addition and subtraction in the appropriate group.
-Second, using the XSalsa20 construction~\cite{xsalsa}, we can directly
-build a stream cipher which takes a 192-bit nonce to generate a stream, simplifying
-the second Feistel operation and associated proof, as well as subkey generation.
-Finally, Poly1305 hash has a much weaker security bound than the $\GF(2^{128})$ polynomial hash;
-the proof is shaped around ensuring we pay the smallest multiple of this cost we can.
-
 \subsection{Implementation and test vectors}
 Implementations in Python, C, and ARMv7 assembly, as well as thousands of test
 vectors and the \LaTeX{} source for this paper,  are available from our source code
