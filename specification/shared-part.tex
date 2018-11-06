@@ -87,12 +87,18 @@
 }
 \end{abstract}
 
+\iftoggle{iacr}{
+}{ % iacr
+    \tableofcontents
+} % non-iacr
+
+
 \subfile{introduction.tex}
 \subfile{specification.tex}
 \subfile{design.tex}
 \subfile{performance.tex}
 \subfile{proof.tex}
-\printbibliography
+\printbibliography[heading=bibintoc]
 \appendix
 \subfile{hashing.tex}
 
