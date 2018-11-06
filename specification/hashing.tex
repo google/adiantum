@@ -11,10 +11,10 @@
 \section{\texorpdfstring{$\epsilon$A$\Delta$U}{𝜖A∆U} functions for HBSH}\label{hashing}
 
 Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
-$H_{K_H}(T, M)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|M|$.
+$H_{K_H}(T, L)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|L|$.
 If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext length of
-$|T| \leq l_T$, $|P|, |C| \leq l_P$
-then the bounds on queries to $H$ will be $|T| \leq l_T$, $|M| \leq l_M = l_P - n$.
+$|T| \leq l_T$, $|P|, |C| \leq l_M$
+then the bounds on queries to $H$ will be $|T| \leq l_T$, $|L| \leq l_L = l_M - n$.
 
 \subsection{Notation}
 
@@ -56,13 +56,13 @@ HPolyC is the HBSH construction that the first revision of this paper presented,
 Poly1305 together with an injective encoding function.
 It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
 \begin{align*}
-H_{K_H}(T, M) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || M)
+H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || L)
 \end{align*}
 
-Thus if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then:
+Thus if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then:
 
 \begin{displaymath}
-\epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_M/128})
+\epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_L/128})
 \end{displaymath}
 
 \subsection{NH}\label{nh}
@@ -126,45 +126,45 @@ a separate Poly1305 key.
 In all this takes a $128 + 128 + 8576 = 8832$-bit key.
 
 \begin{algorithmic}[0]
-    \Procedure{H}{$K_H,T,M$}
+    \Procedure{H}{$K_H,T,L$}
     \State $K_T \gets K_H[0;128]$
-    \State $K_M \gets K_H[128;128]$
+    \State $K_L \gets K_H[128;128]$
     \State $K_N \gets K_H[256;8576]$
-    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|M|) || T)$
-    \State $H_M \gets \Polydjb_{K_M}(\NH_{K_N}(\pad_{128}(M)))$
-    \State \textbf{return} $H_T \boxplus H_M$
+    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|L|) || T)$
+    \State $H_L \gets \Polydjb_{K_L}(\NH_{K_N}(\pad_{128}(L)))$
+    \State \textbf{return} $H_T \boxplus H_L$
     \EndProcedure
 \end{algorithmic}
 
-For distinct pairs $(T,M) \neq (T', M')$, we have that if $|M| \neq |M'|$ or $T \neq T'$,
+For distinct pairs $(T,L) \neq (T', L')$, we have that if $|L| \neq |L'|$ or $T \neq T'$,
 then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
-Otherwise $|M| = |M'|$ but $M \neq M'$;
+Otherwise $|L| = |L'|$ but $L \neq L'$;
 per \cite{umac2} the probability NH will compress these to the same value is at most
-$2^{-128}$. If they do not collide, the $256\ceil{|M|/8192}$-bit input to Poly1305 with key $K_M$
+$2^{-128}$. If they do not collide, the $256\ceil{|L|/8192}$-bit input to Poly1305 with key $K_L$
 will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
-$\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|M| \leq l_M$ then
+$\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then
 this composition is  $\epsilon$A$\Delta$U, with:
 
 \begin{align*}
-\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_M/8192})/128}  \\
-&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_M/8192})
+\epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_L/8192})/128}  \\
+&= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_L/8192})
 \end{align*}
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
-at most $l_T$ and a plaintext/ciphertext of length at most $l_P$, then per the result
+at most $l_T$ and a plaintext/ciphertext of length at most $l_M$, then per the result
 of~\autoref{hbshadvantage} their distinguishing advantage is therefore at most:
 
 \begin{align*}
-&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P - 128)/8192}))\binom{q}{2} \\
+&( 2^{-126} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_M - 128)/8192}))\binom{q}{2} \\
 +& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
-+& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_P - 128), t')] \\
++& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_M - 128), t')] \\
 \end{align*}
 
 Assuming that the block and stream ciphers are strong, this is dominated by the
-term for internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_P -
+term for internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_M -
 128)/8192})\binom{q}{2}$. How many messages can be safely encrypted with the
 mode will therefore vary with message and tweak length. For example, if Adiantum
-is used to encrypt 4KiB sectors with 32 byte tweaks, then $\Polydjb_{K_M}$
+is used to encrypt 4KiB sectors with 32 byte tweaks, then $\Polydjb_{K_L}$
 processes 8 blocks, and the above is approximately $2^{-101}q^2$. With these
 message and tweak lengths we would recommend encrypting no more than $2^{55}$
 bytes with a single key. Generating the ciphertext to mount such an attack could
