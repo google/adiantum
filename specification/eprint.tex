@@ -31,6 +31,21 @@
 \usepackage{floatrow}
 \usepackage[svgnames]{xcolor}
 \usepackage[breaklinks,colorlinks,urlcolor=DarkBlue,linkcolor=DarkRed,citecolor=DarkGreen,pdfencoding=unicode]{hyperref}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\providecommand*{\lemmaautorefname}{Lemma}
+
+% https://tex.stackexchange.com/questions/25346/wrong-spacing-before-theorem-environment-amsthm/26350
+\begingroup
+    \makeatletter
+    \@for\theoremstyle:=definition,remark,plain\do{%
+        \expandafter\g@addto@macro\csname th@\theoremstyle\endcsname{%
+            \addtolength\thm@preskip\parskip
+            }%
+        }
+\endgroup
 
 \pretitle{\begin{center}\LARGE\bfseries\sffamily} % sf title
 \renewcommand{\abstitlestyle}{\sffamily\bfseries\centering} % sf abstract

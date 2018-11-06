@@ -12,6 +12,7 @@
 \usepackage{longtable}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{bm}
 \usepackage[logic,probability,advantage,adversary,landau,sets,operators]{cryptocode}
 \usepackage{algpseudocode}
 
@@ -24,17 +25,17 @@
 \DeclareMathOperator{\intify}{int}
 \DeclareMathOperator{\fromint}{fromint}
 \DeclareMathOperator{\pad}{pad}
+\DeclareMathOperator{\Perm}{Perm}
+\DeclareMathOperator{\LP}{LP}
+\DeclareMathOperator{\comp}{\mathsf{comp}}
+\DeclareMathOperator{\badQ}{\mathbf{badQ}}
+\DeclareMathOperator{\badR}{\mathbf{badR}}
+\DeclareMathOperator{\bad}{\mathbf{bad}}
 
 \usetikzlibrary{positioning}
 \usetikzlibrary{groupops}
 
 \newcommand*{\arrowoplus}{\leftarrow\mkern-12mu\oplus}
-\newcommand*{\xprm}[2]{\textsf{\ref*{#1}-#2}}
-\newcommand*{\xprmtitle}[2]{\textbf{\xprm{#1}{#2}}}
-\newcommand*{\calE}{\mathcal{E}}
-\newcommand*{\calD}{\mathcal{D}}
-\newcommand*{\barE}{\overline{\calE}}
-\newcommand*{\barD}{\overline{\calD}}
 
 \renewcommand{\pcadvantagesuperstyle}[1]{#1}
 
