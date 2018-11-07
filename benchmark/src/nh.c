@@ -51,69 +51,36 @@ void nh_generic(const u32 *key, const u8 *message, size_t message_len, u8 *hash)
 		put_unaligned_le64(hash_vec[i], &hash[i * sizeof(__le64)]);
 }
 #else /* optimized generic version */
-
-#define NH_STRIDE(K0, K1, K2, K3)				\
-({								\
-	m_A = get_unaligned_le32(message); message += 4;	\
-	m_B = get_unaligned_le32(message); message += 4;	\
-	m_C = get_unaligned_le32(message); message += 4;	\
-	m_D = get_unaligned_le32(message); message += 4;	\
-	K3##_A = *key++;					\
-	K3##_B = *key++;					\
-	K3##_C = *key++;					\
-	K3##_D = *key++;					\
-	sum0 += (u64)(m_A + K0##_A) * (u64)(m_C + K0##_C);	\
-	sum1 += (u64)(m_A + K1##_A) * (u64)(m_C + K1##_C);	\
-	sum2 += (u64)(m_A + K2##_A) * (u64)(m_C + K2##_C);	\
-	sum3 += (u64)(m_A + K3##_A) * (u64)(m_C + K3##_C);	\
-	sum0 += (u64)(m_B + K0##_B) * (u64)(m_D + K0##_D);	\
-	sum1 += (u64)(m_B + K1##_B) * (u64)(m_D + K1##_D);	\
-	sum2 += (u64)(m_B + K2##_B) * (u64)(m_D + K2##_D);	\
-	sum3 += (u64)(m_B + K3##_B) * (u64)(m_D + K3##_D);	\
-})
-
 void nh_generic(const u32 *key, const u8 *message, size_t message_len, u8 *hash)
 {
-	u64 sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
-	u32 k0_A = *key++;
-	u32 k0_B = *key++;
-	u32 k0_C = *key++;
-	u32 k0_D = *key++;
-	u32 k1_A = *key++;
-	u32 k1_B = *key++;
-	u32 k1_C = *key++;
-	u32 k1_D = *key++;
-	u32 k2_A = *key++;
-	u32 k2_B = *key++;
-	u32 k2_C = *key++;
-	u32 k2_D = *key++;
-	u32 k3_A, k3_B, k3_C, k3_D;
-	u32 m_A, m_B, m_C, m_D;
-	size_t n = message_len / 16;
+	u64 sums[4] = { 0, 0, 0, 0 };
 
 	BUILD_BUG_ON(NH_PAIR_STRIDE != 2);
 	BUILD_BUG_ON(NH_NUM_PASSES != 4);
 
-	while (n >= 4) {
-		NH_STRIDE(k0, k1, k2, k3);
-		NH_STRIDE(k1, k2, k3, k0);
-		NH_STRIDE(k2, k3, k0, k1);
-		NH_STRIDE(k3, k0, k1, k2);
-		n -= 4;
-	}
-	if (n) {
-		NH_STRIDE(k0, k1, k2, k3);
-		if (--n) {
-			NH_STRIDE(k1, k2, k3, k0);
-			if (--n)
-				NH_STRIDE(k2, k3, k0, k1);
-		}
+	while (message_len) {
+		u32 m0 = get_unaligned_le32(message + 0);
+		u32 m1 = get_unaligned_le32(message + 4);
+		u32 m2 = get_unaligned_le32(message + 8);
+		u32 m3 = get_unaligned_le32(message + 12);
+
+		sums[0] += (u64)(u32)(m0 + key[ 0]) * (u32)(m2 + key[ 2]);
+		sums[1] += (u64)(u32)(m0 + key[ 4]) * (u32)(m2 + key[ 6]);
+		sums[2] += (u64)(u32)(m0 + key[ 8]) * (u32)(m2 + key[10]);
+		sums[3] += (u64)(u32)(m0 + key[12]) * (u32)(m2 + key[14]);
+		sums[0] += (u64)(u32)(m1 + key[ 1]) * (u32)(m3 + key[ 3]);
+		sums[1] += (u64)(u32)(m1 + key[ 5]) * (u32)(m3 + key[ 7]);
+		sums[2] += (u64)(u32)(m1 + key[ 9]) * (u32)(m3 + key[11]);
+		sums[3] += (u64)(u32)(m1 + key[13]) * (u32)(m3 + key[15]);
+		key += NH_MESSAGE_UNIT / sizeof(key[0]);
+		message += NH_MESSAGE_UNIT;
+		message_len -= NH_MESSAGE_UNIT;
 	}
 
-	put_unaligned_le64(sum0, hash + 0);
-	put_unaligned_le64(sum1, hash + 8);
-	put_unaligned_le64(sum2, hash + 16);
-	put_unaligned_le64(sum3, hash + 24);
+	put_unaligned_le64(sums[0], hash + 0);
+	put_unaligned_le64(sums[1], hash + 8);
+	put_unaligned_le64(sums[2], hash + 16);
+	put_unaligned_le64(sums[3], hash + 24);
 }
 #endif /* optimized generic version */
 
