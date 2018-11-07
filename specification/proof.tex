@@ -17,7 +17,7 @@ as follows. In what follows we draw on definitions used in \cite{hctr2}.
 \parintro{Hash function}
 We require the hash function
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
-to be $\epsilon$-almost-$\Delta$-universal for some $\epsilon$:
+to be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, L) \neq (T', L')$:
 %
@@ -165,7 +165,7 @@ HBSH-like ciphers. Where a parameter is given as
 $L || R$, $|R|=n$.
 
 \begin{align*}
-    \xi :& \mathcal{K}_H \times \mathcal{M} \rightarrow \bin^n \\
+    \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
     \xi_{K_H, T}(L||R) =& R \boxplus H_{K_H}(T, L) \\
     \vphantom{|} \\
     \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\

@@ -81,16 +81,19 @@ proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
 applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
 We then construct a function that takes a variable-length nonce of up to
 191 bits by padding with a 1 followed by zeroes:
-$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$. For a
-given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output. The left-hand side
-of the plaintext or ciphertext is thus drawn from the space
+$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M || 1))$.
+
+\parintro{Message space}
+For a given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output.
+The left-hand side of the plaintext or ciphertext is thus drawn from the space
 $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$
-and the space of HBSH plaintexts and ciphertexts
-$\mathcal{M} = \bigcup_{i=0}^{l_S}\bin^{i + n}$.
+and the space of Adiantum/HPolyC plaintexts and ciphertexts
+$P, C \in \mathcal{M} = \bigcup_{i=0}^{l_S}\bin^{i + n}$.
 
 \parintro{Hash}
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function
+as defined in \autoref{eadudef}
 yielding a group element represented as an $n$-bit string.
 
 HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
