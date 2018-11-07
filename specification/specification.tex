@@ -51,7 +51,7 @@ $P_R$, $P_M$, $C_M$, $C_R$ are $n$ bits long.
     \end{floatrow}
 \end{figure}
 
-\subsection{Notation}
+\parintro{Notation}
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 $||$ represents concatenation, and $\lambda$ the empty string.
@@ -62,12 +62,12 @@ $\pad_l(X) = X||0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divid
 $\boxplus$ represents addition in a group which depends
 on the hash function, and $\boxminus$ subtraction.
 
-\subsection{Block cipher}
+\parintro{Block cipher}
 The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 is only invoked once no matter the size of the input, so for disk-sector-sized inputs
 its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
 
-\subsection{Stream cipher}
+\parintro{Stream cipher}
 $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
 is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
@@ -88,7 +88,7 @@ $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$
 and the space of HBSH plaintexts and ciphertexts
 $\mathcal{M} = \bigcup_{i=0}^{l_S}\bin^{i + n}$.
 
-\subsection{Hash}
+\parintro{Hash}
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function
 yielding a group element represented as an $n$-bit string.
@@ -100,7 +100,7 @@ vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
 $\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
 lengths. We defer full details to \autoref{hashing}.
 
-\subsection{Key derivation}\label{keyderivation}
+\parintro{Key derivation}
 HBSH derives $K_H$ and $K_E$ from $K_S$ using a zero-length nonce:
 $K_E || K_H || \ldots = S_{K_S}(\lambda)$.\footnote{In the original
 version of this paper, HPolyC used $K_H || K_E || \ldots = S_{K_S}(\lambda)$.}

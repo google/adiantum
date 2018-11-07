@@ -9,6 +9,7 @@
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
 \section{Design}
+\parintro{Three-pass structure}
 Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
 it all. A secure SPRP must have the same property in the reverse direction;
 a three-pass structure therefore seems natural.
@@ -21,6 +22,7 @@ blocks in non-round sizes; many large-block modes need extra wrinkles akin to ci
 to handle the case where the large-block size is not
 a multiple of the block size of the underlying primitive.
 
+\parintro{Block cipher}
 \cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
 a simple attack with two plaintexts and one ciphertext distinguishes it. A single block cipher call
 in the narrow part of the unbalanced network suffices to frustrate this attack; the
@@ -34,6 +36,7 @@ For disk encryption, decryption performance matters most:
 reads are more frequent than writes, and reads generally affect user-perceived latency, while
 operating systems can usually perform writes asynchronously in the background.
 
+\parintro{Building blocks}
 It's unusual for a construction to require more than two distinct building blocks.
 More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
 (eg using CTR mode~\cite{ctr})
@@ -47,6 +50,7 @@ broken into two halves. However if we were to build this using XChaCha12,
 such a construction would require four extra invocations of ChaCha per block, which would be
 a much greater cost than one block cipher invocation.
 
+\parintro{KDM security}
 We do not consider an attack model in which derived keys are presented as input.
 Length-preserving encryption
 which is KDM-secure in the sense of~\cite{kdm} is impossible, since it is trivial for the
@@ -56,6 +60,7 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
+\parintro{Hash function}
 Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
 crucial for large blocks. One of the fastest such functions in software is NH, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
@@ -66,6 +71,7 @@ custom combination of NH and Poly1305; however, available UHASH implementations
 are not constant-time, and a constant-time implementation would be significantly
 slower.
 
+\parintro{Key agility}
 For the 4KiB blocks of disk encryption,
 the ~1KiB NH key size has only a small impact on key agility. Applications
 that need high key agility even on small blocks may instead use HPolyC, which
@@ -77,11 +83,13 @@ that must be called once to compute subkeys and once for each encryption or
 decryption.  No extra work is required for differing message or tweak lengths for either Adiantum
 or HPolyC.
 
+\parintro{Constant-time}
 NH, Poly1305 and ChaCha12 are designed such that the most natural fast implementations are
 constant-time and free from data-dependent lookups. So long as the block cipher implementation
 also has these properties, Adiantum and HPolyC will inherit security against
 this class of side-channel attacks.
 
+\parintro{Parallelizability}
 NH, Poly1305 and ChaCha12 are highly parallelizable.
 The stream cipher and second hash stages can also be run in combination for a total
 of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
@@ -89,6 +97,7 @@ which requires at least three.
 We put the ``special'' block on the right so that in typical uses the bulk encryption has
 the best alignment for fast operations.
 
+\parintro{Naming}
 ``Adiantum'' is the genus of the maidenhair fern, which in the language of
 flowers (floriography) signifies sincerity and discretion.~\cite{fleurs}
 

@@ -14,6 +14,7 @@ HBSH mode relies on a two-input $\epsilon$-almost-$\Delta$-universal function an
 block and stream cipher primitives, and we define their security properties
 as follows. In what follows we draw on definitions used in \cite{hctr2}.
 
+\parintro{Hash function $H$}
 We require the hash function
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
 to be $\epsilon$-almost-$\Delta$-universal for some $\epsilon$:
@@ -26,6 +27,7 @@ any two distinct messages $(T, L) \neq (T', L')$:
 %
 For Adiantum and HPolyC the value of $\epsilon$ will depend on bounds on the lengths of $T$ and $L$.
 
+\parintro{Stream cipher $S$}
 We require the stream cipher
 $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
 to be a pseudorandom function. $\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
@@ -47,7 +49,9 @@ $\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]$ where $\mat
 is the set of all adversaries that make at most $q$ queries, discard all but $l$ bits from
 the results of those queries, and take at most $t$ time.
 
-We require the block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
+\parintro{Block cipher $E$}
+We require the block cipher
+$E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 to be a super-pseudorandom permutation.
 Let $\Perm(S)$ denote the set of all permutations on a set $S$; then we define the distinguishing
 advantage of an adversary A as follows.
@@ -66,6 +70,7 @@ We define $\advantage{\pm \mathrm{prp}}{E}[(q, t)]$ to be
 $\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]$ where $\mathcal{A}(q, t)$
 is the set of all adversaries that make at most $q$ queries and take at most $t$ time.
 
+\parintro{HBSH}
 HBSH itself is a tweakable length-preserving encryption system.
 Let $\Perm^\mathcal{T}(\mathcal{M})$ denote the set of all functions
 $\bm{\pi} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
@@ -115,7 +120,8 @@ and take at most $t$ time.
     where $t' = t + \bigO{q(l_T + l_M)}$.
 \end{theorem}
 
-\subsection{Lemmas}
+\subsection{Preliminaries}
+\parintro{Helper functions}
 We define here
 helper functions $\xi$, $\theta$, $\phi$, and $\eta$, useful for constructing
 HBSH-like ciphers. Where a parameter is given as
@@ -137,6 +143,7 @@ $L || R$, $|R|=n$.
     \eta_{K_H, \pi, F, T} =& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
 \end{align*}
 
+\parintro{H-coefficient technique}
 We begin by using the ``H-coefficient'' technique to prove a distinguishing bound
 between random query responses and
 an ``idealized'' version of HBSH that uses a random function and permutation
@@ -150,6 +157,7 @@ sampled from a distribution of oracles, either $\Omega_X$ or
 $\Omega_Y$ as appropriate; the transcript $\tau$ is then completely determined by the combination
 of attacker and probabilistically chosen deterministic oracle.
 
+\parintro{Transcript}
 Our transcript $\tau$ is a sequence of tuples
 $(d^i, T^i, P^i, C^i)$
 in
@@ -160,6 +168,7 @@ $d^i$ is the direction of the query;
 if $d^i = +$ then the left oracle is queried with $T^i, P^i$ and the result is $C^i$,
 while if $d^i = -$ then the left oracle is queried with $T^i, C^i$ and the result is $P^i$.
 
+\parintro{Allowed queries}
 We consider adversaries contained in $\mathcal{A}(q, l_T, l_M, t)$ for some value of
 the bounds $q$, $l_T$, $l_M$, $t$.
 Without loss of generality, we consider only adversaries who do not make ``pointless''
@@ -167,6 +176,7 @@ queries as defined in \cite{cmc}. Thus for $i < j$, if $d^j = +$ then
 $(T^j, P^j) \neq (T^i, P^i)$, and similarly if $d^j = -$ then
 $(T^j, C^j) \neq (T^i, C^i)$.
 
+\parintro{Ideal world}
 Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
 tweakable length-preserving functions
 $\bm{f} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
@@ -183,6 +193,7 @@ $\Omega_Y = \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$.
 $Y$ is a random variable representing the distribution of transcripts for
 $A^{\mathcal{E}, \mathcal{D}}$.
 
+\parintro{Real world}
 Our ``real world'' is an idealized form of HBSH which uses a random function and permutation:
 $\omega = K_H, \pi, F$
 sampled fairly from
@@ -190,6 +201,7 @@ $\Omega_X = \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \
 $X$ is a random variable representing the distribution of transcripts for
 $A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}$.
 
+\parintro{Bad events}
 We define two bad events $\badQ$ and $\badR$.
 
 \begin{itemize}
@@ -208,6 +220,7 @@ We define two bad events $\badQ$ and $\badR$.
 Finally we define the disjunction
 $\bad = \badQ \cup \badR$.
 
+\subsection{Lemmas}
 \begin{lemma} \label{badQ}
     For any $\tau$ such that $\prob{Y = \tau} > 0$,
     \begin{displaymath}
