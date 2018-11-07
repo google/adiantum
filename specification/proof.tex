@@ -112,13 +112,16 @@ and take at most $t$ time.
     %
     \begin{align*}
         \advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)]
-        &\leq \advantage{\pm \mathrm{prp}}{E}[(q, t')] \\
+        \leq &(\epsilon + 2(2^{-n}))\binom{q}{2} \\
         &+ \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
-        &+ (\epsilon + 2(2^{-n}))\binom{q}{2} \\
+        &+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
     where $t' = t + \bigO{q(l_T + l_M)}$.
 \end{theorem}
+
+\begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
+\end{proof}
 
 \subsection{Preliminaries}
 \parintro{Helper functions}
@@ -163,9 +166,9 @@ Our transcript $\tau$ is a sequence of tuples
 $(d^i, T^i, P^i, C^i)$
 in
 $\{+, -\} \times \mathcal{T} \times \mathcal{M} \times \mathcal{M}$
-for $i \in [0 \ldots q-1]$;
-for the $i$th sequential query
-$d^i$ is the direction of the query;
+for $i \in [0 \ldots q-1]$.
+For the $i$th sequential query
+$d^i$ is the direction of the query:
 if $d^i = +$ then the left oracle is queried with $T^i, P^i$ and the result is $C^i$,
 while if $d^i = -$ then the right oracle is queried with $T^i, C^i$ and the result is $P^i$.
 
@@ -363,8 +366,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     \end{align*}
 \end{proof}
 
-\subsection{Main proof}
-\begin{proof}[Proof of \autoref{hbshadvantage}]
+\subsection{Proof of primary claim}
+\begin{proof}[Proof of \autoref{hbshadvantage}]\label{hbshproof}
     To prove this theorem we need a bound on $|\rho_V - \rho_Z|$
     where
     \begin{align*}
@@ -377,7 +380,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $|\rho_Y - \rho_Z| \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
     (\cite{cmc}, appendix C, lemma 6).
 
-    To bound $|\rho_X - \rho_V|$ we introduce
+    To bound $|\rho_V - \rho_X|$ we introduce
     a stepping stone. Let $\bar{\eta}_{F} = \eta_{K_H, E_{K_E}, F}$ where
     $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$. Define
     \begin{align*}
