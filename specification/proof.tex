@@ -124,28 +124,6 @@ and take at most $t$ time.
 \end{proof}
 
 \subsection{Preliminaries}
-\parintro{Helper functions}
-We define here
-helper functions $\xi$, $\theta$, $\phi$, and $\eta$, useful for constructing
-HBSH-like ciphers. Where a parameter is given as
-$L || R$, $|R|=n$.
-
-\begin{align*}
-    \xi :& \mathcal{K}_H \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H, T}(L||R) =& R \boxplus H_{K_H}(T, L) \\
-    \vphantom{|} \\
-    \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) =& L || \xi_{K_H, T}(L||R) \\
-    =& L || (R \boxplus H_{K_H}(T, L)) \\
-    \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
-    \vphantom{|} \\
-    \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L || R) =& (L \arrowoplus F(\pi(R))) || \pi(R) \\
-    \vphantom{|} \\
-    \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \eta_{K_H, \pi, F, T} =& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
-\end{align*}
-
 \parintro{H-coefficient technique}
 We begin by using the ``H-coefficient'' technique to prove a distinguishing bound
 between random query responses and
@@ -179,6 +157,28 @@ Without loss of generality, we consider only adversaries who do not make ``point
 queries as defined in \cite{cmc}. Thus for $i < j$, if $d^j = +$ then
 $(T^j, P^j) \neq (T^i, P^i)$, and similarly if $d^j = -$ then
 $(T^j, C^j) \neq (T^i, C^i)$.
+
+\parintro{Helper functions}
+We define here
+helper functions $\xi$, $\theta$, $\phi$, and $\eta$, useful for constructing
+HBSH-like ciphers. Where a parameter is given as
+$L || R$, $|R|=n$.
+
+\begin{align*}
+    \xi :& \mathcal{K}_H \times \mathcal{M} \rightarrow \bin^n \\
+    \xi_{K_H, T}(L||R) =& R \boxplus H_{K_H}(T, L) \\
+    \vphantom{|} \\
+    \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \phi_{K_H, T}(L || R) =& L || \xi_{K_H, T}(L||R) \\
+    =& L || (R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
+    \vphantom{|} \\
+    \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \theta_{\pi, F}(L || R) =& (L \arrowoplus F(\pi(R))) || \pi(R) \\
+    \vphantom{|} \\
+    \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \eta_{K_H, \pi, F, T} =& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
+\end{align*}
 
 \parintro{Ideal world}
 Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
@@ -234,19 +234,21 @@ $\bad = \badQ \cup \badR$.
 \end{lemma}
 
 \begin{proof}
-For any pair $i, j$, if $d^j = +$ then let $L^i || R^i = P^i$ and similarly for $P^j$.
+Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = P^i$ and similarly for $P^j$.
+From $\prob{Y = \tau} > 0$ we know that $|T^i|, |T^j| \leq l_T$ and $|P^i|, |P^j| \leq l_M$,
+and therefore that $|L^i|, |L^j| \leq l_M - n$.
+Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
+If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and equality cannot occur.
+Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probability
+at most $\epsilon$:
+
 \begin{align*}
     &\xi(K_H, T^i, L^i||R^i) = \xi(K_H, T^j, L^j||R^j) \\
     \Leftrightarrow& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
     \Leftrightarrow& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
 \end{align*}
-From $\prob{Y = \tau} > 0$ we know that $|T^i|, |T^j| \leq l_T$ and $|P^i|, |P^j| \leq l_M$,
-and therefore that $|L^i|, |L^j| \leq l_M - n$.
-Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
-If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and the above equality doesn't occur.
-Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probability
-at most $\epsilon$.
-A similar argument applies for $C^i$, $C^j$ where $d^j = -$.
+
+Where $d^j = -$, a similar argument applies for $C^i$, $C^j$.
 For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{proof}
 
@@ -259,13 +261,14 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{lemma}
 
 \begin{proof}
-    For any pair $i, j$, if $d^j = +$ then let $L^i || R^i = C^i$ and similarly for $C^j$.
+    Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = C^i$ and similarly for $C^j$.
     Because pointless queries are forbidden, in $Y$ world,
     conditioning on all prior queries and responses,
     all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
     In particular, all values of $R^j$ are equally likely. Therefore
     $\prob{R^j = R^i \boxplus H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j)} = 2^{-n}$.
-    A similar argument applies for $C^i$, $C^j$ where $d^j = -$.
+
+    Where $d^j = -$, a similar argument applies for $P^i$, $P^j$.
     For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{proof}
 
@@ -375,7 +378,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \rho_Z =& \condprob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})} \\
     \end{align*}
 
-    \autoref{xyadv} bounds $|\rho_X - \rho_Y|$.
+    $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
     Since we forbid pointless queries,
     $|\rho_Y - \rho_Z| \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
     (\cite{cmc}, appendix C, lemma 6).
