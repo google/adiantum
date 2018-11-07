@@ -14,7 +14,7 @@ HBSH mode relies on a two-input $\epsilon$-almost-$\Delta$-universal function an
 block and stream cipher primitives, and we define their security properties
 as follows. In what follows we draw on definitions used in \cite{hctr2}.
 
-\parintro{Hash function $H$}
+\parintro{Hash function}
 We require the hash function
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
 to be $\epsilon$-almost-$\Delta$-universal for some $\epsilon$:
@@ -27,7 +27,7 @@ any two distinct messages $(T, L) \neq (T', L')$:
 %
 For Adiantum and HPolyC the value of $\epsilon$ will depend on bounds on the lengths of $T$ and $L$.
 
-\parintro{Stream cipher $S$}
+\parintro{Stream cipher}
 We require the stream cipher
 $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
 to be a pseudorandom function. $\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
@@ -49,7 +49,7 @@ $\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]$ where $\mat
 is the set of all adversaries that make at most $q$ queries, discard all but $l$ bits from
 the results of those queries, and take at most $t$ time.
 
-\parintro{Block cipher $E$}
+\parintro{Block cipher}
 We require the block cipher
 $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
 to be a super-pseudorandom permutation.
@@ -111,10 +111,10 @@ and take at most $t$ time.
     $|T| \leq l_T$, $|L| \leq l_M - n$, then:
     %
     \begin{align*}
-        &\advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)] \\
-        \leq& \advantage{\pm \mathrm{prp}}{E}[(q, t')] \\
-        +& \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
-        +& (\epsilon + 2(2^{-n}))\binom{q}{2} \\
+        \advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)]
+        &\leq \advantage{\pm \mathrm{prp}}{E}[(q, t')] \\
+        &+ \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
+        &+ (\epsilon + 2(2^{-n}))\binom{q}{2} \\
     \end{align*}
     %
     where $t' = t + \bigO{q(l_T + l_M)}$.
@@ -149,7 +149,8 @@ between random query responses and
 an ``idealized'' version of HBSH that uses a random function and permutation
 in place of pseudorandom primitives.
 
-The H-coefficient technique was introduced by Patarin in 1991~\cite{hco}; for definitions
+The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco};
+for definitions
 of the terms, symbols, and inequalities we rely on here, see \cite{hco2} Section 3,
 ``The H-coefficient Technique in a Nutshell''.
 As per that description, WLOG we assume a deterministic adversary $A$. An oracle $\omega$ is
@@ -166,7 +167,7 @@ for $i \in [0 \ldots q-1]$;
 for the $i$th sequential query
 $d^i$ is the direction of the query;
 if $d^i = +$ then the left oracle is queried with $T^i, P^i$ and the result is $C^i$,
-while if $d^i = -$ then the left oracle is queried with $T^i, C^i$ and the result is $P^i$.
+while if $d^i = -$ then the right oracle is queried with $T^i, C^i$ and the result is $P^i$.
 
 \parintro{Allowed queries}
 We consider adversaries contained in $\mathcal{A}(q, l_T, l_M, t)$ for some value of
