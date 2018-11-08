@@ -10,14 +10,14 @@
 \begin{document}
 \section{Security reduction}
 \subsection{Definitions}
-HBSH mode relies on a two-input $\epsilon$-almost-$\Delta$-universal function and
-block and stream cipher primitives, and we define their security properties
-as follows. In what follows we draw on definitions used in \cite{hctr2}.
+Below we define the security properties of HBSH and
+the primitives it uses, and prove a relationship the two.
+In what follows we draw on definitions used in \cite{hctr2}.
 
 \parintro{Hash function}
-We require the hash function
+The hash function
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
-to be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
+must be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, L) \neq (T', L')$:
 %
@@ -28,46 +28,49 @@ any two distinct messages $(T, L) \neq (T', L')$:
 For Adiantum and HPolyC the value of $\epsilon$ will depend on bounds on the lengths of $T$ and $L$.
 
 \parintro{Stream cipher}
-We require the stream cipher
+The stream cipher
 $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
-to be a pseudorandom function. $\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
-functions from $\mathcal{N}$ to $\bin^{l_S}$, and we
-define the distinguishing advantage of an adversary A as follows.
+must be a pseudorandom function.
 %
-\begin{displaymath}
-    \begin{aligned}
-        \advantage{\mathrm{prf}}{S}[(A)] =
-        &\left| \prob{A^S\Rightarrow 1 | K \sample \mathcal{K}_S}\right.
-        \\
-        &\left. - \prob{A^F\Rightarrow 1
-        | F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \right|
-    \end{aligned}
-\end{displaymath}
+\begin{align*}
+    \advantage{\mathrm{prf}}{S}[(A)] \defeq
+    &\left| \prob{A^{S_{K}}\Rightarrow 1 | K \sample \mathcal{K}_S}\right.
+    \\
+    &\left. - \prob{A^F\Rightarrow 1
+    | F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \right|
+    \\
+    \advantage{\mathrm{prf}}{S}[(q, l, t)]
+    \defeq &\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
+\end{align*}
 %
-We define $\advantage{\mathrm{prf}}{S}[(q, l, t)]$ to be
-$\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]$ where $\mathcal{A}(q, l, t)$
+where $A$ is an adversary,
+$\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
+functions from $\mathcal{N}$ to $\bin^{l_S}$,
+and
+$\mathcal{A}(q, l, t)$
 is the set of all adversaries that make at most $q$ queries, discard all but $l$ bits from
 the results of those queries, and take at most $t$ time.
 
 \parintro{Block cipher}
-We require the block cipher
+The block cipher
 $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
-to be a super-pseudorandom permutation.
-Let $\Perm(S)$ denote the set of all permutations on a set $S$; then we define the distinguishing
-advantage of an adversary A as follows.
+must be a super-pseudorandom permutation.
 %
-\begin{displaymath}
-    \begin{aligned}
-        \advantage{\pm \mathrm{prp}}{E}[(A)] =
-        &\left|\prob{A^{E_K,E_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}_E}\right.
-        \\
-        &\left. - \prob{A^{\pi,\pi^{-1}}\Rightarrow 1
-            | \pi \sample \Perm(\bin^n)}\right|
-    \end{aligned}
-\end{displaymath}
+\begin{align*}
+    \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
+    &\left|\prob{A^{E_K,E_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}_E}\right.
+    \\
+    &\left. - \prob{A^{\pi,\pi^{-1}}\Rightarrow 1
+        | \pi \sample \Perm(\bin^n)}\right|
+    \\
+    \advantage{\pm \mathrm{prp}}{E}[(q, t)] \defeq
+    &\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
+\end{align*}
 %
-We define $\advantage{\pm \mathrm{prp}}{E}[(q, t)]$ to be
-$\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]$ where $\mathcal{A}(q, t)$
+where $A$ is an adversary,
+$\Perm(S)$ denotes the set of all permutations on a set $S$,
+and
+$\mathcal{A}(q, t)$
 is the set of all adversaries that make at most $q$ queries and take at most $t$ time.
 
 \parintro{HBSH}
@@ -81,22 +84,24 @@ and $\bm{\pi}_{T}^{-1}$ exists.
 In an abuse of notation, we use $\bm{\pi}^{-1}$ to refer to the function
 such that $\bm{\pi}^{-1}(T, \bm{\pi}(T, M)) = M$ ie $(\bm{\pi}^{-1})_T = (\bm{\pi}_T)^{-1}$.
 For a tweakable length-preserving encryption system
-$\bm{E} : \mathcal{K} \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$, we
-define $A$'s distinguishing advantage as:
+$\bm{E} : \mathcal{K} \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
+the distinguishing advantage of an adversary $A$ is:
+%
+\begin{align*}
+    \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)] \defeq
+    &\left|\prob{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}}\right.
+    \\
+    &\left. - \prob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1
+        | \bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}\right|
+    \\
+\intertext{and}
+\advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(q, l_T, l_M, t)]
+\defeq &
+\max_{A \in \mathcal{A}(q, l_T, l_M, t)} \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)]
+\end{align*}
 %
 \begin{displaymath}
-    \begin{aligned}
-        \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)] =
-        &\left|\prob{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}}\right.
-        \\
-        &\left. - \prob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1
-            | \bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}\right|
-    \end{aligned}
 \end{displaymath}
-%
-We define $\advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(q, l_T, l_M, t)]$
-to be
-$\max_{A \in \mathcal{A}(q, l_T, l_M, t)} \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)]$
 where $\mathcal{A}(q, l_T, l_M, t)$
 is the set of all adversaries that
 make at most $q$ queries
@@ -117,7 +122,7 @@ and take at most $t$ time.
         &+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
-    where $t' = t + \bigO{q(l_T + l_M)}$.
+    where $t' \defeq t + \bigO{q(l_T + l_M)}$.
 \end{theorem}
 
 \begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
@@ -166,18 +171,18 @@ $L || R$, $|R|=n$.
 
 \begin{align*}
     \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H, T}(L||R) =& R \boxplus H_{K_H}(T, L) \\
+    \xi_{K_H, T}(L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
     \vphantom{|} \\
     \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) =& L || \xi_{K_H, T}(L||R) \\
+    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H, T}(L||R) \\
     =& L || (R \boxplus H_{K_H}(T, L)) \\
     \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
     \vphantom{|} \\
     \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L || R) =& (L \arrowoplus F(\pi(R))) || \pi(R) \\
+    \theta_{\pi, F}(L || R) \defeq& (L \arrowoplus F(\pi(R))) || \pi(R) \\
     \vphantom{|} \\
     \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \eta_{K_H, \pi, F, T} =& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
+    \eta_{K_H, \pi, F, T} \defeq& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
 \end{align*}
 
 \parintro{Ideal world}
@@ -193,7 +198,7 @@ Our ``ideal world''
 is then a pair of such functions
 $\omega = \mathcal{E}, \mathcal{D}$
 sampled fairly from
-$\Omega_Y = \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$.
+$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$.
 $Y$ is a random variable representing the distribution of transcripts for
 $A^{\mathcal{E}, \mathcal{D}}$.
 
@@ -201,7 +206,7 @@ $A^{\mathcal{E}, \mathcal{D}}$.
 Our ``real world'' is an idealized form of HBSH which uses a random function and permutation:
 $\omega = K_H, \pi, F$
 sampled fairly from
-$\Omega_X = \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$.
+$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$.
 $X$ is a random variable representing the distribution of transcripts for
 $A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}$.
 
@@ -222,7 +227,7 @@ We define two bad events $\badQ$ and $\badR$.
 \end{itemize}
 
 Finally we define the disjunction
-$\bad = \badQ \cup \badR$.
+$\bad \defeq \badQ \cup \badR$.
 
 \subsection{Lemmas}
 \begin{lemma} \label{badQ}
@@ -341,8 +346,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $\advantage{\pm \widetilde{\mathrm{rnd}}}{\eta}[(q, l_T, l_M, t)]
     = \max_{A \in \mathcal{A}(q, l_T, l_M, t)} |\rho_X - \rho_Y|$ where
     \begin{align*}
-        \rho_X =& \condprob{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}\Rightarrow 1}{K_H, \pi, F \sample \Omega_X} \\
-        \rho_Y =& \condprob{A^{\mathcal{E}, \mathcal{D}}\Rightarrow 1}{\mathcal{E}, \mathcal{D} \sample \Omega_Y} \\
+        \rho_X \defeq& \condprob{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}\Rightarrow 1}{K_H, \pi, F \sample \Omega_X} \\
+        \rho_Y \defeq& \condprob{A^{\mathcal{E}, \mathcal{D}}\Rightarrow 1}{\mathcal{E}, \mathcal{D} \sample \Omega_Y} \\
     \end{align*}
 
     Applying the H-coefficient technique:
@@ -374,8 +379,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     To prove this theorem we need a bound on $|\rho_V - \rho_Z|$
     where
     \begin{align*}
-        \rho_V =& \condprob{A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1}{K_S \sample \mathcal{K}_S} \\
-        \rho_Z =& \condprob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})} \\
+        \rho_V \defeq& \condprob{A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1}{K_S \sample \mathcal{K}_S} \\
+        \rho_Z \defeq& \condprob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})} \\
     \end{align*}
 
     $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
@@ -384,10 +389,10 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     (\cite{cmc}, appendix C, lemma 6).
 
     To bound $|\rho_V - \rho_X|$ we introduce
-    a stepping stone. Let $\bar{\eta}_{F} = \eta_{K_H, E_{K_E}, F}$ where
+    a stepping stone. Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
     $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$. Define
     \begin{align*}
-        \rho_W =& \condprob{A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1}{F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \\
+        \rho_W \defeq& \condprob{A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1}{F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \\
     \end{align*}
 
     Note that $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
