@@ -174,10 +174,10 @@ $L || R$, $|R|=n$.
 
 \begin{align*}
     \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H, T}(L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
+    \xi_{K_H}(T, L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
     \vphantom{|} \\
     \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H, T}(L||R) \\
+    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H}(T, L||R) \\
     =& L || (R \boxplus H_{K_H}(T, L)) \\
     \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
     \vphantom{|} \\
@@ -203,7 +203,7 @@ $\omega = K_H, \pi, F$
 sampled fairly from
 $\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$.
 $X$ is a random variable representing the distribution of transcripts for
-$A^{\eta_{\omega}, \eta_{\omega}^{-1}}$.
+$A^{\eta_{\omega}, \eta_{\omega}^{-1}}$ (where $\eta_{\omega}$ means $\eta_{K_H, \pi, F}$).
 
 \parintro{Bad events}
 We define two bad events $\badQ$ and $\badR$.
@@ -211,13 +211,13 @@ We define two bad events $\badQ$ and $\badR$.
 \begin{itemize}
     \item $(K_H, \tau) \in \badQ$ if there exists $i < j$ such that
     \begin{itemize}
-        \item either $d^j = +$ and $\xi(K_H, T^i, P^i) = \xi(K_H, T^j, P^j)$
-        \item or $d^j = -$ and $\xi(K_H, T^i, C^i) = \xi(K_H, T^j, C^j)$.
+        \item either $d^j = +$ and $\xi_{K_H}(T^i, P^i) = \xi_{K_H}(T^j, P^j)$
+        \item or $d^j = -$ and $\xi_{K_H}(T^i, C^i) = \xi_{K_H}(T^j, C^j)$.
     \end{itemize}
     \item $(K_H, \tau) \in \badR$ if there exists $i < j$ such that
     \begin{itemize}
-        \item either $d^j = -$ and $\xi(K_H, T^i, P^i) = \xi(K_H, T^j, P^j)$
-        \item or $d^j = +$ and $\xi(K_H, T^i, C^i) = \xi(K_H, T^j, C^j)$.
+        \item either $d^j = -$ and $\xi_{K_H}(T^i, P^i) = \xi_{K_H}(T^j, P^j)$
+        \item or $d^j = +$ and $\xi_{K_H}(T^i, C^i) = \xi_{K_H}(T^j, C^j)$.
     \end{itemize}
 \end{itemize}
 
@@ -243,7 +243,7 @@ Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probabili
 at most $\epsilon$:
 
 \begin{align*}
-    &\xi(K_H, T^i, L^i||R^i) = \xi(K_H, T^j, L^j||R^j) \\
+    &\xi_{K_H}(T^i, L^i||R^i) = \xi_{K_H}(T^j, L^j||R^j) \\
     \Leftrightarrow& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
     \Leftrightarrow& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
 \end{align*}
