@@ -158,7 +158,7 @@ $d^i$ is the direction of the query:
 if $d^i = +$ then the left oracle is queried with $T^i, P^i$ and the result is $C^i$,
 while if $d^i = -$ then the right oracle is queried with $T^i, C^i$ and the result is $P^i$.
 
-\parintro{Allowed queries}
+\parintro{Pointless queries}
 We consider adversaries contained in $\mathcal{A}(q, l_T, l_M, t)$ for some value of
 the bounds $q$, $l_T$, $l_M$, $t$.
 Without loss of generality, we consider only adversaries who do not make ``pointless''
@@ -238,15 +238,16 @@ Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = P^i$ and similarly 
 From $\prob{Y = \tau} > 0$ we know that $|T^i|, |T^j| \leq l_T$ and $|P^i|, |P^j| \leq l_M$,
 and therefore that $|L^i|, |L^j| \leq l_M - n$.
 Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
-If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and equality cannot occur.
-Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probability
-at most $\epsilon$:
-
+%
 \begin{align*}
     &\xi_{K_H}(T^i, L^i||R^i) = \xi_{K_H}(T^j, L^j||R^j) \\
     \Leftrightarrow& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
     \Leftrightarrow& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
 \end{align*}
+%
+If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and equality cannot occur.
+Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probability
+at most $\epsilon$.
 
 Where $d^j = -$, a similar argument applies for $C^i$, $C^j$.
 For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
@@ -265,7 +266,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     Because pointless queries are forbidden, in $Y$ world,
     conditioning on all prior queries and responses,
     all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
-    In particular, all values of $R^j$ are equally likely. Therefore
+    In particular, even after conditioning on $L^j$,
+    all values of $R^j$ are equally likely. Therefore
     $\prob{R^j = R^i \boxplus H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j)} = 2^{-n}$.
 
     Where $d^j = -$, a similar argument applies for $P^i$, $P^j$.
