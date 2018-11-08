@@ -79,10 +79,9 @@ tweakable length-preserving functions
 $\bm{f} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
 such that for all $T, M \in \mathcal{T} \times \mathcal{M}$,
 $|\bm{f}(T, M)| = |M|$. Let $\Perm^\mathcal{T}(\mathcal{M})$ denote
-the subset of $\LP^\mathcal{T}(\mathcal{M})$ such that
-for all $T \in \mathcal{T}$, $\bm{f}_{T}$ is a bijection.
-In an abuse of notation,
-where $\bm{\pi}$ is a member of this set,
+the set of $\bm{\pi} \in \LP^\mathcal{T}(\mathcal{M})$ such that
+for all $T \in \mathcal{T}$, $\bm{\pi}_{T}$ is a bijection.
+In an abuse of notation
 we use $\bm{\pi}^{-1}$ to refer to the function
 such that $\bm{\pi}^{-1}(T, \bm{\pi}(T, M)) = M$ ie $(\bm{\pi}^{-1})_T = (\bm{\pi}_T)^{-1}$.
 
@@ -247,8 +246,8 @@ We define two bad events $\badQ$ and $\badR$.
     \end{itemize}
     \item $(K_H, \tau) \in \badR$ if there exists $i < j$ such that
     \begin{itemize}
-        \item either $d^j = -$ and $\xi_{K_H}(T^i, P^i) = \xi_{K_H}(T^j, P^j)$
-        \item or $d^j = +$ and $\xi_{K_H}(T^i, C^i) = \xi_{K_H}(T^j, C^j)$.
+        \item either $d^j = +$ and $\xi_{K_H}(T^i, C^i) = \xi_{K_H}(T^j, C^j)$
+        \item or $d^j = -$ and $\xi_{K_H}(T^i, P^i) = \xi_{K_H}(T^j, P^j)$.
     \end{itemize}
 \end{itemize}
 
@@ -294,7 +293,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \begin{proof}
     Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = C^i$ and similarly for $C^j$.
-    Because pointless queries are forbidden, in $Y$ world,
+    Because pointless queries are forbidden, in the ideal world,
     conditioning on all prior queries and responses,
     all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
     In particular, even after conditioning on $L^j$,
@@ -316,7 +315,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{lemma}
 
 \begin{proof}
-    In the $Y$ world, for any transcript such that $\prob{Y = \tau} > 0$,
+    In the ideal world, for any transcript such that $\prob{Y = \tau} > 0$,
     since all queries are distinct, the responses are independent of all
     previous responses, and
     $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-|P^i|}$.
