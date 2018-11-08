@@ -22,7 +22,7 @@ for any $g \in \bin^n$ and
 any two distinct messages $(T, L) \neq (T', L')$:
 %
 \begin{displaymath}
-\prob{H_{K}(T, L) \boxminus H_{K}(T', L') = g | K \sample \mathcal{K}_H} \leq \epsilon
+\probsub{K \sample \mathcal{K}_H}{H_{K}(T, L) \boxminus H_{K}(T', L') = g} \leq \epsilon
 \end{displaymath}
 %
 For Adiantum and HPolyC the value of $\epsilon$ will depend on bounds on the lengths of $T$ and $L$.
@@ -34,10 +34,10 @@ must be a pseudorandom function.
 %
 \begin{align*}
     \advantage{\mathrm{prf}}{S}[(A)] \defeq
-    &\left| \prob{A^{S_{K}}\Rightarrow 1 | K \sample \mathcal{K}_S}\right.
+    &\left| \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
     \\
-    &\left. - \prob{A^F\Rightarrow 1
-    | F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \right|
+    &\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+    {A^F\Rightarrow 1} \right|
     \\
     \advantage{\mathrm{prf}}{S}[(q, l, t)]
     \defeq &\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
@@ -58,10 +58,9 @@ must be a super-pseudorandom permutation.
 %
 \begin{align*}
     \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
-    &\left|\prob{A^{E_K,E_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}_E}\right.
+    &\left|\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
     \\
-    &\left. - \prob{A^{\pi,\pi^{-1}}\Rightarrow 1
-        | \pi \sample \Perm(\bin^n)}\right|
+    &\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right|
     \\
     \advantage{\pm \mathrm{prp}}{E}[(q, t)] \defeq
     &\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
@@ -89,10 +88,10 @@ the distinguishing advantage of an adversary $A$ is:
 %
 \begin{align*}
     \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)] \defeq
-    &\left|\prob{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1 | K \sample \mathcal{K}}\right.
+    &\left|\probsub{K \sample \mathcal{K}}{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1}\right.
     \\
-    &\left. - \prob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1
-        | \bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}\right|
+    &\left. - \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
+        {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}\right|
     \\
 \intertext{and}
 \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(q, l_T, l_M, t)]
@@ -208,7 +207,7 @@ $\omega = K_H, \pi, F$
 sampled fairly from
 $\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$.
 $X$ is a random variable representing the distribution of transcripts for
-$A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}$.
+$A^{\eta_{\omega}, \eta_{\omega}^{-1}}$.
 
 \parintro{Bad events}
 We define two bad events $\badQ$ and $\badR$.
@@ -297,7 +296,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
 
     \begin{align*}
-        & \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
+        & \eta_{\omega, T^i}(P^i) = C^i\\
         \Leftrightarrow & \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
         \Leftrightarrow & \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
         \Leftrightarrow & \pi(P_M^i) = C_M^i \wedge F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \\
@@ -328,7 +327,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             \pi \sample \Perm(\bin^n),
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
         }{
-            \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
+            \forall_i : \eta_{\omega, T^i}(P^i) = C^i
         } \\
         =& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
         \geq & \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}\\
@@ -346,8 +345,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $\advantage{\pm \widetilde{\mathrm{rnd}}}{\eta}[(q, l_T, l_M, t)]
     = \max_{A \in \mathcal{A}(q, l_T, l_M, t)} |\rho_X - \rho_Y|$ where
     \begin{align*}
-        \rho_X \defeq& \condprob{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}}\Rightarrow 1}{K_H, \pi, F \sample \Omega_X} \\
-        \rho_Y \defeq& \condprob{A^{\mathcal{E}, \mathcal{D}}\Rightarrow 1}{\mathcal{E}, \mathcal{D} \sample \Omega_Y} \\
+        \rho_X \defeq& \probsub{\omega \sample \Omega_X}{A^{\eta_{\omega}, \eta_{\omega}^{-1}}\Rightarrow 1} \\
+        \rho_Y \defeq& \probsub{\mathcal{E}, \mathcal{D} \sample \Omega_Y}{A^{\mathcal{E}, \mathcal{D}}\Rightarrow 1} \\
     \end{align*}
 
     Applying the H-coefficient technique:
@@ -379,8 +378,10 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     To prove this theorem we need a bound on $|\rho_V - \rho_Z|$
     where
     \begin{align*}
-        \rho_V \defeq& \condprob{A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1}{K_S \sample \mathcal{K}_S} \\
-        \rho_Z \defeq& \condprob{A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})} \\
+        \rho_V \defeq& \probsub{K_S \sample \mathcal{K}_S}
+            {A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1} \\
+        \rho_Z \defeq& \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
+            {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1} \\
     \end{align*}
 
     $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
@@ -392,7 +393,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     a stepping stone. Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
     $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$. Define
     \begin{align*}
-        \rho_W \defeq& \condprob{A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1}{F \sample (\mathcal{N} \rightarrow \bin^{l_S})} \\
+        \rho_W \defeq& \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+            {A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1} \\
     \end{align*}
 
     Note that $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
@@ -402,7 +404,9 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $\rho_V$ and $\rho_W$ makes at most $q + 1$ queries on the stream cipher
     or random function respectively, and uses at most $|K_E| + |K_H| + q(l_M - n)$ bits
     of the output; by a standard substitution argument
-    $|\rho_V - \rho_W| \leq \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')]$ where $t' = t + \bigO{q(l_T + l_M)}$.
+    $|\rho_V - \rho_W| \leq
+    \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')]$
+    where $t' = t + \bigO{q(l_T + l_M)}$.
 
     The differences between $\rho_W$ and $\rho_X$ are the use of a block cipher
     in place of a random permutation, and the use of $F(\lambda)$ to determine
@@ -411,7 +415,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     argument we have that $|\rho_W - \rho_X| \leq \advantage{\pm \mathrm{prp}}{E}[(q, t')]$.
 
     \autoref{hbshadvantage} follows by summing these bounds:
-    $|\rho_V - \rho_Z| \leq |\rho_V - \rho_W| + |\rho_W - \rho_X| + |\rho_X - \rho_Y| + |\rho_Y - \rho_Z|$.
+    $|\rho_V - \rho_Z| \leq
+    |\rho_V - \rho_W| + |\rho_W - \rho_X| + |\rho_X - \rho_Y| + |\rho_Y - \rho_Z|$.
 \end{proof}
 
 \subbib
