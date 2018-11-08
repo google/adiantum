@@ -74,14 +74,18 @@ is the set of all adversaries that make at most $q$ queries and take at most $t$
 
 \parintro{HBSH}
 HBSH itself is a tweakable length-preserving encryption system.
-Let $\Perm^\mathcal{T}(\mathcal{M})$ denote the set of all functions
-$\bm{\pi} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
-such that for all $T \in \mathcal{T}$,
-$\bm{\pi}_{T}$ is a length-preserving permutation: ie
-$|\bm{\pi}(T, M)| = |M|$ for all $M \in \mathcal{M}$,
-and $\bm{\pi}_{T}^{-1}$ exists.
-In an abuse of notation, we use $\bm{\pi}^{-1}$ to refer to the function
+Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
+tweakable length-preserving functions
+$\bm{f} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
+such that for all $T, M \in \mathcal{T} \times \mathcal{M}$,
+$|\bm{f}(T, M)| = |M|$. Let $\Perm^\mathcal{T}(\mathcal{M})$ denote
+the subset of $\LP^\mathcal{T}(\mathcal{M})$ such that
+for all $T \in \mathcal{T}$, $\bm{f}_{T}$ is a bijection.
+In an abuse of notation,
+where $\bm{\pi}$ is a member of this set,
+we use $\bm{\pi}^{-1}$ to refer to the function
 such that $\bm{\pi}^{-1}(T, \bm{\pi}(T, M)) = M$ ie $(\bm{\pi}^{-1})_T = (\bm{\pi}_T)^{-1}$.
+
 For a tweakable length-preserving encryption system
 $\bm{E} : \mathcal{K} \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
 the distinguishing advantage of an adversary $A$ is:
@@ -185,16 +189,8 @@ $L || R$, $|R|=n$.
 \end{align*}
 
 \parintro{Ideal world}
-Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
-tweakable length-preserving functions
-$\bm{f} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
-such that for all $T, M \in \mathcal{T} \times \mathcal{M}$,
-$|\bm{f}(T, M)| = |M|$;
-this is the definition of $\Perm^\mathcal{T}(\mathcal{M})$ with
-the requirement for bijectivity on $\mathcal{M}$ removed.
-
 Our ``ideal world''
-is then a pair of such functions
+is a pair of length-preserving functions
 $\omega = \mathcal{E}, \mathcal{D}$
 sampled fairly from
 $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$.
