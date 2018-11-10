@@ -71,12 +71,14 @@ yielding a group element represented as an $n$-bit string.
 $\boxplus$ represents addition in a group which depends
 on the hash function, and $\boxminus$ subtraction.
 
-HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
-based on Poly1305, while Adiantum uses both Poly1305 and NH;
-specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
-vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
-$\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
-lengths. We defer full details to \autoref{hashing}.
+\begin{sloppypar}
+    HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
+    based on Poly1305, while Adiantum uses both Poly1305 and NH;
+    specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
+    vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
+    $\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
+    lengths. We defer full details to \autoref{hashing}.
+\end{sloppypar}
 
 \parintro{Block cipher}
 The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$

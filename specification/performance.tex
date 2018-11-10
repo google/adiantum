@@ -24,11 +24,13 @@ decryption.
     \label{performancetable}
     \centering
     \begin{tabular}{lrr}
+        \toprule
         Algorithm &
             \makecell{Cycles per byte \\ (4096-byte sectors)} &
             \makecell{Cycles per byte \\ (512-byte sectors)} \\
-    \hline
+    \midrule
     \input{work/performance.tex}
+    \bottomrule
     \end{tabular}
 \end{table}
 
@@ -41,7 +43,7 @@ and the granularity of \textit{fscrypt} file-based encryption, while
 to support this size.
 
 For comparison we evaluate against various block ciphers in XTS mode~\cite{xts}:
-AES\mbox~\cite{AES}, Speck~\cite{speck1,speck2,speck3}, NOEKEON~\cite{noekeon},
+AES \cite{AES}, Speck~\cite{speck1,speck2,speck3}, NOEKEON~\cite{noekeon},
 and XTEA~\cite{xtea}. We also include the performance of ChaCha, NH,
 and Poly1305 by themselves for reference.
 
@@ -60,8 +62,9 @@ product of message size and cpb.
     \label{implementation}
     \centering
     \begin{tabular}{llp{7cm}}
+        \toprule
         Algorithm & Source & Notes \\
-    \hline
+    \midrule
     ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support
         ChaCha8 and ChaCha12; also applied optimizations from \texttt{cryptodev}
         commit a1b22a5f45fe8841 \\
@@ -73,6 +76,7 @@ product of message size and cpb.
     \mbox{Speck128/256-XTS} & Linux v4.17 & \texttt{speck-neon-core.S} \\
     \mbox{NOEKEON-XTS} & ours & \\
     \mbox{XTEA-XTS} & ours & \\
+    \bottomrule
     \end{tabular}
 \end{table}
 
