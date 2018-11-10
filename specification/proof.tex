@@ -124,7 +124,7 @@ and take at most $t$ time.
         &+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
-    where $t' \defeq t + \bigO{q(l_T + l_M)}$.
+    where $t' = t + \bigO{q(l_T + l_M)}$.
 \end{theorem}
 
 \begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
@@ -134,36 +134,36 @@ and take at most $t$ time.
 The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco}.
 In what follows we rely on the exposition of
 \cite{hco2} Section 3,
-``The H-coefficient Technique in a Nutshell''.
-However for our proof we vary slightly in the notation used.
+``The H-coefficient Technique in a Nutshell'', though we vary slightly by introducing
+a new symbol $\Upsilon$ so we can distinguish between what is sampled and the adversary oracles.
 
 WLOG we assume a deterministic adversary $A$.
 We wish to bound the adversary's ability to distinguish between
-two ``worlds'',  world X (the ``real world'') and world Y (the ``ideal world'').
-Associated with each world we have
+two ``worlds'', world X (the ``real world'') and world Y (the ``ideal world'').
+Associated with world X we have
 \begin{itemize}
-    \item a set of instances $\Omega_X$, $\Omega_Y$
-    \item a probability distribution over this set, so we can stochastically draw an instance $\omega \sample \Omega_X$ or $\omega \sample \Omega_Y$
-    \item a way of interpreting an instance as a tuple of
-    deterministic oracles
-    available to the adversary, so we can speak of eg $A^{\omega}$ meaning
-    ``adversary $A$ run with the oracles associated with instance $\omega$''.
+    \item $\Omega_X$: a set of instances we sample fairly from. We write
+    $\probsub{\Omega_X}{}$ as shorthand for $\probsub{\omega \sample \Omega_X}{}$.
+    \item $\Upsilon_X$: a map from an instance $\omega \in \Omega_X$ to a tuple of
+    deterministic oracles we can present to the adversary.
+    \item $\rho_X \defeq \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1}$
+    where the adversary $A$ is clear from context.
+    As the adversary interacts with the oracles, a transcript $\tau$
+    of queries and responses is generated.
+    \item $X$: a random variable representing a transcript for $A^{\Upsilon_X(\omega)}$
+    given $\omega \sample \Omega_X$; we write $\tau \sim X$
+    to indicate that $\tau$ is sampled from this distribution.
+    \item $\comp_X$:  We write $\omega \in \comp_X(\tau)$
+    if a transcript $\tau$ is ``compatible'' with an instance $\omega \in \Omega_X$,
+    ie if given an adversary $A$ that makes those queries, the oracle $\Upsilon_X(\omega)$
+    makes those responses and thus $A^{\Upsilon_X(\omega)}$ produces that transcript.
 \end{itemize}
+We have the same for world Y throughout.
 
-As the adversary interacts with the oracles, a transcript $\tau$
-of queries and responses is generated. We write $\omega \in \comp_X(\tau)$
-if a transcript $\tau$ is ``compatible'' with an instance $\omega \in \Omega_X$
-(and similarly for Y),
-ie if the associated oracle produces those responses to those queries. $X$ is
-a random variable representing the distribution of transcripts from
-$A^\omega$ for $\omega \sample \Omega_X$, and similarly for $Y$;
-we write $\tau \sim Y$ to indicate that $\tau$ is sampled from this distribution.
 The H-coefficient technique is based on the observation that:
-
 \begin{align*}
-    \advantage{Y}{X}[(A)] =&
-    \left|\probsub{\omega \sample \Omega_X}{A^\omega \Rightarrow 1}
-    - \probsub{\omega \sample \Omega_Y}{A^\omega \Rightarrow 1}\right| \\
+    \advantage{\textrm{Y}}{\textrm{X}}[(A)] =&
+    \left|\rho_X - \rho_Y \right| \\
     \leq & \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \left(\prob{Y = \tau} - \prob{X = \tau}\right) \\
     = & 1 - \expsub{\tau \sim Y}{\min
@@ -172,9 +172,10 @@ The H-coefficient technique is based on the observation that:
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
         \right)}
 \end{align*}
+as shown in \cite{hco2}.
 
 \subsection{Preliminaries}
-We use the H-coefficient technique to prove a distinguishing bound
+We use this technique to prove a distinguishing bound
 between random query responses and
 an ``idealized'' version of HBSH that uses a random function and permutation
 in place of pseudorandom primitives.
@@ -207,33 +208,24 @@ $L || R$, $|R|=n$.
 \begin{align*}
     \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
     \xi_{K_H}(T, L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
-    \vphantom{|} \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
     \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
     \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H}(T, L||R) \\
     =& L || (R \boxplus H_{K_H}(T, L)) \\
     \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
-    \vphantom{|} \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
     \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
     \theta_{\pi, F}(L || R) \defeq& (L \arrowoplus F(\pi(R))) || \pi(R) \\
-    \vphantom{|} \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
     \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
     \eta_{K_H, \pi, F, T} \defeq& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
 \end{align*}
-
-\parintro{Ideal world}
-Our ``ideal world''
-is a pair of length-preserving functions
-$\omega = \mathcal{E}, \mathcal{D}$
-sampled fairly from
-$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
-where $\mathcal{E}, \mathcal{D}$ is our associated tuple of oracles.
-
-\parintro{Real world}
-Our ``real world'' is an idealized form of HBSH which uses a random function and permutation:
-$\omega = K_H, \pi, F$
-sampled fairly from
-$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$, and our associated oracles are
-$\eta_{\omega}, \eta_{\omega}^{-1}$,  where $\eta_{\omega}$ means $\eta_{K_H, \pi, F}$.
 
 \parintro{Bad events}
 We define two bad events $\badQ$ and $\badR$.
@@ -253,6 +245,19 @@ We define two bad events $\badQ$ and $\badR$.
 
 Finally we define the disjunction
 $\bad \defeq \badQ \cup \badR$.
+
+\parintro{Ideal world}
+Our ``ideal world'' samples fairly from all possible pairs of length-preserving functions:
+$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
+so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
+$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
+
+\parintro{Real world}
+Our ``real world'' is
+an idealized form of HBSH which uses a random function and permutation:
+$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
+and given $(K_H, \pi, F) \in \Omega_X$,
+$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
 
 \subsection{Lemmas}
 \begin{lemma} \label{badQ}
@@ -325,7 +330,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
 
     \begin{align*}
-        & \eta_{\omega, T^i}(P^i) = C^i\\
+        & \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
         \Leftrightarrow & \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
         \Leftrightarrow & \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
         \Leftrightarrow & \pi(P_M^i) = C_M^i \wedge F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \\
@@ -356,29 +361,21 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             \pi \sample \Perm(\bin^n),
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
         }{
-            \forall_i : \eta_{\omega, T^i}(P^i) = C^i
+            \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
         } \\
         =& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
-        \geq & \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}\\
+        \geq & \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} \qedhere \\
     \end{align*}
 \end{proof}
 
 \begin{lemma} \label{xyadv}
     \begin{displaymath}
-        \advantage{\pm \widetilde{\mathrm{rnd}}}{\eta}[(q, l_T, l_M, t)]
+        |\rho_X - \rho_Y|
         \leq (\epsilon + 2^{-n})\binom{q}{2}
     \end{displaymath}
 \end{lemma}
 
-\begin{proof}
-    $\advantage{\pm \widetilde{\mathrm{rnd}}}{\eta}[(q, l_T, l_M, t)]
-    = \max_{A \in \mathcal{A}(q, l_T, l_M, t)} |\rho_X - \rho_Y|$ where
-    \begin{align*}
-        \rho_X \defeq& \probsub{\omega \sample \Omega_X}{A^{\eta_{\omega}, \eta_{\omega}^{-1}}\Rightarrow 1} \\
-        \rho_Y \defeq& \probsub{\mathcal{E}, \mathcal{D} \sample \Omega_Y}{A^{\mathcal{E}, \mathcal{D}}\Rightarrow 1} \\
-    \end{align*}
-
-    Applying the H-coefficient technique:
+\begin{proof} Using the H-coefficient technique:
     \begin{align*}
         &|\rho_X - \rho_Y| \\
         \leq& 1 - \expsub{\tau \sim Y}{\min
@@ -398,7 +395,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \leq & \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badQ}
          + \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
          \intertext{by \autoref{badQ} and \autoref{badR}}
-        \leq & (\epsilon + 2^{-n})\binom{q}{2} \\
+        \leq & (\epsilon + 2^{-n})\binom{q}{2} \qedhere \\
     \end{align*}
 \end{proof}
 
