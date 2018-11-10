@@ -6,17 +6,19 @@
 
 %!TeX spellcheck = en-US
 
-\providecommand*{\lemmaautorefname}{Lemma}
-
 \usepackage[style=alphabetic,backend=biber]{biblatex}
 \usepackage{tikz}
 \usepackage{makecell}
 \usepackage{longtable}
-\usepackage{amsmath}
-\usepackage{amssymb}
 \usepackage{bm}
 \usepackage[logic,probability,advantage,adversary,landau,sets,operators]{cryptocode}
 \usepackage{algpseudocode}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{groupops}
+
+\providecommand*{\lemmaautorefname}{Lemma}
+\renewcommand{\pcadvantagesuperstyle}[1]{#1}
 
 \newcommand{\parintro}[1]{\textbf{#1}:}
 
@@ -36,13 +38,8 @@
 \DeclareMathOperator{\badR}{\mathbf{badR}}
 \DeclareMathOperator{\bad}{\mathbf{bad}}
 
-\usetikzlibrary{positioning}
-\usetikzlibrary{groupops}
-
 \newcommand*{\arrowoplus}{\leftarrow\mkern-12mu\oplus}
 \newcommand*{\defeq}{\stackrel{\text{def}}{=}}
-
-\renewcommand{\pcadvantagesuperstyle}[1]{#1}
 
 \addbibresource{bib.bib}
 
