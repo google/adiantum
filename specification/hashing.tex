@@ -63,7 +63,7 @@ Thus if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then:
 
 \begin{displaymath}
 \epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_L/128})
-\end{displaymath}
+\end{displaymath}\label{hpolycepsilon}
 
 \subsection{NH}\label{nh}
 
@@ -148,7 +148,7 @@ this composition is  $\epsilon$A$\Delta$U, with:
 \begin{align*}
 \epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_L/8192})/128}  \\
 &= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_L/8192})
-\end{align*}
+\end{align*}\label{adiantumepsilon}
 
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a plaintext/ciphertext of length at most $l_M$, then by \autoref{hbshadvantage}
