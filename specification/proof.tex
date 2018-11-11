@@ -138,7 +138,6 @@ In what follows we rely on the highly recommended exposition of
 ``The H-coefficient Technique in a Nutshell'', though we vary slightly by introducing
 a new symbol $\Upsilon$ so we can distinguish between what is sampled and the adversary oracles.
 
-WLOG we assume a deterministic adversary $A$.
 We wish to bound the adversary's ability to distinguish between
 two ``worlds'', world X (the ``real world'') and world Y (the ``ideal world'').
 Associated with world X we have
@@ -161,9 +160,14 @@ Associated with world X we have
 \end{itemize}
 We have the same for world Y throughout.
 
-Since the oracle $\Upsilon_X(\omega)$ is deterministic,
+We assume a deterministic adversary. This is without loss of
+generality; if we assume a distribution of adversaries $A \sample \mathcal{A}$
+then an advantage bound on each of the deterministic adversaries $A$ bounds the advantage
+of the ensemble $\mathcal{A}$.
+
+Since the oracle $\Upsilon_X(\omega)$, once sampled, is also deterministic,
 the transcript produced by $A^{\Upsilon_X(\omega)}$ is the unique transcript
-compatible both with deterministic adversary $A$ and instance $\omega$. Where a transcript
+compatible both with adversary $A$ and instance $\omega$. Where a transcript
 is not compatible with $A$, $\prob{X = \tau} = \prob{Y = \tau} = 0$. If either
 of these is not zero, the transcript is compatible with $A$, and
 $\prob{X = \tau} = \probsub{\Omega_X}{\omega \in \comp_X(\tau)}$ and similarly for Y.
