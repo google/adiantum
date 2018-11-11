@@ -133,7 +133,7 @@ and take at most $t$ time.
 
 \subsection{H-coefficient technique}
 The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco}.
-In what follows we rely on the exposition of
+In what follows we rely on the highly recommended exposition of
 \cite{hco2} Section 3,
 ``The H-coefficient Technique in a Nutshell'', though we vary slightly by introducing
 a new symbol $\Upsilon$ so we can distinguish between what is sampled and the adversary oracles.
@@ -161,19 +161,38 @@ Associated with world X we have
 \end{itemize}
 We have the same for world Y throughout.
 
-The H-coefficient technique is based on the observation that:
+Since the oracle $\Upsilon_X(\omega)$ is deterministic,
+the transcript produced by $A^{\Upsilon_X(\omega)}$ is the unique transcript
+compatible both with deterministic adversary $A$ and instance $\omega$. Where a transcript
+is not compatible with $A$, $\prob{X = \tau} = \prob{Y = \tau} = 0$. If either
+of these is not zero, the transcript is compatible with $A$, and
+$\prob{X = \tau} = \probsub{\Omega_X}{\omega \in \comp_X(\tau)}$ and similarly for Y.
+
+The adversary always returns the same result for the same transcript, so
+its advantage is maximized if it returns 1 exactly when $\prob{Y = \tau} > \prob{X = \tau}$.
+Therefore:
 \begin{align*}
     \advantage{\textrm{Y}}{\textrm{X}}[(A)] =&
     \left|\rho_X - \rho_Y \right| \\
     \leq & \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \left(\prob{Y = \tau} - \prob{X = \tau}\right) \\
+    = & \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
+    \prob{Y = \tau}\left(1 - \frac{\prob{X = \tau}}{\prob{Y = \tau}}\right) \\
+    = & \sum_{\tau: \prob{Y = \tau} > 0}
+    \prob{Y = \tau}\left(1 - \min\left(1,\frac{\prob{X = \tau}}{\prob{Y = \tau}}\right)\right) \\
+    = & \expsub{\tau \sim Y}{1 - \min
+        \left(1,
+           \frac{\prob{X = \tau}}{\prob{Y = \tau}}
+        \right)} \\
     = & 1 - \expsub{\tau \sim Y}{\min
         \left(1,
            \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
         \right)}
 \end{align*}
-as shown in \cite{hco2}.
+
+The advantage of this rearrangement is that the only probability distribution we sum over is that
+of $Y$, which is a great deal more convenient to work with.
 
 \subsection{Preliminaries}
 We use this technique to prove a distinguishing bound
