@@ -146,7 +146,7 @@ Associated with world X we have
     $\probsub{\Omega_X}{}$ as shorthand for $\probsub{\omega \sample \Omega_X}{}$.
     \item $\Upsilon_X$: a map from an instance $\omega \in \Omega_X$ to a tuple of
     deterministic oracles we can present to the adversary.
-    \item $\rho_X \defeq \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1}$
+    \item $\rho_X \defeq \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1}$\label{rhox}
     where the adversary $A$ is clear from context.
     As the adversary interacts with the oracles, a transcript $\tau$
     of queries and responses is generated.
@@ -195,7 +195,7 @@ Therefore:
         \right)}
 \end{align*}
 
-The advantage of this rearrangement is that the only probability distribution we sum over is that
+With this rearrangement, the only probability distribution we sum over is that
 of $Y$, which is a great deal more convenient to work with.
 
 \subsection{Preliminaries}
@@ -425,30 +425,25 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \subsection{Proof of primary claim}
 \begin{proof}[Proof of \autoref{hbshadvantage}]\label{hbshproof}
-    To prove this theorem we need a bound on $|\rho_V - \rho_Z|$
-    where
+    Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
+    $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$;
+    then we define
     \begin{align*}
         \rho_V \defeq& \probsub{K_S \sample \mathcal{K}_S}
             {A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1} \\
+        \rho_W \defeq& \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+            {A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1} \\
+        \rho_X \defeq& \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1} \\
+            =&\probsub{K_H, \pi, F \sample \Omega_X}{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}} \Rightarrow 1} \\
+        \rho_Y \defeq& \probsub{\Omega_Y}{A^{\Upsilon_Y(\omega)} \Rightarrow 1} \\
+            =&\probsub{\mathcal{E}, \mathcal{D} \sample \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})}{A^{\mathcal{E}, \mathcal{D}} \Rightarrow 1} \\
         \rho_Z \defeq& \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
             {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1} \\
     \end{align*}
+    copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox}.
 
-    $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
-    Since we forbid pointless queries,
-    $|\rho_Y - \rho_Z| \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
-    (\cite{cmc}, appendix C, lemma 6).
-
-    To bound $|\rho_V - \rho_X|$ we introduce
-    a stepping stone. Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
-    $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$. Define
-    \begin{align*}
-        \rho_W \defeq& \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
-            {A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1} \\
-    \end{align*}
-
-    Note that $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
-    $\rho_V$ and $\rho_W$ is just distinguishing the substitution of a PRF
+    $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
+    $\rho_V$ and $\rho_W$ is distinguishing the substitution of a PRF
     for a random function.
     Including the key schedule, the attacker distinguishing
     $\rho_V$ and $\rho_W$ makes at most $q + 1$ queries on the stream cipher
@@ -463,6 +458,11 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $K_E$ and $K_H$. Since $F$ is a random function and $F(\lambda)$ is used
     only here, this is equivalent to choosing them at random; again by a substitution
     argument we have that $|\rho_W - \rho_X| \leq \advantage{\pm \mathrm{prp}}{E}[(q, t')]$.
+
+    $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
+    Since we forbid pointless queries,
+    $|\rho_Y - \rho_Z| \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
+    (\cite{cmc}, appendix C, lemma 6).
 
     \autoref{hbshadvantage} follows by summing these bounds:
     $|\rho_V - \rho_Z| \leq
