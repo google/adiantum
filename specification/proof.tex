@@ -270,18 +270,18 @@ We define two bad events $\badQ$ and $\badR$.
 Finally we define the disjunction
 $\bad \defeq \badQ \cup \badR$.
 
-\parintro{Ideal world}
-Our ``ideal world'' samples fairly from all possible pairs of length-preserving functions:
-$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
-so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
-$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
-
-\parintro{Real world}
-Our ``real world'' is
+\parintro{World X}
+World X is
 an idealized form of HBSH which uses a random function and permutation:
 $\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
 and given $(K_H, \pi, F) \in \Omega_X$,
 $\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
+
+\parintro{World Y}
+World Y samples fairly from all possible pairs of length-preserving functions:
+$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
+so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
+$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
 
 \subsection{Lemmas}
 \begin{lemma} \label{badQ}
@@ -323,7 +323,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \begin{proof}
     Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = C^i$ and similarly for $C^j$.
-    Because pointless queries are forbidden, in the ideal world,
+    Because pointless queries are forbidden, in world Y,
     conditioning on all prior queries and responses,
     all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
     In particular, even after conditioning on $L^j$,
@@ -345,7 +345,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{lemma}
 
 \begin{proof}
-    In the ideal world, for any transcript such that $\prob{Y = \tau} > 0$,
+    In world Y, for any transcript such that $\prob{Y = \tau} > 0$,
     since all queries are distinct, the responses are independent of all
     previous responses, and
     $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-|P^i|}$.
