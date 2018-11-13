@@ -11,7 +11,7 @@
 \section{Security reduction}
 \subsection{Definitions}
 Below we define the security properties of HBSH and
-the primitives it uses, and prove a relationship the two.
+the primitives it uses, and prove a relationship between the two.
 In what follows we draw on definitions used in \cite{hctr2}.
 
 \parintro{Hash function}
@@ -165,8 +165,8 @@ generality; if we assume a distribution of adversaries $A \sample \mathcal{A}$
 then an advantage bound on each of the deterministic adversaries $A$ bounds the advantage
 of the ensemble $\mathcal{A}$.
 
-Since the oracle $\Upsilon_X(\omega)$, once sampled, is also deterministic,
-the transcript produced by $A^{\Upsilon_X(\omega)}$ is the unique transcript
+Once $\omega$ is sampled, the oracle $\Upsilon_X(\omega)$ is then deterministic;
+the transcript produced by $A^{\Upsilon_X(\omega)}$ is thus the unique transcript
 compatible both with adversary $A$ and instance $\omega$. Where a transcript
 is not compatible with $A$, $\prob{X = \tau} = \prob{Y = \tau} = 0$. If either
 of these is not zero, the transcript is compatible with $A$, and
@@ -196,7 +196,7 @@ Therefore:
 \end{align*}
 
 With this rearrangement, the only probability distribution we sum over is that
-of $Y$, which is a great deal more convenient to work with.
+of $Y$, which can be more convenient to work with.
 
 \subsection{Preliminaries}
 We use this technique to prove a distinguishing bound
@@ -220,8 +220,8 @@ We consider adversaries contained in $\mathcal{A}(q, l_T, l_M, t)$ for some valu
 the bounds $q$, $l_T$, $l_M$, $t$.
 Without loss of generality, we consider only adversaries who do not make ``pointless''
 queries as defined in \cite{cmc}. Thus for $i < j$, if $d^j = +$ then
-$(T^j, P^j) \neq (T^i, P^i)$, and similarly if $d^j = -$ then
-$(T^j, C^j) \neq (T^i, C^i)$.
+$(T^i, P^i) \neq (T^j, P^j)$, and similarly if $d^j = -$ then
+$(T^i, C^i) \neq (T^j, C^j)$.
 
 \parintro{Helper functions}
 We define here
@@ -427,7 +427,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \begin{proof}[Proof of \autoref{hbshadvantage}]\label{hbshproof}
     Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
     $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$;
-    then we define
+    then (copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox})
+    we define
     \begin{align*}
         \rho_V \defeq& \probsub{K_S \sample \mathcal{K}_S}
             {A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1} \\
@@ -440,7 +441,6 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \rho_Z \defeq& \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
             {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1} \\
     \end{align*}
-    copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox}.
 
     $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
     $\rho_V$ and $\rho_W$ is distinguishing the substitution of a PRF
