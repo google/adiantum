@@ -9,7 +9,7 @@
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
 \section{Security reduction}
-\subsection{Definitions}
+\subsection{Security definitions}
 Below we define the security properties of HBSH and
 the primitives it uses, and prove a relationship between the two.
 In what follows we draw on definitions used in \cite{hctr2}.
@@ -131,6 +131,43 @@ and take at most $t$ time.
 \begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
 \end{proof}
 
+\subsection{Definition of HBSH}
+Rather than work with pseudocode, we provide here an
+equivalent definition of HBSH in functional form.
+Where a parameter is given as $L || R$, $|R|=n$.
+
+\begin{align*}
+    \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
+    \xi_{K_H}(T, L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H}(T, L||R) \\
+    =& L || (R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \theta_{\pi, F}(L || R) \defeq& (L \arrowoplus F(\pi(R))) || \pi(R) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \eta_{K_H, \pi, F, T} \defeq& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \bar{\eta}_{F} :& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \bar{\eta}_{F} \defeq& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E || K_H || \ldots = F(\lambda) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \HBSH :& \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \HBSH_{K_S} \defeq& \bar{\eta}_{S_{K_S}} \\
+\end{align*}
+
 \subsection{H-coefficient technique}
 The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco}.
 In what follows we rely on the highly recommended exposition of
@@ -204,6 +241,19 @@ between random query responses and
 an ``idealized'' version of HBSH that uses a random function and permutation
 in place of pseudorandom primitives.
 
+\parintro{World X}
+World X is
+an idealized form of HBSH which uses a random function and permutation:
+$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
+and given $(K_H, \pi, F) \in \Omega_X$,
+$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
+
+\parintro{World Y}
+World Y samples fairly from all possible pairs of length-preserving functions:
+$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
+so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
+$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
+
 \parintro{Transcript}
 Our transcript $\tau$ is a sequence of tuples
 $(d^i, T^i, P^i, C^i)$
@@ -223,36 +273,8 @@ queries as defined in \cite{cmc}. Thus for $i < j$, if $d^j = +$ then
 $(T^i, P^i) \neq (T^j, P^j)$, and similarly if $d^j = -$ then
 $(T^i, C^i) \neq (T^j, C^j)$.
 
-\parintro{Helper functions}
-We define here
-helper functions $\xi$, $\theta$, $\phi$, and $\eta$, useful for constructing
-HBSH-like ciphers. Where a parameter is given as
-$L || R$, $|R|=n$.
-
-\begin{align*}
-    \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H}(T, L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H}(T, L||R) \\
-    =& L || (R \boxplus H_{K_H}(T, L)) \\
-    \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L || R) \defeq& (L \arrowoplus F(\pi(R))) || \pi(R) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \eta_{K_H, \pi, F, T} \defeq& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
-\end{align*}
-
 \parintro{Bad events}
-We define two bad events $\badQ$ and $\badR$.
+We define various classes of ``bad event'':
 
 \begin{itemize}
     \item $(K_H, \tau) \in \badQ$ if there exists $i < j$ such that
@@ -269,19 +291,6 @@ We define two bad events $\badQ$ and $\badR$.
 
 Finally we define the disjunction
 $\bad \defeq \badQ \cup \badR$.
-
-\parintro{World X}
-World X is
-an idealized form of HBSH which uses a random function and permutation:
-$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
-and given $(K_H, \pi, F) \in \Omega_X$,
-$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
-
-\parintro{World Y}
-World Y samples fairly from all possible pairs of length-preserving functions:
-$\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
-so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
-$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
 
 \subsection{Lemmas}
 \begin{lemma} \label{badQ}
@@ -425,9 +434,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \subsection{Proof of primary claim}
 \begin{proof}[Proof of \autoref{hbshadvantage}]\label{hbshproof}
-    Let $\bar{\eta}_{F} \defeq \eta_{K_H, E_{K_E}, F}$ where
-    $E$ is a block cipher and $K_E || K_H || \ldots = F(\lambda)$;
-    then (copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox})
+    Copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox},
     we define
     \begin{align*}
         \rho_V \defeq& \probsub{K_S \sample \mathcal{K}_S}
@@ -442,7 +449,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1} \\
     \end{align*}
 
-    $\HBSH_{K_S} = \bar{\eta}_{S_{K_S}}$, so distinguishing
+    Distinguishing
     $\rho_V$ and $\rho_W$ is distinguishing the substitution of a PRF
     for a random function.
     Including the key schedule, the attacker distinguishing
