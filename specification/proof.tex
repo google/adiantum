@@ -159,7 +159,7 @@ Where a parameter is given as $L || R$, $|R|=n$.
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \bar{\eta}_{F} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \bar{\eta} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
     \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E || K_H || \ldots = F(\lambda) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
@@ -358,7 +358,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     since all queries are distinct, the responses are independent of all
     previous responses, and
     $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-|P^i|}$.
-    Let $P_L^i || P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
+
+    For world X, let $P_L^i || P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
     Since $(K_H, \tau) \notin \bad$ we have that $P_M^i \neq P_M^j$
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
 
@@ -366,7 +367,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         {}& \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
         \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
         \Leftrightarrow {}& \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
-        \Leftrightarrow {}& \pi(P_M^i) = C_M^i \wedge F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \\
+        \Leftrightarrow {}& P_L^i \arrowoplus F(C_M^i) = C_L^i \wedge \pi(P_M^i) = C_M^i \\
+        \Leftrightarrow {}& F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
     \end{align*}
 
     These conditions are independent, since they depend on independently drawn
@@ -421,6 +423,23 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
               \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             \right)} \\
+        ={}& 1 - \expsub{\tau \sim Y}{\min
+            \left(1, \expsub{K_H \sample \mathcal{K}_H}{
+              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
+            \right)} \\
+        \leq{}& 1 - \expsub{\tau \sim Y}{
+            \expsub{K_H \sample \mathcal{K}_H}{
+              \min\left(1,
+              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
+              \right)}
+            } \\
+        \leq{}& 1 - \expsub{\tau \sim Y}{
+            \probsub{K_H \sample \mathcal{K}_H}{
+                \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}} \geq 1
+            }} \\
         \intertext{by \autoref{notbad}}
         \leq{}& 1 - \expsub{\tau \sim Y}{
             \probsub{K_H \in \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
