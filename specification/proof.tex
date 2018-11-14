@@ -220,16 +220,14 @@ Therefore:
     = {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \prob{Y = \tau}\left(1 - \frac{\prob{X = \tau}}{\prob{Y = \tau}}\right) \\
     = {}& \sum_{\tau: \prob{Y = \tau} > 0}
-    \prob{Y = \tau}\left(1 - \min\left(1,\frac{\prob{X = \tau}}{\prob{Y = \tau}}\right)\right) \\
-    = {}& \expsub{\tau \sim Y}{1 - \min
-        \left(1,
+    \prob{Y = \tau}\left(1 - \minone{\frac{\prob{X = \tau}}{\prob{Y = \tau}}}\right) \\
+    = {}& \expsub{\tau \sim Y}{1 - \minone{
            \frac{\prob{X = \tau}}{\prob{Y = \tau}}
-        \right)} \\
-    = {}& 1 - \expsub{\tau \sim Y}{\min
-        \left(1,
+        }} \\
+    = {}& 1 - \expsub{\tau \sim Y}{\minone{
            \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-        \right)}
+        }}
 \end{align*}
 
 With this rearrangement, the only probability distribution we sum over is that
@@ -413,27 +411,26 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \begin{proof} Using the H-coefficient technique:
     \begin{align*}
         {}&|\rho_X - \rho_Y| \\
-        \leq{}& 1 - \expsub{\tau \sim Y}{\min
-            \left(1,
+        \leq{}& 1 - \expsub{\tau \sim Y}{\minone{
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-            \right)} \\
-        ={}& 1 - \expsub{\tau \sim Y}{\min
-            \left(1, \sum_{K_H \in \mathcal{K}_H}
+            }} \\
+        ={}& 1 - \expsub{\tau \sim Y}{\minone{
+            \sum_{K_H \in \mathcal{K}_H}
               \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-            \right)} \\
-        ={}& 1 - \expsub{\tau \sim Y}{\min
-            \left(1, \expsub{K_H \sample \mathcal{K}_H}{
+            }} \\
+        ={}& 1 - \expsub{\tau \sim Y}{\minone{
+            \expsub{K_H \sample \mathcal{K}_H}{
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
-            \right)} \\
+            }} \\
         \leq{}& 1 - \expsub{\tau \sim Y}{
             \expsub{K_H \sample \mathcal{K}_H}{
-              \min\left(1,
+              \minone{
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-              \right)}
+              }}
             } \\
         \leq{}& 1 - \expsub{\tau \sim Y}{
             \probsub{K_H \sample \mathcal{K}_H}{
