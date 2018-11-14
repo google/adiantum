@@ -155,9 +155,9 @@ at most $l_T$ and a plaintext/ciphertext of length at most $l_M$, then by \autor
 their distinguishing advantage is therefore at most:
 
 \begin{align*}
-&( 3(2^{-128}) + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_M - 128)/8192}))\binom{q}{2} \\
-+& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
-+& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_M - 128), t')] \\
+{}&( 3(2^{-128}) + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_M - 128)/8192}))\binom{q}{2} \\
++{}& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
++{}& \advantage{\mathrm{prf}}{S_{K_S}}[(8832 + q(l_M - 128), t')] \\
 \end{align*}
 
 Assuming that the block and stream ciphers are strong, this is dominated by the

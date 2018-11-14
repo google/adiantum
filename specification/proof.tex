@@ -36,13 +36,13 @@ must be a pseudorandom function.
 %
 \begin{align*}
     \advantage{\mathrm{prf}}{S}[(A)] \defeq
-    &\left| \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
+    {}&\left| \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
     \\
-    &\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+    {}&\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
     {A^F\Rightarrow 1} \right|
     \\
     \advantage{\mathrm{prf}}{S}[(q, l, t)]
-    \defeq &\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
+    \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
 \end{align*}
 %
 where $A$ is an adversary,
@@ -60,12 +60,12 @@ must be a super-pseudorandom permutation.
 %
 \begin{align*}
     \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
-    &\left|\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
+    {}&\left|\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
     \\
-    &\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right|
+    {}&\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right|
     \\
     \advantage{\pm \mathrm{prp}}{E}[(q, t)] \defeq
-    &\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
+    {}&\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
 \end{align*}
 %
 where $A$ is an adversary,
@@ -92,14 +92,14 @@ the distinguishing advantage of an adversary $A$ is:
 %
 \begin{align*}
     \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)] \defeq
-    &\left|\probsub{K \sample \mathcal{K}}{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1}\right.
+    {}&\left|\probsub{K \sample \mathcal{K}}{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1}\right.
     \\
-    &\left. - \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
+    {}&\left. - \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
         {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}\right|
     \\
     \intertext{and}
     \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(q, l_T, l_M, t)]
-    \defeq &
+    \defeq {}&
     \max_{A \in \mathcal{A}(q, l_T, l_M, t)} \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)]
 \end{align*}
 %
@@ -120,9 +120,9 @@ and take at most $t$ time.
     %
     \begin{align*}
         \advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)]
-        \leq &(\epsilon + 2(2^{-n}))\binom{q}{2} \\
-        &+ \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
-        &+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
+        \leq {}&(\epsilon + 2(2^{-n}))\binom{q}{2} \\
+        {}&+ \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
+        {}&+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
     where $t' = t + \bigO{q(l_T + l_M)}$.
@@ -137,35 +137,35 @@ equivalent definition of HBSH in functional form.
 Where a parameter is given as $L || R$, $|R|=n$.
 
 \begin{align*}
-    \xi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H}(T, L||R) \defeq& R \boxplus H_{K_H}(T, L) \\
+    \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
+    \xi_{K_H}(T, L||R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \phi :& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) \defeq& L || \xi_{K_H}(T, L||R) \\
-    =& L || (R \boxplus H_{K_H}(T, L)) \\
-    \phi^{-1}_{K_H, T}(L || R) =& L || (R \boxminus H_{K_H}(T, L)) \\
+    \phi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \phi_{K_H, T}(L || R) \defeq{}& L || \xi_{K_H}(T, L||R) \\
+    ={}& L || (R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L || R) ={}& L || (R \boxminus H_{K_H}(T, L)) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \theta :& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L || R) \defeq& (L \arrowoplus F(\pi(R))) || \pi(R) \\
+    \theta :{}& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \theta_{\pi, F}(L || R) \defeq{}& (L \arrowoplus F(\pi(R))) || \pi(R) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \eta :& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \eta_{K_H, \pi, F, T} \defeq& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
+    \eta :{}& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \eta_{K_H, \pi, F, T} \defeq{}& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \bar{\eta}_{F} :& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \bar{\eta}_{F} \defeq& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E || K_H || \ldots = F(\lambda) \\
+    \bar{\eta}_{F} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E || K_H || \ldots = F(\lambda) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \HBSH :& \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \HBSH_{K_S} \defeq& \bar{\eta}_{S_{K_S}} \\
+    \HBSH :{}& \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \HBSH_{K_S} \defeq{}& \bar{\eta}_{S_{K_S}} \\
 \end{align*}
 
 \subsection{H-coefficient technique}
@@ -213,19 +213,19 @@ The adversary always returns the same result for the same transcript, so
 its advantage is maximized if it returns 1 exactly when $\prob{Y = \tau} > \prob{X = \tau}$.
 Therefore:
 \begin{align*}
-    \advantage{\textrm{Y}}{\textrm{X}}[(A)] =&
+    \advantage{\textrm{Y}}{\textrm{X}}[(A)] ={}&
     \left|\rho_X - \rho_Y \right| \\
-    \leq & \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
+    \leq {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \left(\prob{Y = \tau} - \prob{X = \tau}\right) \\
-    = & \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
+    = {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \prob{Y = \tau}\left(1 - \frac{\prob{X = \tau}}{\prob{Y = \tau}}\right) \\
-    = & \sum_{\tau: \prob{Y = \tau} > 0}
+    = {}& \sum_{\tau: \prob{Y = \tau} > 0}
     \prob{Y = \tau}\left(1 - \min\left(1,\frac{\prob{X = \tau}}{\prob{Y = \tau}}\right)\right) \\
-    = & \expsub{\tau \sim Y}{1 - \min
+    = {}& \expsub{\tau \sim Y}{1 - \min
         \left(1,
            \frac{\prob{X = \tau}}{\prob{Y = \tau}}
         \right)} \\
-    = & 1 - \expsub{\tau \sim Y}{\min
+    = {}& 1 - \expsub{\tau \sim Y}{\min
         \left(1,
            \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
@@ -308,9 +308,9 @@ and therefore that $|L^i|, |L^j| \leq l_M - n$.
 Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
 %
 \begin{align*}
-    &\xi_{K_H}(T^i, L^i||R^i) = \xi_{K_H}(T^j, L^j||R^j) \\
-    \Leftrightarrow& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
-    \Leftrightarrow& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
+    {}&\xi_{K_H}(T^i, L^i||R^i) = \xi_{K_H}(T^j, L^j||R^j) \\
+    \Leftrightarrow{}& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
+    \Leftrightarrow{}& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
 \end{align*}
 %
 If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and equality cannot occur.
@@ -363,10 +363,10 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
 
     \begin{align*}
-        & \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
-        \Leftrightarrow & \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
-        \Leftrightarrow & \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
-        \Leftrightarrow & \pi(P_M^i) = C_M^i \wedge F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \\
+        {}& \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
+        \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
+        \Leftrightarrow {}& \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
+        \Leftrightarrow {}& \pi(P_M^i) = C_M^i \wedge F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \\
     \end{align*}
 
     These conditions are independent, since they depend on independently drawn
@@ -389,15 +389,15 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
     Therefore:
     \begin{align*}
-        &\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)} \\
-        =& \probsub{
+        {}&\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)} \\
+        ={}& \probsub{
             \pi \sample \Perm(\bin^n),
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
         }{
             \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
         } \\
-        =& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
-        \geq & \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} \qedhere \\
+        ={}& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
+        \geq {}& \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} \qedhere \\
     \end{align*}
 \end{proof}
 
@@ -410,25 +410,25 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \begin{proof} Using the H-coefficient technique:
     \begin{align*}
-        &|\rho_X - \rho_Y| \\
-        \leq& 1 - \expsub{\tau \sim Y}{\min
+        {}&|\rho_X - \rho_Y| \\
+        \leq{}& 1 - \expsub{\tau \sim Y}{\min
             \left(1,
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             \right)} \\
-        =& 1 - \expsub{\tau \sim Y}{\min
+        ={}& 1 - \expsub{\tau \sim Y}{\min
             \left(1, \sum_{K_H \in \mathcal{K}_H}
               \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             \right)} \\
         \intertext{by \autoref{notbad}}
-        \leq& 1 - \expsub{\tau \sim Y}{
+        \leq{}& 1 - \expsub{\tau \sim Y}{
             \probsub{K_H \in \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
-        = & \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
-        \leq & \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badQ}
+        = {}& \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
+        \leq {}& \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badQ}
          + \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
          \intertext{by \autoref{badQ} and \autoref{badR}}
-        \leq & (\epsilon + 2^{-n})\binom{q}{2} \qedhere \\
+        \leq {}& (\epsilon + 2^{-n})\binom{q}{2} \qedhere \\
     \end{align*}
 \end{proof}
 
@@ -437,15 +437,15 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     Copying the definitions of $\rho_X$, $\rho_Y$ from \autoref{rhox},
     we define
     \begin{align*}
-        \rho_V \defeq& \probsub{K_S \sample \mathcal{K}_S}
+        \rho_V \defeq{}& \probsub{K_S \sample \mathcal{K}_S}
             {A^{\HBSH_{K_S}, \HBSH_{K_S}^{-1}}\Rightarrow 1} \\
-        \rho_W \defeq& \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+        \rho_W \defeq{}& \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
             {A^{\bar{\eta}_{F}, \bar{\eta}_{F}^{-1}}\Rightarrow 1} \\
-        \rho_X \defeq& \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1} \\
-            =&\probsub{K_H, \pi, F \sample \Omega_X}{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}} \Rightarrow 1} \\
-        \rho_Y \defeq& \probsub{\Omega_Y}{A^{\Upsilon_Y(\omega)} \Rightarrow 1} \\
-            =&\probsub{\mathcal{E}, \mathcal{D} \sample \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})}{A^{\mathcal{E}, \mathcal{D}} \Rightarrow 1} \\
-        \rho_Z \defeq& \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
+        \rho_X \defeq{}& \probsub{\Omega_X}{A^{\Upsilon_X(\omega)} \Rightarrow 1} \\
+            ={}&\probsub{K_H, \pi, F \sample \Omega_X}{A^{\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}} \Rightarrow 1} \\
+        \rho_Y \defeq{}& \probsub{\Omega_Y}{A^{\Upsilon_Y(\omega)} \Rightarrow 1} \\
+            ={}&\probsub{\mathcal{E}, \mathcal{D} \sample \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})}{A^{\mathcal{E}, \mathcal{D}} \Rightarrow 1} \\
+        \rho_Z \defeq{}& \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
             {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1} \\
     \end{align*}
 
