@@ -439,10 +439,10 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             }} \\
         \intertext{by \autoref{notbad}}
         \leq{}& 1 - \expsub{\tau \sim Y}{
-            \probsub{K_H \in \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
-        = {}& \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
-        \leq {}& \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badQ}
-         + \probsub{\tau \sim Y, K_H \in \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
+            \probsub{K_H \sample \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
+        = {}& \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
+        \leq {}& \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badQ}
+         + \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
          \intertext{by \autoref{badQ} and \autoref{badR}}
         \leq {}& (\epsilon + 2^{-n})\binom{q}{2} \qedhere \\
     \end{align*}
