@@ -188,7 +188,7 @@ Associated with world X we have
     As the adversary interacts with the oracles, a transcript $\tau$
     of queries and responses is generated.
     \item $X$: a random variable representing a transcript for $A^{\Upsilon_X(\omega)}$
-    given $\omega \sample \Omega_X$; we write $\tau \sim X$
+    given $\omega \sample \Omega_X$; we write $\tau \sample X$
     to indicate that $\tau$ is sampled from this distribution.
     \item $\comp_X$:  We write $\omega \in \comp_X(\tau)$
     if a transcript $\tau$ is ``compatible'' with an instance $\omega \in \Omega_X$,
@@ -221,10 +221,10 @@ Therefore:
     \prob{Y = \tau}\left(1 - \frac{\prob{X = \tau}}{\prob{Y = \tau}}\right) \\
     = {}& \sum_{\tau: \prob{Y = \tau} > 0}
     \prob{Y = \tau}\left(1 - \minone{\frac{\prob{X = \tau}}{\prob{Y = \tau}}}\right) \\
-    = {}& \expsub{\tau \sim Y}{1 - \minone{
+    = {}& \expsub{\tau \sample Y}{1 - \minone{
            \frac{\prob{X = \tau}}{\prob{Y = \tau}}
         }} \\
-    = {}& 1 - \expsub{\tau \sim Y}{\minone{
+    = {}& 1 - \expsub{\tau \sample Y}{\minone{
            \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
         }}
@@ -323,7 +323,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \begin{lemma} \label{badR}
     For any $K_H \sample \mathcal{K}_H$,
     \begin{displaymath}
-        \probsub{\tau \sim Y}{(K_H, \tau) \in \badR}
+        \probsub{\tau \sample Y}{(K_H, \tau) \in \badR}
         \leq 2^{-n} \binom{q}{2}
     \end{displaymath}
 \end{lemma}
@@ -411,38 +411,38 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \begin{proof} Using the H-coefficient technique:
     \begin{align*}
         {}&|\rho_X - \rho_Y| \\
-        \leq{}& 1 - \expsub{\tau \sim Y}{\minone{
+        \leq{}& 1 - \expsub{\tau \sample Y}{\minone{
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             }} \\
-        ={}& 1 - \expsub{\tau \sim Y}{\minone{
+        ={}& 1 - \expsub{\tau \sample Y}{\minone{
             \sum_{K_H \in \mathcal{K}_H}
               \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             }} \\
-        ={}& 1 - \expsub{\tau \sim Y}{\minone{
+        ={}& 1 - \expsub{\tau \sample Y}{\minone{
             \expsub{K_H \sample \mathcal{K}_H}{
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
             }} \\
-        \leq{}& 1 - \expsub{\tau \sim Y}{
+        \leq{}& 1 - \expsub{\tau \sample Y}{
             \expsub{K_H \sample \mathcal{K}_H}{
               \minone{
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
               }}
             } \\
-        \leq{}& 1 - \expsub{\tau \sim Y}{
+        \leq{}& 1 - \expsub{\tau \sample Y}{
             \probsub{K_H \sample \mathcal{K}_H}{
                 \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
                 {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}} \geq 1
             }} \\
         \intertext{by \autoref{notbad}}
-        \leq{}& 1 - \expsub{\tau \sim Y}{
+        \leq{}& 1 - \expsub{\tau \sample Y}{
             \probsub{K_H \sample \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
-        = {}& \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
-        \leq {}& \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badQ}
-         + \probsub{\tau \sim Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
+        = {}& \probsub{\tau \sample Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
+        \leq {}& \probsub{\tau \sample Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badQ}
+         + \probsub{\tau \sample Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \badR} \\
          \intertext{by \autoref{badQ} and \autoref{badR}}
         \leq {}& (\epsilon + 2^{-n})\binom{q}{2} \qedhere \\
     \end{align*}
