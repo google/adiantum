@@ -4,10 +4,10 @@ For details on Adiantum, see [the repository](https://github.com/google/adiantum
 or [our paper](https://eprint.iacr.org/2018/720). This site exists only to share this:
 
 - [draft of forthcoming update to our paper](adiantum-draft.pdf)
-- [d65930a833ffa4a3553726f65908564e41c5e62a](https://github.com/google/adiantum/commit/d65930a833ffa4a3553726f65908564e41c5e62a)
+- [a23be8a634b8ad26cee5ce9552d24dd0197fc2d4](https://github.com/google/adiantum/commit/a23be8a634b8ad26cee5ce9552d24dd0197fc2d4)
 
-        commit d65930a833ffa4a3553726f65908564e41c5e62a
+        commit a23be8a634b8ad26cee5ce9552d24dd0197fc2d4
         Author: Paul Crowley <paulcrowley@google.com>
-        Date:   Sun Nov 11 13:16:38 2018 -0800
+        Date:   Tue Nov 13 21:22:12 2018 -0800
 
-            Fix PDF encoding warnings
+            fix horizontal spacing in aligns
