@@ -234,11 +234,6 @@ With this rearrangement, the only probability distribution we sum over is that
 of $Y$, which can be more convenient to work with.
 
 \subsection{Preliminaries}
-We use this technique to prove a distinguishing bound
-between random query responses and
-an ``idealized'' version of HBSH that uses a random function and permutation
-in place of pseudorandom primitives.
-
 \parintro{World X}
 World X is
 an idealized form of HBSH which uses a random function and permutation:
@@ -251,6 +246,12 @@ World Y samples fairly from all possible pairs of tweakable length-preserving fu
 $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
 so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
 $\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
+
+In what follows, we use the H-coefficient technique to bound the distinguishing advantage
+$\abs{\rho_X - \rho_Y}$
+between these worlds (\autoref{xyadv}). This is one step towards the bound we then prove in
+\autoref{hbshproof} between HBSH itself and tweakable length-preserving permutations,
+$\abs{\rho_V - \rho_Z}$.
 
 \parintro{Transcript}
 Our transcript $\tau$ is a sequence of tuples
@@ -440,6 +441,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
             }} \\
+        \intertext{for any real random variable $U$, we have that $\expect{\minone{U}} \leq \minone{\expect{U}}$}
         \leq{}& 1 - \expsub{\tau \sample Y}{
             \expsub{K_H \sample \mathcal{K}_H}{
               \minone{
