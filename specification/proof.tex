@@ -424,37 +424,46 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     \end{displaymath}
 \end{lemma}
 
-\begin{proof} Using the H-coefficient technique:
+\begin{proof}
+    For any real random variable $U$, we have that $\minone{\expect{U}} \geq \expect{\minone{U}}$.
+    Therefore:
+    \begin{align*}
+        {}& \minone{
+               \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
+               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
+            } \\
+        ={}& \minone{
+            \sum_{K_H \in \mathcal{K}_H}
+              \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
+            } \\
+        ={}& \minone{
+            \expsub{K_H \sample \mathcal{K}_H}{
+              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
+            } \\
+        \geq{}&
+            \expsub{K_H \sample \mathcal{K}_H}{
+              \minone{
+              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
+              }} \\
+        \geq{}&
+            \probsub{K_H \sample \mathcal{K}_H}{
+                \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
+                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}} \geq 1
+            } \\
+        \intertext{by \autoref{notbad}}
+        \geq{}& \probsub{K_H \sample \mathcal{K}_H}{(K_H, \tau) \notin \bad} \\
+    \end{align*}
+
+    Therefore, using the H-coefficient technique:
     \begin{align*}
         {}&\abs{\rho_X - \rho_Y} \\
         \leq{}& 1 - \expsub{\tau \sample Y}{\minone{
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             }} \\
-        ={}& 1 - \expsub{\tau \sample Y}{\minone{
-            \sum_{K_H \in \mathcal{K}_H}
-              \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
-              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-            }} \\
-        ={}& 1 - \expsub{\tau \sample Y}{\minone{
-            \expsub{K_H \sample \mathcal{K}_H}{
-              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
-              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
-            }} \\
-        \intertext{for any real random variable $U$, we have that $\expect{\minone{U}} \leq \minone{\expect{U}}$}
-        \leq{}& 1 - \expsub{\tau \sample Y}{
-            \expsub{K_H \sample \mathcal{K}_H}{
-              \minone{
-              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
-              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-              }}
-            } \\
-        \leq{}& 1 - \expsub{\tau \sample Y}{
-            \probsub{K_H \sample \mathcal{K}_H}{
-                \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
-                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}} \geq 1
-            }} \\
-        \intertext{by \autoref{notbad}}
         \leq{}& 1 - \expsub{\tau \sample Y}{
             \probsub{K_H \sample \mathcal{K}_H}{(K_H, \tau) \notin \bad}} \\
         = {}& \probsub{\tau \sample Y, K_H \sample \mathcal{K}_H}{(K_H, \tau) \in \bad} \\
