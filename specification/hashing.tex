@@ -20,7 +20,7 @@ then the bounds on queries to $H$ will be $|T| \leq l_T$, $|L| \leq l_L = l_M - 
 
 $\intify: \bin^{*} \rightarrow \ZZ$ is the
 standard little-endian map
-(ie $\intify(\lambda) = 0$, $\intify(0 || X) = 2\intify(X)$, $\intify(1 || X) = 1 + 2\intify(X)$),
+(ie $\intify(\lambda) = 0$, $\intify(0 \Concat X) = 2\intify(X)$, $\intify(1 \Concat X) = 1 + 2\intify(X)$),
 and $X = \fromint_l(y)$ is the unique
 $l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$.
 
@@ -47,7 +47,7 @@ Note that 22 bits of the 128-bit key are zeroed before use, so every key is equi
 $2^{22}$ keys and the effective keyspace is $2^{106}$.
 
 Many Poly1305 libraries
-take parameters $K_H || g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
+take parameters $K_H \Concat g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
 is needed we suggest using bitwise inversion and the identity
 $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 
@@ -56,7 +56,7 @@ HPolyC is the HBSH construction that the first revision of this paper presented,
 Poly1305 together with an injective encoding function.
 It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
 \begin{align*}
-H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) || T) || L)
+H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) \Concat T) \Concat L)
 \end{align*}
 
 Thus if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then:
@@ -92,7 +92,7 @@ an output of size $2rw\ceil{|M|/u}$; we call this ratio $u/2rw = 32$ the ``compr
                     \State $p \gets p + ((a_0 + b_0) \bmod 2^w)((a_1 + b_1) \bmod 2^w)$
                 \EndFor
             \EndFor
-            \State $h \gets h || \fromint_{2w}(p)$
+            \State $h \gets h \Concat \fromint_{2w}(p)$
         \EndFor
         \State $M \gets M[l;|M| - l]$
     \EndWhile
@@ -130,7 +130,7 @@ In all this takes a $128 + 128 + 8576 = 8832$-bit key.
     \State $K_T \gets K_H[0;128]$
     \State $K_L \gets K_H[128;128]$
     \State $K_N \gets K_H[256;8576]$
-    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|L|) || T)$
+    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|L|) \Concat T)$
     \State $H_L \gets \Polydjb_{K_L}(\NH_{K_N}(\pad_{128}(L)))$
     \State \textbf{return} $H_T \boxplus H_L$
     \EndProcedure

@@ -134,23 +134,23 @@ and take at most $t$ time.
 \subsection{Definition of HBSH}
 Rather than work with pseudocode, we provide here an
 equivalent definition of HBSH in functional form.
-Where a parameter is given as $L || R$, $|R|=n$.
+Where a parameter is given as $L \Concat R$, $|R|=n$.
 
 \begin{align*}
     \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
-    \xi_{K_H}(T, L||R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
+    \xi_{K_H}(T, L \Concat R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
     \phi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L || R) \defeq{}& L || \xi_{K_H}(T, L||R) \\
-    ={}& L || (R \boxplus H_{K_H}(T, L)) \\
-    \phi^{-1}_{K_H, T}(L || R) ={}& L || (R \boxminus H_{K_H}(T, L)) \\
+    \phi_{K_H, T}(L \Concat R) \defeq{}& L \Concat \xi_{K_H}(T, L \Concat R) \\
+    ={}& L \Concat (R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L \Concat R) ={}& L \Concat (R \boxminus H_{K_H}(T, L)) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
     \theta :{}& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L || R) \defeq{}& (L \arrowoplus F(\pi(R))) || \pi(R) \\
+    \theta_{\pi, F}(L \Concat R) \defeq{}& (L \arrowoplus F(\pi(R))) \Concat \pi(R) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
@@ -160,7 +160,7 @@ Where a parameter is given as $L || R$, $|R|=n$.
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
     \bar{\eta} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E || K_H || \ldots = F(\lambda) \\
+    \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E \Concat K_H \Concat \ldots = F(\lambda) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
@@ -300,13 +300,13 @@ $\bad \defeq \badQ \cup \badR$.
 \end{lemma}
 
 \begin{proof}
-Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = P^i$ and similarly for $P^j$.
+Assume $d^j = +$ for some pair $i, j$, and let $L^i \Concat R^i = P^i$ and similarly for $P^j$.
 From $\prob{Y = \tau} > 0$ we know that $|T^i|, |T^j| \leq l_T$ and $|P^i|, |P^j| \leq l_M$,
 and therefore that $|L^i|, |L^j| \leq l_M - n$.
 Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
 %
 \begin{align*}
-    {}&\xi_{K_H}(T^i, L^i||R^i) = \xi_{K_H}(T^j, L^j||R^j) \\
+    {}&\xi_{K_H}(T^i, L^i \Concat R^i) = \xi_{K_H}(T^j, L^j \Concat R^j) \\
     \Leftrightarrow{}& R^i \boxplus H_{K_H}(T^i, L^i) = R^j \boxplus H_{K_H}(T^j, L^j) \\
     \Leftrightarrow{}& H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j) = R^j \boxminus R^i \\
 \end{align*}
@@ -329,7 +329,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{lemma}
 
 \begin{proof}
-    Assume $d^j = +$ for some pair $i, j$, and let $L^i || R^i = C^i$ and similarly for $C^j$.
+    Assume $d^j = +$ for some pair $i, j$, and let $L^i \Concat R^i = C^i$ and similarly for $C^j$.
     Because pointless queries are forbidden, in world Y,
     conditioning on all prior queries and responses,
     all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
@@ -357,14 +357,14 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     previous responses, and
     $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-|P^i|}$.
 
-    For world X, let $P_L^i || P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
+    For world X, let $P_L^i \Concat P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
     Since $(K_H, \tau) \notin \bad$ we have that $P_M^i \neq P_M^j$
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
 
     \begin{align*}
         {}& \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
         \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
-        \Leftrightarrow {}& \theta_{\pi, F}(P_L^i || P_M^i) = C_L^i || C_M^i \\
+        \Leftrightarrow {}& \theta_{\pi, F}(P_L^i \Concat P_M^i) = C_L^i \Concat C_M^i \\
         \Leftrightarrow {}& P_L^i \arrowoplus F(C_M^i) = C_L^i \wedge \pi(P_M^i) = C_M^i \\
         \Leftrightarrow {}& F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
     \end{align*}
