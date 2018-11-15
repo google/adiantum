@@ -229,7 +229,7 @@ Therefore:
            {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
         }}
 \end{align*}
-
+where $\expect{}$ is the expected value.
 With this rearrangement, the only probability distribution we sum over is that
 of $Y$, which can be more convenient to work with.
 
@@ -425,8 +425,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 \end{lemma}
 
 \begin{proof}
-    For any real random variable $U$, we have that $\minone{\expect{U}} \geq \expect{\minone{U}}$.
-    Therefore:
+    For any transcript $\tau$ such that $\prob{Y = \tau} > 0$:
     \begin{align*}
         {}& \minone{
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
@@ -442,6 +441,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
               \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
               {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
             } \\
+        \intertext{$\minone{\expect{U}} \geq \expect{\minone{U}}$ for any real random variable $U$, therefore}
         \geq{}&
             \expsub{K_H \sample \mathcal{K}_H}{
               \minone{
@@ -457,7 +457,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \geq{}& \probsub{K_H \sample \mathcal{K}_H}{(K_H, \tau) \notin \bad} \\
     \end{align*}
 
-    Therefore, using the H-coefficient technique:
+    Using the H-coefficient technique:
     \begin{align*}
         {}&\abs{\rho_X - \rho_Y} \\
         \leq{}& 1 - \expsub{\tau \sample Y}{\minone{
