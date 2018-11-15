@@ -150,7 +150,7 @@ Where a parameter is given as $L \Concat R$, $\abs{R}=n$.
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
     \theta :{}& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L \Concat R) \defeq{}& (L \arrowoplus F(\pi(R))) \Concat \pi(R) \\
+    \theta_{\pi, F}(L \Concat R) \defeq{}& (L \oplus F(\pi(R))[0;\abs{L}]) \Concat \pi(R) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
@@ -366,7 +366,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         {}& \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
         \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
         \Leftrightarrow {}& \theta_{\pi, F}(P_L^i \Concat P_M^i) = C_L^i \Concat C_M^i \\
-        \Leftrightarrow {}& P_L^i \arrowoplus F(C_M^i) = C_L^i \wedge \pi(P_M^i) = C_M^i \\
+        \Leftrightarrow {}& P_L^i \oplus F(C_M^i)[0;\abs{P_L^i}] = C_L^i \wedge \pi(P_M^i) = C_M^i \\
         \Leftrightarrow {}& F(C_M^i)[0;\abs{P^i} - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
     \end{align*}
 

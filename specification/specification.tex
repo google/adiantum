@@ -32,7 +32,7 @@ a stream cipher $S$.
                 \State $P_L \Concat P_R \gets P$
                 \State $P_M \gets P_R \boxplus H_{K_H}(T, P_L)$
                 \State $C_M \gets E_{K_E}(P_M)$
-                \State $C_L \gets P_L \arrowoplus S_{K_S}(C_M)$
+                \State $C_L \gets P_L \oplus S_{K_S}(C_M)[0;\abs{P_L}]$
                 \State $C_R \gets C_M \boxminus H_{K_H}(T, C_L)$
                 \State $C \gets C_L \Concat C_R$
                 \State \textbf{return} $C$
@@ -42,7 +42,7 @@ a stream cipher $S$.
                 \Procedure{HBSHDecrypt}{$T,C$}
                 \State $C_L \Concat C_R \gets C$
                 \State $C_M \gets C_R \boxplus H_{K_H}(T, C_L)$
-                \State $P_L \gets C_L \arrowoplus S_{K_S}(C_M)$
+                \State $P_L \gets C_L \oplus S_{K_S}(C_M)[0;\abs{C_L}]$
                 \State $P_M \gets E_{K_E}^{-1}(C_M)$
                 \State $P_R \gets P_M \boxminus H_{K_H}(T, P_L)$
                 \State $P \gets P_L \Concat P_R$
@@ -59,7 +59,6 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
 $ \Concat $ represents concatenation, and $\lambda$ the empty string.
 $\abs{X}$ represents the length of $X \in \bin^{*}$ in bits.
 $Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
-$X \arrowoplus Y$ is $X \oplus Y[0;\abs{X}]$.
 $\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$.
 
 \parintro{Hash}
