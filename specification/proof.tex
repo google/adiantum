@@ -353,14 +353,15 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
 
 \begin{proof}
     In world Y, for any transcript such that $\prob{Y = \tau} > 0$,
-    since all queries are distinct, the responses are independent of all
-    previous responses, and
+    since all queries are distinct, the responses are independent fair random draws of
+    binary strings of the appropriate length, and therefore
     $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-\abs{P^i}}$.
 
-    For world X, let $P_L^i \Concat P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
+    For world X,
+    let $P_L^i \Concat P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
     Since $(K_H, \tau) \notin \bad$ we have that $P_M^i \neq P_M^j$
     and $C_M^i \neq C_M^j$ for all $i \neq j$.
-
+    $(K_H, \pi, F) \in \comp_X(\tau)$ exactly if, for each $i$:
     \begin{align*}
         {}& \eta_{K_H, \pi, F, T^i}(P^i) = C^i\\
         \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
@@ -369,8 +370,10 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \Leftrightarrow {}& F(C_M^i)[0;\abs{P^i} - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
     \end{align*}
 
-    These conditions are independent, since they depend on independently drawn
-    variables:
+    Since $\pi$ and $F$ are drawn independently, we can consider these conditions on them
+    separately. For $F$, since all $C_M^i$ are distinct,
+    these are once again independent fair random draws of
+    binary strings of the appropriate length:
     \begin{displaymath}
         \probsub{
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
@@ -378,7 +381,19 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
             \forall_i : F(C_M^i)[0;\abs{P^i} - n] = P_L^i \oplus C_L^i
         } = \prod_i 2^{-(\abs{P^i} - n)}
     \end{displaymath}
-    and
+
+    For $\pi$, again given that all $P_M^i$ are distinct and all $C_M^i$ are distinct,
+    we have that
+    \begin{displaymath}
+        \condprobsub{
+            \pi \sample \Perm(\bin^n)
+        }{
+            \pi(P_M^j) = C_M^j
+        }{
+            \forall_{0 \leq i < j} : \pi(P_M^i) = C_M^i
+        } = \frac{1}{2^n - j}
+    \end{displaymath}
+    (we number queries in the range $i \in [0 \ldots q-1]$) and therefore that:
     \begin{displaymath}
         \probsub{
             \pi \sample \Perm(\bin^n)
