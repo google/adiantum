@@ -23,6 +23,22 @@ def writechanged(path, content):
     if (not path.exists()) or path.read_text() != content:
         path.write_text(content)
 
+def hash_input_files(inp, outp):
+    done = set()
+    with outp.open("w") as outf:
+        with inp.open() as inf:
+            for l in inf:
+                t, n = l.split(maxsplit=1)
+                if t != "INPUT":
+                    continue
+                n = n[:-1]
+                if n in done:
+                    continue
+                done.add(n)
+                npath = pathlib.Path(n)
+                sh = fetchhash.hash_file(npath)
+                outf.write(f"{sh} {n}\n")
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('input', type=pathlib.Path, nargs='?')
@@ -35,6 +51,7 @@ def main():
     work.mkdir(parents = True, exist_ok = True)
     fetch = work / "fetch"
     fetch.mkdir(parents = True, exist_ok = True)
+    texinputs = [wd]
 
     if args.iacr:
         iacrtrans = work / "iacrtrans"
@@ -47,6 +64,7 @@ def main():
                 subprocess.run(["rm", "-rf", str(uz)], check=True)
             subprocess.run(["unzip", "iacr_tosc.zip"], cwd=fetch, check=True)
             uz.rename(iacrtrans)
+        texinputs.append(iacrtrans)
 
     latexrun = work / "latexrun"
     if not latexrun.is_file():
@@ -79,24 +97,27 @@ def main():
     writechanged(work / "git.tex", gitstate)
 
     inputfile = wd / "eprint.tex"
-    extrainputs = []
     latex = "lualatex"
     if args.iacr:
         inputfile = wd / "iacr.tex"
-        extrainputs.append(str(iacrtrans))
         latex = "xelatex"
 
     if args.input is not None:
         inputfile = args.input
 
+    texinputs.append("")
     env = dict(os.environ)
-    env["TEXINPUTS"] = ":".join([str(wd)] + extrainputs + [""])
+    env["TEXINPUTS"] = ":".join(str(d) for d in texinputs)
+    outdir = work / "latex.out"
     subprocess.run([str(latexrun),
-            "-O", str(work / "latex.out"),
+            "-O", str(outdir),
             "--latex-cmd", latex,
             "--bibtex-cmd", "biber",
             str(inputfile)],
         cwd=wd, check=True, env=env)
+    hash_input_files(
+        outdir / (inputfile.stem + ".fls"),
+        outdir / (inputfile.stem + ".sha256"))
 
 if __name__ == "__main__":
     main()
