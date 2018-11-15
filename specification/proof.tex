@@ -36,10 +36,10 @@ must be a pseudorandom function.
 %
 \begin{align*}
     \advantage{\mathrm{prf}}{S}[(A)] \defeq
-    {}&\left| \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
+    {}&\left\lvert \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
     \\
     {}&\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
-    {A^F\Rightarrow 1} \right|
+    {A^F\Rightarrow 1} \right\rvert
     \\
     \advantage{\mathrm{prf}}{S}[(q, l, t)]
     \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
@@ -60,9 +60,9 @@ must be a super-pseudorandom permutation.
 %
 \begin{align*}
     \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
-    {}&\left|\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
+    {}&\left\lvert\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
     \\
-    {}&\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right|
+    {}&\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right\rvert
     \\
     \advantage{\pm \mathrm{prp}}{E}[(q, t)] \defeq
     {}&\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
@@ -92,10 +92,10 @@ the distinguishing advantage of an adversary $A$ is:
 %
 \begin{align*}
     \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(A)] \defeq
-    {}&\left|\probsub{K \sample \mathcal{K}}{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1}\right.
+    {}&\left\lvert\probsub{K \sample \mathcal{K}}{A^{\bm{E}_K,\bm{E}_K^{-1}}\Rightarrow 1}\right.
     \\
     {}&\left. - \probsub{\bm{\pi} \sample \Perm^\mathcal{T}(\mathcal{M})}
-        {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}\right|
+        {A^{\bm{\pi},\bm{\pi}^{-1}}\Rightarrow 1}\right\rvert
     \\
     \intertext{and}
     \advantage{\pm \widetilde{\mathrm{prp}}}{\bm{E}}[(q, l_T, l_M, t)]
@@ -214,7 +214,7 @@ its advantage is maximized if it returns 1 exactly when $\prob{Y = \tau} > \prob
 Therefore:
 \begin{align*}
     \advantage{\textrm{Y}}{\textrm{X}}[(A)] ={}&
-    \left|\rho_X - \rho_Y \right| \\
+    |\rho_X - \rho_Y| \\
     \leq {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \left(\prob{Y = \tau} - \prob{X = \tau}\right) \\
     = {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
