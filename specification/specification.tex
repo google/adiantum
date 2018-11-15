@@ -57,10 +57,10 @@ a stream cipher $S$.
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
 $ \Concat $ represents concatenation, and $\lambda$ the empty string.
-$|X|$ represents the length of $X \in \bin^{*}$ in bits.
+$\abs{X}$ represents the length of $X \in \bin^{*}$ in bits.
 $Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
-$X \arrowoplus Y$ is $X \oplus Y[0;|X|]$.
-$\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $|X| + v$.
+$X \arrowoplus Y$ is $X \oplus Y[0;\abs{X}]$.
+$\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$.
 
 \parintro{Hash}
 $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$

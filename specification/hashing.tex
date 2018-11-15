@@ -11,10 +11,10 @@
 \section{\texorpdfstring{$\epsilon$A$\Delta$U}{𝜖A∆U} functions for HBSH}\label{hashing}
 
 Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
-$H_{K_H}(T, L)$. In each case the value of $\epsilon$ depends on bounds on $|T|$ and $|L|$.
+$H_{K_H}(T, L)$. In each case the value of $\epsilon$ depends on bounds on $\abs{T}$ and $\abs{L}$.
 If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext length of
-$|T| \leq l_T$, $|P|, |C| \leq l_M$
-then the bounds on queries to $H$ will be $|T| \leq l_T$, $|L| \leq l_L = l_M - n$.
+$\abs{T} \leq l_T$, $\abs{P}, \abs{C} \leq l_M$
+then the bounds on queries to $H$ will be $\abs{T} \leq l_T$, $\abs{L} \leq l_L = l_M - n$.
 
 \subsection{Notation}
 
@@ -39,7 +39,7 @@ $\ZZ/2^{128}\ZZ$, so we define
 to define a function we call
 $\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$,
 and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any
-$g \in \bin^{128}$ and any distinct messages $M, M'$ where $|M|, |M'| \leq l$,
+$g \in \bin^{128}$ and any distinct messages $M, M'$ where $\abs{M}, \abs{M'} \leq l$,
 $\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^{-103}\ceil{l/128}$.
 In that paper this function is used to build a MAC based on AES, while in
 RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
@@ -54,12 +54,12 @@ $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 \subsection{HPolyC hashing}
 HPolyC is the HBSH construction that the first revision of this paper presented, which used
 Poly1305 together with an injective encoding function.
-It is simple, fast, and key agile. We require that $|T| < 2^{32}$ and define
+It is simple, fast, and key agile. We require that $\abs{T} < 2^{32}$ and define
 \begin{align*}
-H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(|T|) \Concat T) \Concat L)
+H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(\abs{T}) \Concat T) \Concat L)
 \end{align*}
 
-Thus if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then:
+Thus if for all queries $\abs{T} \leq l_T$ and $\abs{L} \leq l_L$ then:
 
 \begin{displaymath}
 \epsilon = 2^{-103}(\ceil{(32 + l_T)/128} + \ceil{l_L/128})
@@ -74,13 +74,13 @@ NH~\cite{umac1,umac2,rfc4418} is then defined over message
 lengths divisible by $2sw = 128$
 and takes a $u + 2sw(r -1) = 8576$-bit key, processing the message
 in $u$-bit chunks to produce
-an output of size $2rw\ceil{|M|/u}$; we call this ratio $u/2rw = 32$ the ``compression ratio''.
+an output of size $2rw\ceil{\abs{M}/u}$; we call this ratio $u/2rw = 32$ the ``compression ratio''.
 
 \begin{algorithmic}[0]
     \Procedure{NH}{$K, M$}
     \State $h \gets \lambda$
     \While {$M \neq \lambda$}
-        \State $l \gets \min{(|M|, u)}$
+        \State $l \gets \min{(\abs{M}, u)}$
         \For {$i \gets 0, 2sw, \ldots,  2sw(r-1)$}
             \State $p \gets 0$
             \For {$j \gets 0, 2sw, \ldots, l-2sw$}
@@ -94,7 +94,7 @@ an output of size $2rw\ceil{|M|/u}$; we call this ratio $u/2rw = 32$ the ``compr
             \EndFor
             \State $h \gets h \Concat \fromint_{2w}(p)$
         \EndFor
-        \State $M \gets M[l;|M| - l]$
+        \State $M \gets M[l;\abs{M} - l]$
     \EndWhile
     \State \textbf{return} $h$
     \EndProcedure
@@ -130,19 +130,19 @@ In all this takes a $128 + 128 + 8576 = 8832$-bit key.
     \State $K_T \gets K_H[0;128]$
     \State $K_L \gets K_H[128;128]$
     \State $K_N \gets K_H[256;8576]$
-    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(|L|) \Concat T)$
+    \State $H_T \gets \Polydjb_{K_T}(\fromint_{128}(\abs{L}) \Concat T)$
     \State $H_L \gets \Polydjb_{K_L}(\NH_{K_N}(\pad_{128}(L)))$
     \State \textbf{return} $H_T \boxplus H_L$
     \EndProcedure
 \end{algorithmic}
 
-For distinct pairs $(T,L) \neq (T', L')$, we have that if $|L| \neq |L'|$ or $T \neq T'$,
-then the $128 + |T|$-bit input to Poly1305 with key $K_T$ will differ.
-Otherwise $|L| = |L'|$ but $L \neq L'$;
+For distinct pairs $(T,L) \neq (T', L')$, we have that if $\abs{L} \neq \abs{L'}$ or $T \neq T'$,
+then the $128 + \abs{T}$-bit input to Poly1305 with key $K_T$ will differ.
+Otherwise $\abs{L} = \abs{L'}$ but $L \neq L'$;
 per \cite{umac2} the probability NH will compress these to the same value is at most
-$2^{-128}$. If they do not collide, the $256\ceil{|L|/8192}$-bit input to Poly1305 with key $K_L$
+$2^{-128}$. If they do not collide, the $256\ceil{\abs{L}/8192}$-bit input to Poly1305 with key $K_L$
 will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
-$\epsilon$A$\Delta$U, if for all queries $|T| \leq l_T$ and $|L| \leq l_L$ then
+$\epsilon$A$\Delta$U, if for all queries $\abs{T} \leq l_T$ and $\abs{L} \leq l_L$ then
 this composition is  $\epsilon$A$\Delta$U, with:
 
 \begin{align*}

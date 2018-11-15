@@ -79,7 +79,7 @@ Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
 tweakable length-preserving functions
 $\bm{f} : \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
 such that for all $T, M \in \mathcal{T} \times \mathcal{M}$,
-$|\bm{f}(T, M)| = |M|$. Let $\Perm^\mathcal{T}(\mathcal{M})$ denote
+$\abs{\bm{f}(T, M)} = \abs{M}$. Let $\Perm^\mathcal{T}(\mathcal{M})$ denote
 the set of $\bm{\pi} \in \LP^\mathcal{T}(\mathcal{M})$ such that
 for all $T \in \mathcal{T}$, $\bm{\pi}_{T}$ is a bijection.
 In an abuse of notation
@@ -116,12 +116,12 @@ and take at most $t$ time.
 \begin{theorem}\label{hbshadvantage}
     Where HBSH mode is instantiated with hash function $H$, block cipher $E$ and stream cipher $S$,
     and where $H$ is $\epsilon$-almost-$\Delta$-universal for inputs such that
-    $|T| \leq l_T$, $|L| \leq l_M - n$, then:
+    $\abs{T} \leq l_T$, $\abs{L} \leq l_M - n$, then:
     %
     \begin{align*}
         \advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)]
         \leq {}&(\epsilon + 2(2^{-n}))\binom{q}{2} \\
-        {}&+ \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')] \\
+        {}&+ \advantage{\mathrm{prf}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')] \\
         {}&+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
@@ -134,7 +134,7 @@ and take at most $t$ time.
 \subsection{Definition of HBSH}
 Rather than work with pseudocode, we provide here an
 equivalent definition of HBSH in functional form.
-Where a parameter is given as $L \Concat R$, $|R|=n$.
+Where a parameter is given as $L \Concat R$, $\abs{R}=n$.
 
 \begin{align*}
     \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
@@ -214,7 +214,7 @@ its advantage is maximized if it returns 1 exactly when $\prob{Y = \tau} > \prob
 Therefore:
 \begin{align*}
     \advantage{\textrm{Y}}{\textrm{X}}[(A)] ={}&
-    |\rho_X - \rho_Y| \\
+    \abs{\rho_X - \rho_Y} \\
     \leq {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
     \left(\prob{Y = \tau} - \prob{X = \tau}\right) \\
     = {}& \sum_{\tau: \prob{Y = \tau} > \prob{X = \tau}}
@@ -301,8 +301,8 @@ $\bad \defeq \badQ \cup \badR$.
 
 \begin{proof}
 Assume $d^j = +$ for some pair $i, j$, and let $L^i \Concat R^i = P^i$ and similarly for $P^j$.
-From $\prob{Y = \tau} > 0$ we know that $|T^i|, |T^j| \leq l_T$ and $|P^i|, |P^j| \leq l_M$,
-and therefore that $|L^i|, |L^j| \leq l_M - n$.
+From $\prob{Y = \tau} > 0$ we know that $\abs{T^i}, \abs{T^j} \leq l_T$ and $\abs{P^i}, \abs{P^j} \leq l_M$,
+and therefore that $\abs{L^i}, \abs{L^j} \leq l_M - n$.
 Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j, P^j)$.
 %
 \begin{align*}
@@ -332,7 +332,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     Assume $d^j = +$ for some pair $i, j$, and let $L^i \Concat R^i = C^i$ and similarly for $C^j$.
     Because pointless queries are forbidden, in world Y,
     conditioning on all prior queries and responses,
-    all possible values of $C^j$ such that $|C^j| = |P^j|$ will be equally likely.
+    all possible values of $C^j$ such that $\abs{C^j} = \abs{P^j}$ will be equally likely.
     In particular, even after conditioning on $L^j$,
     all values of $R^j$ are equally likely. Therefore
     $\prob{R^j = R^i \boxplus H_{K_H}(T^i, L^i) \boxminus H_{K_H}(T^j, L^j)} = 2^{-n}$.
@@ -355,7 +355,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     In world Y, for any transcript such that $\prob{Y = \tau} > 0$,
     since all queries are distinct, the responses are independent of all
     previous responses, and
-    $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-|P^i|}$.
+    $\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} = \prod_i 2^{-\abs{P^i}}$.
 
     For world X, let $P_L^i \Concat P_R^i = P^i$, $P_M^i = \xi_{K_H, T^i}(P^i)$ and similarly for $C^i$.
     Since $(K_H, \tau) \notin \bad$ we have that $P_M^i \neq P_M^j$
@@ -366,7 +366,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \Leftrightarrow {}& \phi_{K_H,T^i}^{-1}(\theta_{\pi, F}(\phi_{K_H,T^i}(P^i))) = C^i\\
         \Leftrightarrow {}& \theta_{\pi, F}(P_L^i \Concat P_M^i) = C_L^i \Concat C_M^i \\
         \Leftrightarrow {}& P_L^i \arrowoplus F(C_M^i) = C_L^i \wedge \pi(P_M^i) = C_M^i \\
-        \Leftrightarrow {}& F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
+        \Leftrightarrow {}& F(C_M^i)[0;\abs{P^i} - n] = P_L^i \oplus C_L^i \wedge \pi(P_M^i) = C_M^i \\
     \end{align*}
 
     These conditions are independent, since they depend on independently drawn
@@ -375,8 +375,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         \probsub{
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
         }{
-            \forall_i : F(C_M^i)[0;|P^i| - n] = P_L^i \oplus C_L^i
-        } = \prod_i 2^{-(|P^i| - n)}
+            \forall_i : F(C_M^i)[0;\abs{P^i} - n] = P_L^i \oplus C_L^i
+        } = \prod_i 2^{-(\abs{P^i} - n)}
     \end{displaymath}
     and
     \begin{displaymath}
@@ -396,21 +396,21 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
         }{
             \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
         } \\
-        ={}& \prod_i \frac{1}{2^n - i}2^{-(|P^i| - n)} \\
-        \geq {}& \prod_i 2^{-|P^i|} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} \qedhere \\
+        ={}& \prod_i \frac{1}{2^n - i}2^{-(\abs{P^i} - n)} \\
+        \geq {}& \prod_i 2^{-\abs{P^i}} = \probsub{\Omega_Y}{\omega \in \comp_Y(\tau)} \qedhere \\
     \end{align*}
 \end{proof}
 
 \begin{lemma} \label{xyadv}
     \begin{displaymath}
-        |\rho_X - \rho_Y|
+        \abs{\rho_X - \rho_Y}
         \leq (\epsilon + 2^{-n})\binom{q}{2}
     \end{displaymath}
 \end{lemma}
 
 \begin{proof} Using the H-coefficient technique:
     \begin{align*}
-        {}&|\rho_X - \rho_Y| \\
+        {}&\abs{\rho_X - \rho_Y} \\
         \leq{}& 1 - \expsub{\tau \sample Y}{\minone{
                \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau)}}
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
@@ -470,26 +470,26 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     for a random function.
     Including the key schedule, the attacker distinguishing
     $\rho_V$ and $\rho_W$ makes at most $q + 1$ queries on the stream cipher
-    or random function respectively, and uses at most $|K_E| + |K_H| + q(l_M - n)$ bits
+    or random function respectively, and uses at most $\abs{K_E} + \abs{K_H} + q(l_M - n)$ bits
     of the output; by a standard substitution argument
-    $|\rho_V - \rho_W| \leq
-    \advantage{\mathrm{prf}}{S}[(q + 1, |K_E| + |K_H| + q(l_M - n), t')]$
+    $\abs{\rho_V - \rho_W} \leq
+    \advantage{\mathrm{prf}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')]$
     where $t' = t + \bigO{q(l_T + l_M)}$.
 
     The differences between $\rho_W$ and $\rho_X$ are the use of a block cipher
     in place of a random permutation, and the use of $F(\lambda)$ to determine
     $K_E$ and $K_H$. Since $F$ is a random function and $F(\lambda)$ is used
     only here, this is equivalent to choosing them at random; again by a substitution
-    argument we have that $|\rho_W - \rho_X| \leq \advantage{\pm \mathrm{prp}}{E}[(q, t')]$.
+    argument we have that $\abs{\rho_W - \rho_X} \leq \advantage{\pm \mathrm{prp}}{E}[(q, t')]$.
 
-    $|\rho_X - \rho_Y| \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
+    $\abs{\rho_X - \rho_Y} \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
     Since we forbid pointless queries,
-    $|\rho_Y - \rho_Z| \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
+    $\abs{\rho_Y - \rho_Z} \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
     (\cite{cmc}, appendix C, lemma 6).
 
     \autoref{hbshadvantage} follows by summing these bounds:
-    $|\rho_V - \rho_Z| \leq
-    |\rho_V - \rho_W| + |\rho_W - \rho_X| + |\rho_X - \rho_Y| + |\rho_Y - \rho_Z|$.
+    $\abs{\rho_V - \rho_Z} \leq
+    \abs{\rho_V - \rho_W} + \abs{\rho_W - \rho_X} + \abs{\rho_X - \rho_Y} + \abs{\rho_Y - \rho_Z}$.
 \end{proof}
 
 \subbib
