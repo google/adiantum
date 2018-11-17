@@ -66,9 +66,9 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
     space of plaintexts and ciphertexts
     \item $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$, $\mathcal{R} = \bin^n$: messages are processed in two parts,
     $\mathcal{L} \times \mathcal{R}$
-    \item $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$: two-argument hash function with keyspace $\mathcal{K}_H$
-    \item $\boxplus, \boxminus: \bin^n \times \bin^n \rightarrow \bin^n$: group operations
-    \item $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$: $n$-bit block cipher with key space $\mathcal{K}_E$
+    \item $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \mathcal{R}$: two-argument hash function with keyspace $\mathcal{K}_H$
+    \item $\boxplus, \boxminus: \mathcal{R} \times \mathcal{R} \rightarrow \mathcal{R}$: group operations
+    \item $E: \mathcal{K}_E \times \mathcal{R} \rightarrow \mathcal{R}$: $n$-bit block cipher with key space $\mathcal{K}_E$
     \item $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$:
     stream cipher with key space $\mathcal{K}_S$
     and nonce space $\mathcal{N}$
@@ -77,7 +77,7 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
 \end{itemize}
 Where we have eg $P_L \Concat P_R \gets P$
 with $P \in \mathcal{M}$, $P_L, P_R$ is the unique
-pair of elements in $\mathcal{L} \times \bin^n$ such that
+pair of elements in $\mathcal{L} \times \mathcal{R}$ such that
 $P_L \Concat P_R = P$.
 
 \parintro{Block cipher}
@@ -89,7 +89,7 @@ its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $
 $S$
 is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
 the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
-is distinct from all $n$-bit strings; thus $\{\lambda \} \cup \bin^n \subseteq \mathcal{N}$.
+is distinct from all $n$-bit strings; thus $\{\lambda \} \cup \mathcal{R} \subseteq \mathcal{N}$.
 
 Adiantum and HPolyC use the XChaCha12 stream cipher.
 The ChaCha~\cite{chacha}

@@ -16,7 +16,7 @@ primitives used to build HBSH, and those of HBSH itself.
 \parintro{Hash function}
 The hash function $H$
 must be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
-for any $g \in \bin^n$ and
+for any $g \in \mathcal{R}$ and
 any two distinct messages $(T, L) \neq (T', L')$:
 %
 \begin{displaymath}
@@ -59,7 +59,7 @@ must be a super-pseudorandom permutation.
     \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
     {}&\left\lvert\probsub{K \sample \mathcal{K}_E}{A^{E_K,E_K^{-1}}\Rightarrow 1}\right.
     \\
-    {}&\left. - \probsub{\pi \sample \Perm(\bin^n)}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right\rvert
+    {}&\left. - \probsub{\pi \sample \Perm(\mathcal{R})}{A^{\pi,\pi^{-1}}\Rightarrow 1}\right\rvert
     \\
     \advantage{\pm \mathrm{prp}}{E}[(q, t)] \defeq
     {}&\max_{A \in \mathcal{A}(q, t)} \advantage{\pm \mathrm{prp}}{E}[(A)]
@@ -132,10 +132,10 @@ and take at most $t$ time.
 Rather than work with pseudocode, we provide here an
 equivalent definition of HBSH in functional form.
 Where a parameter is given as $L \Concat R$ we have that
-$L \in \mathcal{L}$, $R \in \bin^n$, $L \Concat R \in \mathcal{M}$.
+$L \in \mathcal{L}$, $R \in \mathcal{R}$, $L \Concat R \in \mathcal{M}$.
 
 \begin{align*}
-    \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\
+    \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{R} \\
     \xi_{K_H}(T, L \Concat R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
@@ -147,12 +147,12 @@ $L \in \mathcal{L}$, $R \in \bin^n$, $L \Concat R \in \mathcal{M}$.
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \theta :{}& \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \theta :{}& \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
     \theta_{\pi, F}(L \Concat R) \defeq{}& (L \oplus F(\pi(R))[0;\abs{L}]) \Concat \pi(R) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
-    \eta :{}& \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \eta :{}& \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
     \eta_{K_H, \pi, F, T} \defeq{}& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
@@ -235,7 +235,7 @@ of $Y$, which can be more convenient to work with.
 \parintro{World X}
 World X is
 an idealized form of HBSH which uses a random function and permutation:
-$\Omega_X \defeq \mathcal{K}_H \times \Perm(\bin^n) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
+$\Omega_X \defeq \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
 and given $(K_H, \pi, F) \in \Omega_X$,
 $\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
 
@@ -385,7 +385,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     we have that
     \begin{displaymath}
         \condprobsub{
-            \pi \sample \Perm(\bin^n)
+            \pi \sample \Perm(\mathcal{R})
         }{
             \pi(P_M^j) = C_M^j
         }{
@@ -395,7 +395,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     (we number queries in the range $i \in [0 \ldots q-1]$) and therefore that:
     \begin{displaymath}
         \probsub{
-            \pi \sample \Perm(\bin^n)
+            \pi \sample \Perm(\mathcal{R})
         }{
             \forall_i : \pi(P_M^i) = C_M^i
         } = \prod_i \frac{1}{2^n - i}
@@ -405,7 +405,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     \begin{align*}
         {}&\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)} \\
         ={}& \probsub{
-            \pi \sample \Perm(\bin^n),
+            \pi \sample \Perm(\mathcal{R}),
             F \sample (\mathcal{N} \rightarrow \bin^{l_S})
         }{
             \forall_i : \eta_{K_H, \pi, F, T^i}(P^i) = C^i
