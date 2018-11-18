@@ -10,13 +10,11 @@
 \begin{document}
 \section{Security reduction}
 \subsection{Security definitions}
-Below we define the security properties of HBSH and
-the primitives it uses, and prove a relationship between the two.
-In what follows we draw on definitions used in \cite{hctr2}.
+We here prove a relationship between the security properties of the
+primitives used to build HBSH, and those of HBSH itself.
 
 \parintro{Hash function}
-The hash function
-$H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
+The hash function $H$
 must be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
 for any $g \in \bin^n$ and
 any two distinct messages $(T, L) \neq (T', L')$:
@@ -30,8 +28,7 @@ hash function used in HPolyC is given in \autoref{hpolycepsilon},
 and for Adiantum in \autoref{adiantumepsilon}.
 
 \parintro{Stream cipher}
-The stream cipher
-$S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
+The stream cipher $S$
 must be a pseudorandom function.
 %
 \begin{align*}
@@ -55,7 +52,7 @@ the results of those queries, and take at most $t$ time.
 
 \parintro{Block cipher}
 The block cipher
-$E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
+$E$
 must be a super-pseudorandom permutation.
 %
 \begin{align*}
@@ -134,7 +131,8 @@ and take at most $t$ time.
 \subsection{Definition of HBSH}
 Rather than work with pseudocode, we provide here an
 equivalent definition of HBSH in functional form.
-Where a parameter is given as $L \Concat R$, $\abs{R}=n$.
+Where a parameter is given as $L \Concat R$ we have that
+$L \in \mathcal{L}$, $R \in \bin^n$, $L \Concat R \in \mathcal{M}$.
 
 \begin{align*}
     \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \bin^n \\

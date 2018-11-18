@@ -14,10 +14,6 @@ From plaintext $P$ of at least $n$ bits and a tweak $T$,
 it generates a ciphertext $C$ of the same length as $P$.
 HBSH divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
 the remainder of the input, and applies an unbalanced Feistel network.
-It uses
-an $\epsilon$-almost-$\Delta$-universal function $H$,
-an $n$-bit block cipher $E$, and
-a stream cipher $S$.
 
 \begin{figure}
     \begin{floatrow}
@@ -56,13 +52,61 @@ a stream cipher $S$.
 \parintro{Notation}
 Partial application is implicit; if we define $f: A \times B \rightarrow C$ and
 $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f_a(b)) = b$.
-$ \Concat $ represents concatenation, and $\lambda$ the empty string.
-$\abs{X}$ represents the length of $X \in \bin^{*}$ in bits.
-$Y[a;l]$ refers to the subsequence of $Y$ of length $l$ starting at $a$.
-$\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$.
+\begin{itemize}
+    \item $\abs{X}$: length of $X \in \bin^{*}$ in bits
+    \item $\lambda$: the empty string $\abs{\lambda} = 0$
+    \item $\Concat$: bitstring concatenation
+    \item $Y[a;l]$: the subsequence of $Y$ of length $l$ starting at $a$.
+    \item $\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$
+    \item $n$, $l_S$: parameters which depend on the
+    primitives from which HBSH is built
+    \item $\mathcal{T}$: the
+    space of tweaks, which depends on the hash function used
+    \item $\mathcal{M} = \bigcup_{i=n}^{l_S + n}\bin^i$: the
+    space of plaintexts and ciphertexts
+    \item $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$, $\mathcal{R} = \bin^n$: messages are processed in two parts,
+    $\mathcal{L} \times \mathcal{R}$
+    \item $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$: two-argument hash function with keyspace $\mathcal{K}_H$
+    \item $\boxplus, \boxminus: \bin^n \times \bin^n \rightarrow \bin^n$: group operations
+    \item $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$: $n$-bit block cipher with key space $\mathcal{K}_E$
+    \item $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$:
+    stream cipher with key space $\mathcal{K}_S$
+    and nonce space $\mathcal{N}$
+    \item $\HBSH : \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$: the HBSH construction takes a key, a tweak, and
+    a plaintext, and returns a ciphertext such that $\abs{\HBSH(K_S, T, M)} = \abs{M}$
+\end{itemize}
+Where we have eg $P_L \Concat P_R \gets P$
+with $P \in \mathcal{M}$, $P_L, P_R$ is the unique
+pair of elements in $\mathcal{L} \times \bin^n$ such that
+$P_L \Concat P_R = P$.
+
+\parintro{Block cipher}
+The block cipher $E$
+is only invoked once no matter the size of the input, so for disk-sector-sized inputs
+its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$ and $\mathcal{K}_E = \bin^{256}$.
+
+\parintro{Stream cipher}
+$S$
+is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
+the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
+is distinct from all $n$-bit strings; thus $\{\lambda \} \cup \bin^n \subseteq \mathcal{N}$.
+
+Adiantum and HPolyC use the XChaCha12 stream cipher.
+The ChaCha~\cite{chacha}
+stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
+a ChaCha20 variant with a 96-bit nonce, but we need a 128-bit nonce.
+The XSalsa20 construction~\cite{xsalsa}
+proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
+applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
+We then construct a function that takes a variable-length nonce of up to
+191 bits by padding with a 1 followed by zeroes:
+$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M \Concat 1))$ and
+$\mathcal{N} = \bigcup_{i=0}^{191}\bin^i$.
+The maximum output length $l_S = 2^{73}$,
+and keyspace $\mathcal{K}_S = \bin^{256}$.
 
 \parintro{Hash}
-$H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \bin^n$
+$H$
 is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$A$\Delta$U) function
 (as defined in \autoref{eadudef})
 yielding a group element represented as an $n$-bit string.
@@ -75,34 +119,9 @@ on the hash function, and $\boxminus$ subtraction.
     specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
     vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
     $\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
-    lengths. We defer full details to \autoref{hashing}.
+    lengths.
+    We defer full details to \autoref{hashing}.
 \end{sloppypar}
-
-\parintro{Block cipher}
-The $n$-bit block cipher $E: \mathcal{K}_E \times \bin^n \rightarrow \bin^n$
-is only invoked once no matter the size of the input, so for disk-sector-sized inputs
-its performance isn't critical. Adiantum and HPolyC use AES-256~\cite{AES}, so $n = 128$.
-
-\parintro{Stream cipher and message space}
-$S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$
-is a stream cipher which takes a key and a nonce and produces a long random stream. In normal use
-the nonce is an $n$-bit string, but for key derivation we use the empty string $\lambda$, which
-is distinct from all $n$-bit strings; thus $\lambda \cup \bin^n \subseteq \mathcal{N}$.
-$P_L$, $C_L$ must therefore be in the space
-$\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$
-and the space of HBSH plaintexts and ciphertexts
-$P, C \in \mathcal{M} = \bigcup_{i=0}^{l_S}\bin^{i + n}$.
-
-Adiantum and HPolyC use the XChaCha12 stream cipher. The ChaCha~\cite{chacha}
-stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
-a ChaCha20 variant with a 96-bit nonce, but we need a 128-bit nonce.
-The XSalsa20 construction~\cite{xsalsa}
-proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
-applies straightforwardly to ChaCha~\cite{xchacha,monocypher,libsodiumxchacha}.
-We then construct a function that takes a variable-length nonce of up to
-191 bits by padding with a 1 followed by zeroes:
-$S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M \Concat 1))$.
-For a given key and nonce, XChaCha12 produces $l_S = 2^{73}$ bits of output.
 
 \parintro{Key derivation}
 HBSH derives $K_E$ and $K_H$ from $K_S$ using a zero-length nonce:
