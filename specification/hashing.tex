@@ -54,9 +54,10 @@ $g \boxminus g' = \neg ((\neg g) \boxplus g')$.
 \subsection{HPolyC hashing}
 HPolyC is the HBSH construction that the first revision of this paper presented, which used
 Poly1305 together with an injective encoding function.
-It is simple, fast, and key agile. We require that $\abs{T} < 2^{32}$ and define
+It is simple, fast, and key agile.
 \begin{align*}
-H_{K_H}(T, L) = \Polydjb_{K_H}(\pad_{128}(\intify_{32}(\abs{T}) \Concat T) \Concat L)
+\mathcal{T} ={}& \bigcup_{i=0}^{2^{32}-1}\bin^i \\
+H_{K_H}(T, L) ={}& \Polydjb_{K_H}(\pad_{128}(\intify_{32}(\abs{T}) \Concat T) \Concat L) \\
 \end{align*}
 
 Thus if for all queries $\abs{T} \leq l_T$ and $\abs{L} \leq l_L$ then:
@@ -150,6 +151,9 @@ this composition is  $\epsilon$A$\Delta$U, with:
 &= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_L/8192})
 \end{align*}\label{adiantumepsilon}
 
+Our theorems assume $\mathcal{T}$ is finite,
+so we somewhat arbitrarily set
+$\mathcal{T} = \bigcup_{i=0}^{l_S}\bin^i$.
 If we limit our Adiantum attacker to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a plaintext/ciphertext of length at most $l_M$, then by \autoref{hbshadvantage}
 their distinguishing advantage is therefore at most:
