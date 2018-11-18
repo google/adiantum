@@ -57,23 +57,31 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
     \item $\lambda$: the empty string $\abs{\lambda} = 0$
     \item $\Concat$: bitstring concatenation
     \item $Y[a;l]$: the subsequence of $Y$ of length $l$ starting at $a$.
-    \item $\pad_l(X) = X \Concat 0^v$ where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$
+    \item $\pad_l(X) = X \Concat 0^v$
+    where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$
     \item $n$, $l_S$: parameters which depend on the
-    primitives from which HBSH is built
+    primitives from which HBSH is built;
+    for Adiantum and HPolyC, $n = 128$ and $l_S = 2^{73}$
     \item $\mathcal{T}$: the
     space of tweaks, which depends on the hash function used
     \item $\mathcal{M} = \bigcup_{i=n}^{l_S + n}\bin^i$: the
     space of plaintexts and ciphertexts
-    \item $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$, $\mathcal{R} = \bin^n$: messages are processed in two parts,
+    \item $\mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$, $\mathcal{R} = \bin^n$:
+    messages are processed in two parts,
     $\mathcal{L} \times \mathcal{R}$
-    \item $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \mathcal{R}$: two-argument hash function with keyspace $\mathcal{K}_H$
-    \item $\boxplus, \boxminus: \mathcal{R} \times \mathcal{R} \rightarrow \mathcal{R}$: group operations
-    \item $E: \mathcal{K}_E \times \mathcal{R} \rightarrow \mathcal{R}$: $n$-bit block cipher with key space $\mathcal{K}_E$
+    \item $H: \mathcal{K}_H \times \mathcal{T} \times \mathcal{L} \rightarrow \mathcal{R}$:
+    two-argument hash function with keyspace $\mathcal{K}_H$
+    \item $\boxplus, \boxminus: \mathcal{R} \times \mathcal{R} \rightarrow \mathcal{R}$:
+    group operations
+    \item $E: \mathcal{K}_E \times \mathcal{R} \rightarrow \mathcal{R}$:
+    $n$-bit block cipher with key space $\mathcal{K}_E$
     \item $S: \mathcal{K}_S \times \mathcal{N} \rightarrow \bin^{l_S}$:
     stream cipher with key space $\mathcal{K}_S$
     and nonce space $\mathcal{N}$
-    \item $\HBSH : \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$: the HBSH construction takes a key, a tweak, and
-    a plaintext, and returns a ciphertext such that $\abs{\HBSH(K_S, T, M)} = \abs{M}$
+    \item $\HBSH : \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$:
+    the HBSH construction takes a key, a tweak, and a plaintext,
+    and returns a ciphertext
+    such that $\abs{\HBSH(K_S, T, M)} = \abs{M}$
 \end{itemize}
 Where we have eg $P_L \Concat P_R \gets P$
 with $P \in \mathcal{M}$, $P_L, P_R$ is the unique
@@ -93,7 +101,7 @@ is distinct from all $n$-bit strings; thus $\{\lambda \} \cup \mathcal{R} \subse
 
 Adiantum and HPolyC use the XChaCha12 stream cipher.
 The ChaCha~\cite{chacha}
-stream ciphers takes a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
+stream ciphers take a 64-bit nonce, and RFC7539~\cite{RFC7539} proposes
 a ChaCha20 variant with a 96-bit nonce, but we need a 128-bit nonce.
 The XSalsa20 construction~\cite{xsalsa}
 proposed for Salsa20~\cite{salsa20,salsa812} extends the nonce to 192 bits, and
@@ -114,7 +122,7 @@ $\boxplus$ represents addition in a group which depends
 on the hash function, and $\boxminus$ subtraction.
 
 \begin{sloppypar}
-    HPolyC and Adiantum differ only in their choice of hash function. HPolyC is
+    Adiantum and HPolyC differ only in their choice of hash function. HPolyC is
     based on Poly1305, while Adiantum uses both Poly1305 and NH;
     specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
     vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
