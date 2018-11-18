@@ -4,10 +4,10 @@ For details on Adiantum, see [the repository](https://github.com/google/adiantum
 or [our paper](https://eprint.iacr.org/2018/720). This site exists only to share this:
 
 - [draft of forthcoming update to our paper](adiantum-draft.pdf)
-- [2cc38f849b981755b9e0b25d2d42f55b9eaa27dc](https://github.com/google/adiantum/commit/2cc38f849b981755b9e0b25d2d42f55b9eaa27dc)
+- [9d974d892dd645f28afec27310fae793ed85ff19](https://github.com/google/adiantum/commit/9d974d892dd645f28afec27310fae793ed85ff19)
 
-        commit 2cc38f849b981755b9e0b25d2d42f55b9eaa27dc
+        commit 9d974d892dd645f28afec27310fae793ed85ff19
         Author: Paul Crowley <paulcrowley@google.com>
-        Date:   Fri Nov 16 11:24:28 2018 -0800
+        Date:   Sat Nov 17 15:34:40 2018 -0800
 
-            Add missing q parameter
+            Use \mathcal{R}
