@@ -15,7 +15,9 @@ primitives used to build HBSH, and those of HBSH itself.
 
 \parintro{Hash function}
 The hash function $H$
-must be $\epsilon$-almost-$\Delta$-universal\label{eadudef} for some $\epsilon$:
+must be $\epsilon$-almost-$\Delta$-universal\label{eadudef}
+(or $\epsilon$-$\Delta$U per \cite{eadu})
+for some $\epsilon$:
 for any $g \in \mathcal{R}$ and
 any two distinct messages $(T, L) \neq (T', L')$:
 %
@@ -29,7 +31,7 @@ and for Adiantum in \autoref{adiantumepsilon}.
 
 \parintro{Stream cipher}
 The stream cipher $S$
-must be a pseudorandom function.
+must be a pseudorandom function~\cite{concsym}:
 %
 \begin{align*}
     \advantage{\mathrm{prf}}{S}[(A)] \defeq
@@ -53,7 +55,7 @@ the results of those queries, and take at most $t$ time.
 \parintro{Block cipher}
 The block cipher
 $E$
-must be a super-pseudorandom permutation.
+must be a super-pseudorandom permutation~\cite{concsym}:
 %
 \begin{align*}
     \advantage{\pm \mathrm{prp}}{E}[(A)] \defeq
@@ -83,7 +85,7 @@ In an abuse of notation
 we use $\bm{\pi}^{-1}$ to refer to the function
 such that $\bm{\pi}^{-1}(T, \bm{\pi}(T, M)) = M$ ie $(\bm{\pi}^{-1})_T = (\bm{\pi}_T)^{-1}$.
 
-For a tweakable, variable-input-length, super-pseudorandom permutation
+Per~\cite{cmc}, for a tweakable, variable-input-length, super-pseudorandom permutation
 $\bm{E} : \mathcal{K} \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$
 the distinguishing advantage of an adversary $A$ is:
 %
@@ -311,7 +313,7 @@ Because pointless queries are forbidden we also know that $(T^i, P^i) \neq (T^j,
 \end{align*}
 %
 If $(T^i, L^i) = (T^j, L^j)$ then $R^i \neq R^j$ and equality cannot occur.
-Otherwise by the $\epsilon$A$\Delta$U property of $H$ this occurs with probability
+Otherwise by the $\epsilon$-$\Delta$U property of $H$ this occurs with probability
 at most $\epsilon$ (where $\epsilon$ depends on the bounds on
 the parameters $l_T$, $l_M -n$).
 
@@ -495,7 +497,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     Including the key schedule, the attacker distinguishing
     $\rho_V$ and $\rho_W$ makes at most $q + 1$ queries on the stream cipher
     or random function respectively, and uses at most $\abs{K_E} + \abs{K_H} + q(l_M - n)$ bits
-    of the output; by a standard substitution argument
+    of the output; by a standard substitution argument per \cite{cbcsec,concsym}
     $\abs{\rho_V - \rho_W} \leq
     \advantage{\mathrm{prf}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')]$
     where $t' = t + \bigO{q(l_T + l_M)}$.

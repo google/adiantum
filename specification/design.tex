@@ -13,9 +13,9 @@
 Any secure PRP must have a pass that reads all of the plaintext, followed by a pass that modifies
 it all. A secure SPRP must have the same property in the reverse direction;
 a three-pass structure therefore seems natural.
-$\epsilon$A$\Delta$U functions are the fastest options for reading the plaintext in a
+$\epsilon$-$\Delta$U functions are the fastest options for reading the plaintext in a
 cryptographically useful way, and stream ciphers are the fastest options for modifying it.
-$\epsilon$A$\Delta$Us
+$\epsilon$-$\Delta$Us
 are typically much faster than stream ciphers, and so the hash-XOR-hash structure emerges as
 the best option for performance. This structure also has the advantage that it naturally handles
 blocks in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
@@ -61,7 +61,7 @@ applied in this domain is an open problem. Users must take care to protect the k
 included in the input.
 
 \parintro{Hash function}
-Since the $\epsilon$A$\Delta$U is run twice over the bulk of the block, its speed is especially
+Since the $\epsilon$-$\Delta$U is run twice over the bulk of the block, its speed is especially
 crucial for large blocks. One of the fastest such functions in software is NH, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
 combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size

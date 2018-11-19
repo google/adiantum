@@ -8,9 +8,9 @@
 
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
-\section{\texorpdfstring{$\epsilon$A$\Delta$U}{𝜖A∆U} functions for HBSH}\label{hashing}
+\section{\texorpdfstring{$\epsilon$-$\Delta$U}{𝜖-∆U} functions for HBSH}\label{hashing}
 
-Adiantum and HPolyC are identical except for the choice of $\epsilon$A$\Delta$U hash function
+Adiantum and HPolyC are identical except for the choice of $\epsilon$-$\Delta$U hash function
 $H_{K_H}(T, L)$. In each case the value of $\epsilon$ depends on bounds on $\abs{T}$ and $\abs{L}$.
 If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext length of
 $\abs{T} \leq l_T$, $\abs{P}, \abs{C} \leq l_M$
@@ -25,7 +25,7 @@ and $X = \fromint_l(y)$ is the unique
 $l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$.
 
 For both Adiantum and HPolyC,
-the output group for which the $\epsilon$A$\Delta$U property applies is
+the output group for which the $\epsilon$-$\Delta$U property applies is
 $\ZZ/2^{128}\ZZ$, so we define
 
 \begin{align*}
@@ -38,7 +38,7 @@ $\ZZ/2^{128}\ZZ$, so we define
 \cite{poly1305} uses polynomials over the finite field $\ZZ/(2^{130}-5)\ZZ$
 to define a function we call
 $\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$,
-and proves in Theorem 3.3 that it is $\epsilon$A$\Delta$U: for any
+and proves in Theorem 3.3 that it is $\epsilon$-$\Delta$U: for any
 $g \in \bin^{128}$ and any distinct messages $M, M'$ where $\abs{M}, \abs{M'} \leq l$,
 $\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^{-103}\ceil{l/128}$.
 In that paper this function is used to build a MAC based on AES, while in
@@ -142,9 +142,9 @@ then the $128 + \abs{T}$-bit input to Poly1305 with key $K_T$ will differ.
 Otherwise $\abs{L} = \abs{L'}$ but $L \neq L'$;
 per \cite{umac2} the probability NH will compress these to the same value is at most
 $2^{-128}$. If they do not collide, the $256\ceil{\abs{L}/8192}$-bit input to Poly1305 with key $K_L$
-will differ. Since the sum of two $\epsilon$A$\Delta$U functions with independent keys is also
-$\epsilon$A$\Delta$U, if for all queries $\abs{T} \leq l_T$ and $\abs{L} \leq l_L$ then
-this composition is  $\epsilon$A$\Delta$U, with:
+will differ. Since the sum of two $\epsilon$-$\Delta$U functions with independent keys is also
+$\epsilon$-$\Delta$U, if for all queries $\abs{T} \leq l_T$ and $\abs{L} \leq l_L$ then
+this composition is  $\epsilon$-$\Delta$U, with:
 
 \begin{align*}
 \epsilon &= 2^{-128} + 2^{-103}\ceil{\max(128 + l_T, 256\ceil{l_L/8192})/128}  \\
