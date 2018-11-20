@@ -8,15 +8,53 @@
 
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
-\section{Security reduction}
-\subsection{Security definitions}
-We here prove a relationship between the security properties of the
-primitives used to build HBSH, and those of HBSH itself.
+\section{Security of HBSH}
+Assuming the security of the underlying block and stream ciphers,
+we show here that HBSH has an
+advantage bound that grows quadratically with the number of queries.
+\subsection{Definition of HBSH}\label{funcdef}
+We provide here an
+equivalent definition of HBSH in functional form.
+Where a parameter is given as $L \Concat R$ we have that
+$L \in \mathcal{L}$, $R \in \mathcal{R}$, $L \Concat R \in \mathcal{M}$.
 
+\begin{align*}
+    \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{R} \\
+    \xi_{K_H}(T, L \Concat R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \phi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \phi_{K_H, T}(L \Concat R) \defeq{}& L \Concat \xi_{K_H}(T, L \Concat R) \\
+    ={}& L \Concat (R \boxplus H_{K_H}(T, L)) \\
+    \phi^{-1}_{K_H, T}(L \Concat R) ={}& L \Concat (R \boxminus H_{K_H}(T, L)) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \theta :{}& \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \theta_{\pi, F}(L \Concat R) \defeq{}& (L \oplus F(\pi(R))[0;\abs{L}]) \Concat \pi(R) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \eta :{}& \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \eta_{K_H, \pi, F, T} \defeq{}& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \bar{\eta} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E \Concat K_H \Concat \ldots = F(\lambda) \\
+    %
+    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
+    %
+    \HBSH :{}& \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
+    \HBSH_{K_S} \defeq{}& \bar{\eta}_{S_{K_S}} \\
+\end{align*}
+
+\subsection{Security definitions}
 \parintro{Hash function}
 The hash function $H$
 must be $\epsilon$-almost-$\Delta$-universal\label{eadudef}
-(or $\epsilon$-$\Delta$U per \cite{eadu})
+($\epsilon$-$\Delta$U per \cite{eadu})
 for some $\epsilon$:
 for any $g \in \mathcal{R}$ and
 any two distinct messages $(T, L) \neq (T', L')$:
@@ -130,44 +168,6 @@ and take at most $t$ time.
 \begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
 \end{proof}
 
-\subsection{Definition of HBSH}
-Rather than work with pseudocode, we provide here an
-equivalent definition of HBSH in functional form.
-Where a parameter is given as $L \Concat R$ we have that
-$L \in \mathcal{L}$, $R \in \mathcal{R}$, $L \Concat R \in \mathcal{M}$.
-
-\begin{align*}
-    \xi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{R} \\
-    \xi_{K_H}(T, L \Concat R) \defeq{}& R \boxplus H_{K_H}(T, L) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \phi :{}& \mathcal{K}_H \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \phi_{K_H, T}(L \Concat R) \defeq{}& L \Concat \xi_{K_H}(T, L \Concat R) \\
-    ={}& L \Concat (R \boxplus H_{K_H}(T, L)) \\
-    \phi^{-1}_{K_H, T}(L \Concat R) ={}& L \Concat (R \boxminus H_{K_H}(T, L)) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \theta :{}& \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \theta_{\pi, F}(L \Concat R) \defeq{}& (L \oplus F(\pi(R))[0;\abs{L}]) \Concat \pi(R) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \eta :{}& \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \eta_{K_H, \pi, F, T} \defeq{}& \phi_{K_H,T}^{-1} \circ \theta_{\pi, F} \circ \phi_{K_H,T} \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \bar{\eta} :{}& (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \bar{\eta}_{F} \defeq{}& \eta_{K_H, E_{K_E}, F} \quad \textrm{where} \ K_E \Concat K_H \Concat \ldots = F(\lambda) \\
-    %
-    \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
-    %
-    \HBSH :{}& \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M} \\
-    \HBSH_{K_S} \defeq{}& \bar{\eta}_{S_{K_S}} \\
-\end{align*}
-
 \subsection{H-coefficient technique}
 The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco}.
 In what follows we rely on the highly recommended exposition of
@@ -247,6 +247,7 @@ $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M}
 so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
 $\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
 
+\parintro{Approach}
 In what follows, we use the H-coefficient technique to bound the distinguishing advantage
 $\abs{\rho_X - \rho_Y}$
 between these worlds (\autoref{xyadv}). This is one step towards the bound we then prove in
