@@ -9,12 +9,6 @@
 \documentclass[eprint.tex]{subfiles}
 \begin{document}
 \section{Specification}
-The HBSH construction is shown in \autoref{finalfig} and \autoref{pseudocode}.
-From plaintext $P$ of at least $n$ bits and a tweak $T$,
-it generates a ciphertext $C$ of the same length as $P$.
-HBSH divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
-the remainder of the input, and applies an unbalanced Feistel network.
-
 \begin{figure}
     \begin{floatrow}
         \ffigbox{
@@ -92,6 +86,13 @@ Where we have eg $P_L \Concat P_R \gets P$
 with $P \in \mathcal{M}$, $P_L, P_R$ is the unique
 pair of elements in $\mathcal{L} \times \mathcal{R}$ such that
 $P_L \Concat P_R = P$.
+
+\parintro{HBSH}
+The HBSH construction is shown in \autoref{finalfig} and \autoref{pseudocode}.
+From plaintext $P$ of at least $n$ bits and a tweak $T$,
+it generates a ciphertext $C$ of the same length as $P$.
+HBSH divides the plaintext into a right-hand block of $n$ bits and a left-hand block with
+the remainder of the input, and applies an unbalanced Feistel network.
 
 \parintro{Hash}
 $H$
