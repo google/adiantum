@@ -28,7 +28,8 @@ a simple attack with two plaintexts and one ciphertext distinguishes it. A singl
 in the narrow part of the unbalanced network suffices to frustrate this attack; the
 larger the block, the smaller the relative cost of this call. If the plaintext is exactly $n$ bits
 long, the stream cipher is not used, and the construction becomes
-$C = E_{K_E}(P \boxplus H_{K_H}(T, \lambda)) \boxminus H_{K_H}(T, \lambda)$.
+$C = E_{K_E}(P \boxplus H_{K_H}(T, \lambda)) \boxminus H_{K_H}(T, \lambda)$
+as per Subsection 3.1 of \cite{tweakable}.
 Compared to HCTR~\cite{hctr} or HCH~\cite{hch}, we sacrifice
 symmetry of encryption with decryption in return for
 the ability to run the block cipher and stream cipher in parallel when decrypting.
