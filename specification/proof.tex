@@ -247,13 +247,13 @@ World X is
 an idealized form of HBSH which uses a random function and permutation:
 $\Omega_X \defeq \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
 and given $(K_H, \pi, F) \in \Omega_X$,
-$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$.
+$\Upsilon_X(K_H, \pi, F) \defeq (\eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1})$.
 
 \parintro{World Y}
 World Y samples fairly from all possible pairs of tweakable length-preserving functions:
 $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
 so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$,
-$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$.
+$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq (\mathcal{E}, \mathcal{D})$.
 
 \parintro{Transcript}
 Our transcript $\tau$ is a sequence of tuples
@@ -506,7 +506,7 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     $\abs{\rho_X - \rho_Y} \leq (\epsilon + 2^{-n})\binom{q}{2}$ by \autoref{xyadv}.
     Since we forbid pointless queries,
     $\abs{\rho_Y - \rho_Z} \leq 2^{-n}\binom{q}{2}$ by Halevi and Rogaway's PRP-RND lemma
-    (\cite{cmc}, appendix C, lemma 6).
+    (\cite{cmc}, Appendix C, Lemma 6).
 
     \autoref{hbshadvantage} follows by summing these bounds:
     $\abs{\rho_V - \rho_Z} \leq
