@@ -433,15 +433,8 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
                {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
             } \\
         ={}& \minone{
-            \sum_{K_H \in \mathcal{K}_H}
-              \frac{\probsub{\Omega_X}{\omega \in \comp_X(\tau) \wedge \omega = (K_H, ., .)}}
-              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}
-            } \\
-        ={}& \minone{
-            \expsub{K_H \sample \mathcal{K}_H}{
-              \frac{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}
-              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}}
-            } \\
+              \frac{\expsub{K_H \sample \mathcal{K}_H}{\condprobsub{\Omega_X}{\omega \in \comp_X(\tau)}{\omega = (K_H, ., .)}}}
+              {\probsub{\Omega_Y}{\omega \in \comp_Y(\tau)}}} \\
         \intertext{$\minone{\expect{U}} \geq \expect{\minone{U}}$ for any real random variable $U$, therefore}
         \geq{}&
             \expsub{K_H \sample \mathcal{K}_H}{
