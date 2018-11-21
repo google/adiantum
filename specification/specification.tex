@@ -59,6 +59,11 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
     \item $Y[a;l]$: the subsequence of $Y$ of length $l$ starting at $a$.
     \item $\pad_l(X) = X \Concat 0^v$
     where $v$ is the least integer $\geq 0$ such that $l$ divides $\abs{X} + v$
+    \item $\intify: \bin^{*} \rightarrow \ZZ$: the
+    standard little-endian map such that
+    $\intify(\lambda) = 0$, $\intify(0 \Concat X) = 2\intify(X)$, $\intify(1 \Concat X) = 1 + 2\intify(X)$
+    \item $\fromint_l(y) = X$: the unique
+    $l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$
     \item $n$, $l_S$: parameters which depend on the
     primitives from which HBSH is built;
     for Adiantum and HPolyC, $n = 128$ and $l_S = 2^{73}$

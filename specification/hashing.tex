@@ -16,14 +16,7 @@ If queries to HBSH are bounded to a maximum tweak and plaintext/ciphertext lengt
 $\abs{T} \leq l_T$, $\abs{P}, \abs{C} \leq l_M$
 then the bounds on queries to $H$ will be $\abs{T} \leq l_T$, $\abs{L} \leq l_L = l_M - n$.
 
-\subsection{Notation}
-
-$\intify: \bin^{*} \rightarrow \ZZ$ is the
-standard little-endian map
-(ie $\intify(\lambda) = 0$, $\intify(0 \Concat X) = 2\intify(X)$, $\intify(1 \Concat X) = 1 + 2\intify(X)$),
-and $X = \fromint_l(y)$ is the unique
-$l$-bit sequence such that $\intify(X) \equiv y \pmod{2^l}$.
-
+\subsection{Poly1305}
 For both Adiantum and HPolyC,
 the output group for which the $\epsilon$-$\Delta$U property applies is
 $\ZZ/2^{128}\ZZ$, so we define
@@ -32,8 +25,6 @@ $\ZZ/2^{128}\ZZ$, so we define
     x \boxplus y &= \fromint_{128}(\intify(x) + \intify(y)) \\
     x \boxminus y &= \fromint_{128}(\intify(x) - \intify(y)) \\
 \end{align*}
-
-\subsection{Poly1305}
 
 \cite{poly1305} uses polynomials over the finite field $\ZZ/(2^{130}-5)\ZZ$
 to define a function we call
@@ -117,6 +108,9 @@ A second hashing stage is used to handle these issues.
 \subsection{Adiantum hashing}
 
 For Adiantum we use NH followed by Poly1305 to hash the message.
+Our theorems assume $\mathcal{T}$ is finite,
+so we somewhat arbitrarily set
+$\mathcal{T} = \mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$.
 To avoid encoding and padding issues, we hash the message length and tweak with
 a separate Poly1305 key.
 In all this takes a $128 + 128 + 8576 = 8832$-bit key.
@@ -146,9 +140,7 @@ this composition is  $\epsilon$-$\Delta$U, with:
 &= 2^{-128} + 2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{l_L/8192})
 \end{align*}\label{adiantumepsilon}
 
-Our theorems assume $\mathcal{T}$ is finite,
-so we somewhat arbitrarily set
-$\mathcal{T} = \mathcal{L} = \bigcup_{i=0}^{l_S}\bin^i$.
+\subsection{Usage limits}
 If we limit our Adiantum adversary to at most $q$ queries each of which uses a tweak of length at
 at most $l_T$ and a plaintext/ciphertext of length at most $l_M$, then by \autoref{hbshadvantage}
 their distinguishing advantage is therefore at most:
@@ -159,7 +151,7 @@ their distinguishing advantage is therefore at most:
 +{}& \advantage{\pm \mathrm{prp}}{E_{K_E}}[(q, t')] \\
 \end{align*}
 
-Assuming that the block and stream ciphers are strong, this is dominated by the
+Assuming that the block and stream ciphers are strong, the advantage is dominated by the
 term for internal collisions: $2^{-103}\max(1 + \ceil{l_T/128}, 2\ceil{(l_M -
 128)/8192})\binom{q}{2}$. How many messages can be safely encrypted with the
 mode will therefore vary with message and tweak length. For example, if Adiantum
