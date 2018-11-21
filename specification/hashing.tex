@@ -44,12 +44,7 @@ $\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^
 In that paper this function is used to build a MAC based on AES, while in
 RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
 Note that 22 bits of the 128-bit key are zeroed before use, so every key is equivalent to
-$2^{22}$ keys and the effective keyspace is $2^{106}$.
-
-Many Poly1305 libraries
-take parameters $K_H \Concat g, M$ and return $g \boxplus \Polydjb_{K_H}(M)$; where subtraction
-is needed we suggest using bitwise inversion and the identity
-$g \boxminus g' = \neg ((\neg g) \boxplus g')$.
+$2^{22} - 1$ other keys and the effective keyspace is $2^{106}$.
 
 \subsection{HPolyC hashing}
 HPolyC is the HBSH construction that the first revision of this paper presented, which used
