@@ -63,7 +63,11 @@ included in the input.
 \parintro{Stream cipher}
 Users are highly sensitive to the performance of disk encryption; an
 extra microsecond decrypting the contents of a sector can mean many users
-forgoing encryption altogether. ChaCha and its predecessor Salsa20
+forgoing encryption altogether.
+eBACS~\cite{supercop} tests a wide variety of stream ciphers on a wide variety
+of architectures; ChaCha12 is consistently one of the
+fastest options for the ``armeabi'' (32-bit ARM) architecture.
+ChaCha and its predecessor Salsa20
 have seen intense cryptanalysis in the decade or so since publication
 \cite{tdcs20,nonrandomsalsa,tsunoo,latindance,ishiguro2011,ishiguro2012,zhenqing2012,
 maitra2015,chachamaitra,choudhuri2016,dey2017,Choudhuri_Maitra_2017,chacha2018};
