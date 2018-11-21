@@ -44,7 +44,10 @@ to build a super-pseudorandom permutation.
 
 More recently, proposals in this space have focused on the use of
 block ciphers. VIL mode~\cite{brvil} is a CBC-MAC based two-pass variable-input-length construction which
-is a PRP but not an SPRP. CMC mode~\cite{cmc} is a true SPRP using two passes of the block cipher;
+is a PRP but not an SPRP.
+\cite{cmc} gives the concrete security definition for
+a tweakable, variable-length, length-preserving SPRP,
+and defines CMC mode, a two-pass mode with a quadratic security bound.
 EME mode~\cite{eme} is similar but parallelizable, while
 EME* mode~\cite{emestar} extends EME mode to handle blocks that are not a multiple of the block
 cipher size. PEP~\cite{pep}, TET~\cite{tet}, and HEH~\cite{heh} have a mixing layer either side of
@@ -55,7 +58,7 @@ $\epsilon$-almost-XOR-universal hash function for the first and third rounds
 (``hash-XOR-hash''),
 which uses block
 cipher invocations on the narrow side of the network to ensure that the network is an SPRP, rather
-than just a PRP; it also introduces a tweak.
+than just a PRP.
 HCTR~\cite{hctr,hctr2}, HCH~\cite{hch}, and HMC~\cite{hmc} reduce this to a single
 block cipher invocation within the Feistel network.
 These proposals require
@@ -100,8 +103,8 @@ Without special cases or extra setup, Adiantum handles:
     \item varying message and tweak lengths for the same keys.
 \end{itemize}
 
-We also describe a simpler proposal, HPolyC, which sacrifices a little speed on large blocks
-for simplicity and greater key agility, leaving out the NH hash layer.
+We also describe HPolyC, which does not use NH.
+HPolyC is 30\% slower on large blocks, but simpler and much more key agile.
 
 \subsection{Implementation and test vectors}
 Implementations in Python, C, and ARMv7 assembly, as well as thousands of test

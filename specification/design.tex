@@ -78,9 +78,9 @@ that need high key agility even on small blocks may instead use HPolyC, which
 uses Poly1305 directly. For this a vectorized Poly1305 implementation is important.  The main
 cost of a new HPolyC key is a single XChaCha12 invocation to generate subkeys.
 ChaCha12 has no key schedule
-and makes no use of precomputation; XChaCha12 has a ``nonce scheduling'' step
-that must be called once to compute subkeys and once for each encryption or
-decryption.  No extra work is required for differing message or tweak lengths for either Adiantum
+and makes no use of precomputation; XChaCha12
+requires one extra call to the ChaCha permutation for each new nonce.
+No extra work is required for differing message or tweak lengths for either Adiantum
 or HPolyC.
 
 \parintro{Constant-time}
