@@ -172,8 +172,9 @@ and take at most $t$ time.
     where $t' = t + \bigO{q(l_T + l_M)}$.
 \end{theorem}
 
-\begin{proof}Deferred to \autoref{hbshproof}.\renewcommand{\qedsymbol}{}
-\end{proof}
+This is proven in what follows. First we use the H-coefficient technique to establish
+\autoref{xyadv}, a closely related bound; then in \autoref{hbshproof} we bridge the
+gap between this bound and the desired bound.
 
 \subsection{H-coefficient technique}
 The H-coefficient technique was introduced by Patarin in 1991~\cite{ppdes,hco}.
@@ -253,13 +254,6 @@ World Y samples fairly from all possible pairs of tweakable length-preserving fu
 $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
 so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$,
 $\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$.
-
-\parintro{Approach}
-In what follows, we use the H-coefficient technique to bound the distinguishing advantage
-$\abs{\rho_X - \rho_Y}$
-between these worlds (\autoref{xyadv}). This is one step towards the bound we then prove in
-\autoref{hbshproof} between HBSH itself and tweakable length-preserving permutations,
-$\abs{\rho_V - \rho_Z}$.
 
 \parintro{Transcript}
 Our transcript $\tau$ is a sequence of tuples
