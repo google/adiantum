@@ -18,7 +18,7 @@ or performance will again suffer greatly
 Nonce reuse is inevitable as there is nowhere to store a varying nonce, and there is no space
 for a MAC; thus standard constructions like AES-GCM are not an option and standard notions
 of semantic security are unachievable.  The best that can be done under the circumstances is
-a ``tweakable super-pseudorandom permutation'': an attacker with access to both encryption
+a ``tweakable super-pseudorandom permutation'': an adversary with access to both encryption
 and decryption functions who can choose tweak and plaintext/ciphertext freely is unable to
 distinguish it from a family of independent random permutations.
 
