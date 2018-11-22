@@ -92,16 +92,5 @@ platforms, as these algorithms are well-suited for implementation with either
 general-purpose scalar instructions or with general-purpose vector instructions
 such as NEON or AVX2.
 
-For a greater margin of security at a slower speed, ChaCha20 can
-be used instead of ChaCha12; the same stream cipher
-must be used for key derivation as for the Feistel function. Similarly, one could substitute
-NOEKEON in place of AES-256 to make defense against timing attacks easier and improve performance.
-This may weaken security against a brute-force attack since NOEKEON has only a 128-bit key, though
-it's not obvious how to mount such an attack when the hashing and stream cipher keys are unknown.
-Note that this is a different axis of security than success probability; an
-attack that needs (say) $2^{40}$ work and always succeeds is a much bigger
-problem than than an attack that needs negligible work and succeeds with
-probability $2^{-40}$.
-
 \subbib
 \end{document}
