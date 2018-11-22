@@ -33,6 +33,7 @@ $L \in \mathcal{L}$, $R \in \mathcal{R}$, $L \Concat R \in \mathcal{M}$.
     %
     \theta :{}& \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S}) \times \mathcal{M} \rightarrow \mathcal{M} \\
     \theta_{\pi, F}(L \Concat R) \defeq{}& (L \oplus F(\pi(R))[0;\abs{L}]) \Concat \pi(R) \\
+    \theta_{\pi, F}^{-1}(L \Concat R) ={}& (L \oplus F(R)[0;\abs{L}]) \Concat \pi^{-1}(R) \\
     %
     \allowdisplaybreaks[4] \vphantom{|} \\ \allowdisplaybreaks[0]
     %
@@ -67,29 +68,6 @@ Given bounds on the lengths of $T$ and $L$, the value of $\epsilon$ for the
 hash function used in HPolyC is given in \autoref{hpolycepsilon},
 and for Adiantum in \autoref{adiantumepsilon}.
 
-\parintro{Stream cipher}
-The stream cipher $S$
-must be a pseudorandom function~\cite{concsym}:
-%
-\begin{align*}
-    \advantage{\mathrm{prf}}{S}[(A)] \defeq
-    {}&\left\lvert \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
-    \\
-    {}&\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
-    {A^F\Rightarrow 1} \right\rvert
-    \\
-    \advantage{\mathrm{prf}}{S}[(q, l, t)]
-    \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
-\end{align*}
-%
-where $A$ is an adversary,
-$\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
-functions from $\mathcal{N}$ to $\bin^{l_S}$,
-and
-$\mathcal{A}(q, l, t)$
-is the set of all adversaries that make at most $q$ queries, discard all but $l$ bits from
-the results of those queries, and take at most $t$ time.
-
 \parintro{Block cipher}
 The block cipher
 $E$
@@ -110,6 +88,30 @@ $\Perm(S)$ denotes the set of all permutations on a set $S$,
 and
 $\mathcal{A}(q, t)$
 is the set of all adversaries that make at most $q$ queries and take at most $t$ time.
+
+\parintro{Stream cipher}
+The stream cipher $S$
+must be a pseudorandom function~\cite{concsym}:
+%
+\begin{align*}
+    \advantage{\mathrm{prf}}{S}[(A)] \defeq
+    {}&\left\lvert \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
+    \\
+    {}&\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
+    {A^F\Rightarrow 1} \right\rvert
+    \\
+    \advantage{\mathrm{prf}}{S}[(q, l, t)]
+    \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
+\end{align*}
+%
+where $A$ is an adversary,
+$\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
+functions from $\mathcal{N}$ to $\bin^{l_S}$,
+and
+$\mathcal{A}(q, l, t)$
+is the set of all adversaries that make at most $q$ queries,
+discard all but a total of $l$ bits from
+the results of those queries, and take at most $t$ time.
 
 \parintro{Tweakable SPRP}
 Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
@@ -239,13 +241,13 @@ World X is
 an idealized form of HBSH which uses a random function and permutation:
 $\Omega_X \defeq \mathcal{K}_H \times \Perm(\mathcal{R}) \times (\mathcal{N} \rightarrow \bin^{l_S})$,
 and given $(K_H, \pi, F) \in \Omega_X$,
-$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$
+$\Upsilon_X(K_H, \pi, F) \defeq \eta_{K_H, \pi, F}, \eta_{K_H, \pi, F}^{-1}$.
 
 \parintro{World Y}
 World Y samples fairly from all possible pairs of tweakable length-preserving functions:
 $\Omega_Y \defeq \LP^\mathcal{T}(\mathcal{M}) \times \LP^\mathcal{T}(\mathcal{M})$,
-so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$, $\Upsilon_Y$ is simply the identity function:
-$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$
+so given $(\mathcal{E}, \mathcal{D}) \in \Omega_Y$,
+$\Upsilon_Y(\mathcal{E}, \mathcal{D}) \defeq \mathcal{E}, \mathcal{D}$.
 
 \parintro{Approach}
 In what follows, we use the H-coefficient technique to bound the distinguishing advantage

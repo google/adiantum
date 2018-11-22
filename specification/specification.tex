@@ -81,12 +81,30 @@ $a \in A$ then $f_a: B \rightarrow C$, and if $f_a^{-1}$ exists then $f_a^{-1}(f
     \item $\HBSH : \mathcal{K}_S \times \mathcal{T} \times \mathcal{M} \rightarrow \mathcal{M}$:
     the HBSH construction takes a key, a tweak, and a plaintext,
     and returns a ciphertext
-    such that $\abs{\HBSH(K_S, T, M)} = \abs{M}$
+    such that $\abs{\HBSH_{K_S}(T, M)} = \abs{M}$
 \end{itemize}
 Where we have eg $P_L \Concat P_R \gets P$
 with $P \in \mathcal{M}$, $P_L, P_R$ is the unique
 pair of elements in $\mathcal{L} \times \mathcal{R}$ such that
 $P_L \Concat P_R = P$.
+
+\parintro{Hash}
+$H$
+is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$-$\Delta$U) function
+(as defined in \autoref{eadudef})
+yielding a group element represented as an $n$-bit string.
+$\boxplus$ represents addition in a group which depends
+on the hash function, and $\boxminus$ subtraction.
+
+\begin{sloppypar}
+    Adiantum and HPolyC differ only in their choice of hash function. HPolyC is
+    based on Poly1305, while Adiantum uses both Poly1305 and NH;
+    specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
+    vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
+    $\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
+    lengths.
+    We defer full details to \autoref{hashing}.
+\end{sloppypar}
 
 \parintro{Block cipher}
 The block cipher $E$
@@ -112,24 +130,6 @@ $S_{K_S}(C_M) = \XChaCha12_{K_S}(\pad_{192}(C_M \Concat 1))$ and
 $\mathcal{N} = \bigcup_{i=0}^{191}\bin^i$.
 The maximum output length $l_S = 2^{73}$,
 and keyspace $\mathcal{K}_S = \bin^{256}$.
-
-\parintro{Hash}
-$H$
-is an $\epsilon$-almost-$\Delta$-universal ($\epsilon$-$\Delta$U) function
-(as defined in \autoref{eadudef})
-yielding a group element represented as an $n$-bit string.
-$\boxplus$ represents addition in a group which depends
-on the hash function, and $\boxminus$ subtraction.
-
-\begin{sloppypar}
-    Adiantum and HPolyC differ only in their choice of hash function. HPolyC is
-    based on Poly1305, while Adiantum uses both Poly1305 and NH;
-    specifically little-endian $\NH^T[256, 32, 4]$ with a stride of 2 for fast
-    vectorization. In both cases, the group used for $\boxplus$ and $\boxminus$ is
-    $\ZZ/2^{128}\ZZ$. The value of $\epsilon$ depends on bounds on the input
-    lengths.
-    We defer full details to \autoref{hashing}.
-\end{sloppypar}
 
 \parintro{Key derivation}
 HBSH derives $K_E$ and $K_H$ from $K_S$ using a zero-length nonce:
