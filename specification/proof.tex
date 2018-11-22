@@ -90,18 +90,24 @@ $\mathcal{A}(q, t)$
 is the set of all adversaries that make at most $q$ queries and take at most $t$ time.
 
 \parintro{Stream cipher}
-The stream cipher $S$
-must be a pseudorandom function~\cite{concsym}:
+Our definition is related to the definition of a PRF in \cite{concsym}, but
+because we model the stream cipher $S$ as a pseudorandom function with a very long output,
+we bound the adversary not only in how many queries they make,
+but in how many bits they read in total.
+Thus, a query consists of a pair
+$(N, l_q) \in \mathcal{N} \times \NN$ where $0 < l_q \leq l_S$,
+and the response is $S_K(N)[0;l_q]$ or $F(N)[0;l_q]$;
+we cap the sum of $l_q$ values across queries.
 %
 \begin{align*}
-    \advantage{\mathrm{prf}}{S}[(A)] \defeq
-    {}&\left\lvert \probsub{K \sample \mathcal{K}_S}{A^{S_{K}}\Rightarrow 1}\right.
+    \advantage{\mathrm{sc}}{S}[(A)] \defeq
+    {}&\left\lvert \probsub{K \sample \mathcal{K}_S}{A^{S_{K}(.)[0;.]}\Rightarrow 1}\right.
     \\
     {}&\left. - \probsub{F \sample (\mathcal{N} \rightarrow \bin^{l_S})}
-    {A^F\Rightarrow 1} \right\rvert
+    {A^{F(.)[0;.]}\Rightarrow 1} \right\rvert
     \\
-    \advantage{\mathrm{prf}}{S}[(q, l, t)]
-    \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{prf}}{S}[(A)]
+    \advantage{\mathrm{sc}}{S}[(q, l, t)]
+    \defeq {}&\max_{A \in \mathcal{A}(q, l, t)} \advantage{\mathrm{sc}}{S}[(A)]
 \end{align*}
 %
 where $A$ is an adversary,
@@ -109,9 +115,8 @@ $\mathcal{N} \rightarrow \bin^{l_S}$ denotes the set of all
 functions from $\mathcal{N}$ to $\bin^{l_S}$,
 and
 $\mathcal{A}(q, l, t)$
-is the set of all adversaries that make at most $q$ queries,
-discard all but a total of $l$ bits from
-the results of those queries, and take at most $t$ time.
+is the set of all adversaries that make at most $q$ queries such that
+$\sum l_q \leq l$, and which take at most $t$ time.
 
 \parintro{Tweakable SPRP}
 Let $\LP^\mathcal{T}(\mathcal{M})$ denote the set of all
@@ -160,7 +165,7 @@ and take at most $t$ time.
     \begin{align*}
         \advantage{\pm \widetilde{\mathrm{prp}}}{\HBSH}[(q, l_T, l_M, t)]
         \leq {}&(\epsilon + 2(2^{-n}))\binom{q}{2} \\
-        {}&+ \advantage{\mathrm{prf}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')] \\
+        {}&+ \advantage{\mathrm{sc}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')] \\
         {}&+ \advantage{\pm \mathrm{prp}}{E}[(q, t')]\\
     \end{align*}
     %
@@ -488,14 +493,14 @@ For an upper bound, we sum across all $\binom{q}{2}$ pairs $i, j$.
     \end{align*}
 
     Distinguishing
-    $\rho_V$ and $\rho_W$ is distinguishing the substitution of a PRF
+    $\rho_V$ and $\rho_W$ is distinguishing the substitution of a stream cipher
     for a random function.
     Including the key schedule, the adversary distinguishing
     $\rho_V$ and $\rho_W$ makes at most $q + 1$ queries on the stream cipher
     or random function respectively, and uses at most $\abs{K_E} + \abs{K_H} + q(l_M - n)$ bits
     of the output; by a standard substitution argument per \cite{cbcsec,concsym}
     $\abs{\rho_V - \rho_W} \leq
-    \advantage{\mathrm{prf}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')]$
+    \advantage{\mathrm{sc}}{S}[(q + 1, \abs{K_E} + \abs{K_H} + q(l_M - n), t')]$
     where $t' = t + \bigO{q(l_T + l_M)}$.
 
     The differences between $\rho_W$ and $\rho_X$ are the use of a block cipher
