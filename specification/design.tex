@@ -60,6 +60,18 @@ Whether there is a notion of KDM-security that can be
 applied in this domain is an open problem. Users must take care to protect the keys from being
 included in the input.
 
+\parintro{Stream cipher}
+Users are highly sensitive to the performance of disk encryption; an
+extra microsecond decrypting the contents of a sector can mean many users
+forgoing encryption altogether. ChaCha and its predecessor Salsa20
+have seen intense cryptanalysis in the decade or so since publication
+\cite{tdcs20,nonrandomsalsa,tsunoo,latindance,ishiguro2011,ishiguro2012,zhenqing2012,
+maitra2015,chachamaitra,choudhuri2016,dey2017,Choudhuri_Maitra_2017,chacha2018};
+the best attack breaks 7 rounds, a landmark reached with \cite{latindance} in 2008.
+Each round greatly increases the difficulty of attack.
+We therefore feel confident selecting the 12-round variant as giving
+good confidence in security while minimizing the cost to users.
+
 \parintro{Hash function}
 Since the $\epsilon$-$\Delta$U is run twice over the bulk of the block, its speed is especially
 crucial for large blocks. One of the fastest such functions in software is NH, and

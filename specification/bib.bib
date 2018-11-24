@@ -736,7 +736,7 @@ and Rogaway, Phillip"
                  Phillip Rogaway}
 ,    title     = {A Concrete Security Treatment of Symmetric Encryption}
 ,    booktitle = {38th Annual Symposium on Foundations of Computer Science, {FOCS} '97
-,                 Miami Beach, Florida, USA, October 19-22, 1997}
+,                Miami Beach, Florida, USA, October 19-22, 1997}
 ,    pages     = {394--403}
 ,    year      = {1997}
 ,    crossref  = {DBLP:conf/focs/1997}
@@ -749,7 +749,7 @@ and Rogaway, Phillip"
 
 @proceedings{DBLP:conf/focs/1997
 ,    title     = {38th Annual Symposium on Foundations of Computer Science, {FOCS} '97
-,                 Miami Beach, Florida, USA, October 19-22, 1997}
+,                Miami Beach, Florida, USA, October 19-22, 1997}
 ,    publisher = {{IEEE} Computer Society}
 ,    year      = {1997}
 ,    url       = {http://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=5208}
@@ -759,16 +759,193 @@ and Rogaway, Phillip"
 ,    bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{eadu,
-  author    = {Douglas R. Stinson},
-  title     = {On the Connections Between Universal Hashing, Combinatorial Designs
-               and Error-Correcting Codes},
-  journal   = {Electronic Colloquium on Computational Complexity {(ECCC)}},
-  volume    = {2},
-  number    = {52},
-  year      = {1995},
-  url       = {http://eccc.hpi-web.de/eccc-reports/1995/TR95-052/index.html},
-  timestamp = {Tue, 14 Aug 2018 17:08:05 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/eccc/ECCC-TR95-052},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+@article{eadu
+,     author    = {Douglas R. Stinson}
+,     title     = {On the Connections Between Universal Hashing, Combinatorial Designs
+               and Error-Correcting Codes}
+,     journal   = {Electronic Colloquium on Computational Complexity {(ECCC)}}
+,     volume    = {2}
+,     number    = {52}
+,     year      = {1995}
+,     url       = {http://eccc.hpi-web.de/eccc-reports/1995/TR95-052/index.html}
+,     timestamp = {Tue, 14 Aug 2018 17:08:05 +0200}
+,     biburl    = {https://dblp.org/rec/bib/journals/eccc/ECCC-TR95-052}
+,     bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{chachamaitra
+,    title = "Chosen IV cryptanalysis on reduced round ChaCha and Salsa"
+,    journal = "Discrete Applied Mathematics"
+,    volume = "208"
+,    pages = "88 - 97"
+,    year = "2016"
+,    issn = "0166-218X"
+,    doi = "10.1016/j.dam.2016.02.020"
+,    url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.732.5014"
+,    author = "Subhamoy Maitra"
+,    keywords = "Stream cipher, ChaCha, Salsa, Non-randomness, Probabilistic Neutral Bit (PNB), ARX cipher"
+,    abstract = "Recently, ChaCha20 (the stream cipher ChaCha with 20 rounds) is in the process of being a standardized and thus it attracts serious interest in cryptanalysis. The most significant effort to analyse Salsa and ChaCha was explained by Aumasson et al. long back (FSE 2008) and further, only minor improvements could be achieved. In this paper, first we revisit the work of Aumasson et al. to provide a clearer insight of the existing attack (2248 complexity for ChaCha7, i.e., 7 rounds) and show certain improvements (complexity around 2243) by exploiting additional Probabilistic Neutral Bits. More importantly, we describe a novel idea that explores proper choice of IVs corresponding to the keys, for which the complexity can be improved further (2239). The choice of IVs corresponding to the keys is the prime observation of this work. We systematically show how a single difference propagates after one round and how the differences can be reduced with proper choices of IVs. For Salsa too (Salsa20/8, i.e., 8 rounds), we get improvement in complexity, reducing it to 2245.5 from 2247.2 reported by Aumasson et al."
+}
+
+@InProceedings{latindance
+,    author="Aumasson, Jean-Philippe
+and Fischer, Simon
+and Khazaei, Shahram
+and Meier, Willi
+and Rechberger, Christian"
+,    editor="Nyberg, Kaisa"
+,    title="New Features of Latin Dances: Analysis of Salsa, ChaCha, and Rumba"
+,    booktitle="Fast Software Encryption"
+,    year="2008"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="470--488"
+,    abstract="The stream cipher Salsa20 was introduced by Bernstein in 2005 as a candidate in the eSTREAM project, accompanied by the reduced versions Salsa20/8 and Salsa20/12. ChaCha is a variant of Salsa20 aiming at bringing better diffusion for similar performance. Variants of Salsa20 with up to 7 rounds (instead of 20) have been broken by differential cryptanalysis, while ChaCha has not been analyzed yet. We introduce a novel method for differential cryptanalysis of Salsa20 and ChaCha, inspired by correlation attacks and related to the notion of neutral bits. This is the first application of neutral bits in stream cipher cryptanalysis. It allows us to break the 256-bit version of Salsa20/8, to bring faster attacks on the 7-round variant, and to break 6- and 7-round ChaCha. In a second part, we analyze the compression function Rumba, built as the XOR of four Salsa20 instances and returning a 512-bit output. We find collision and preimage attacks for two simplified variants, then we discuss differential attacks on the original version, and exploit a high-probability differential to reduce complexity of collision search from 2256 to 279 for 3-round Rumba. To prove the correctness of our approach we provide examples of collisions and near-collisions on simplified versions."
+,    isbn="978-3-540-71039-4"
+}
+
+@inproceedings{tdcs20
+,    author = {Paul Crowley}
+,    title = {Truncated differential cryptanalysis of five rounds of Salsa20}
+,    booktitle = {The State of the Art of Stream Ciphers}
+,    year = {2006}
+,    organization = {ECRYPT Network of Excellence}
+,    month = feb
+,    url={https://ia.cr/2005/375}
+}
+
+@InProceedings{chacha2018
+,    author="Deepthi, Kakumani K. C.
+and Singh, Kunwar"
+,    editor="Hu, Jiankun
+and Khalil, Ibrahim
+and Tari, Zahir
+and Wen, Sheng"
+,    title="Cryptanalysis of Salsa and ChaCha: Revisited"
+,    booktitle="Mobile Networks and Management"
+,    year="2018"
+,    publisher="Springer International Publishing"
+,    address="Cham"
+,    pages="324--338"
+,    abstract="Stream cipher is one of the basic cryptographic primitives that provide the confidentiality of communication through insecure channel. EU ECRYPT network has organized a project for identifying new stream suitable for widespread adoption where the ciphers can provide a more security levels. Finally the result of the project has identified new stream ciphers referred as eSTREAM. Salsa20 is one of the eSTREAM cipher built on a pseudorandom function. In this paper our contribution is two phases. First phase have two parts. In WCC 2015, Maitra et al. [9] explained characterization of valid states by reversing one round of Salsa20. In first part, we have revisited the Maitra et al. [9] characterization of valid states by reversing one round of Salsa20. We found there is a mistake in one bit change in {\$}{\$}8^{\{}th{\}}{\$}{\$}and {\$}{\$}9^{\{}th{\}}{\$}{\$}word in first round will result in valid initial state. In second part, Maitra et al. [9] as mentioned that it would be an interesting combinatorial problem to characterize all such states. We have characterized nine more values which lead to valid initial states. The combinations {\$}{\$}(s{\_}4,s{\_}7){\$}{\$}, {\$}{\$}(s{\_}2,s{\_}3){\$}{\$}, {\$}{\$}(s{\_}{\{}13{\}},s{\_}{\{}14{\}}){\$}{\$}, {\$}{\$}(s{\_}1,s{\_}6){\$}{\$}, {\$}{\$}(s{\_}1,s{\_}{\{}11{\}}){\$}{\$}, {\$}{\$}(s{\_}1,s{\_}{\{}12{\}}){\$}{\$}, {\$}{\$}(s{\_}6,s{\_}{\{}11{\}}){\$}{\$}, {\$}{\$}(s{\_}6,s{\_}{\{}12{\}}){\$}{\$}and {\$}{\$}(s{\_}{\{}11{\}}, s{\_}{\{}12{\}}){\$}{\$}which characterized as valid states."
+,    isbn="978-3-319-90775-8"
+,    doi="10.1007/978-3-319-90775-8_26"
+}
+
+@article{Choudhuri_Maitra_2017
+,    title={Significantly Improved Multi-bit Differentials for Reduced Round Salsa and ChaCha}
+,    volume={2016}
+,    url={https://tosc.iacr.org/index.php/ToSC/article/view/574}
+,    DOI={10.13154/tosc.v2016.i2.261-287}
+,    number={2}
+,    journal={IACR Transactions on Symmetric Cryptology}
+,    author={Choudhuri, Arka and Maitra, Subhamoy}
+,    year={2017}
+,    month=feb
+,    pages={261-287}
+}
+
+@InProceedings{nonrandomsalsa
+,    author="Fischer, Simon
+and Meier, Willi
+and Berbain, C{\^o}me
+and Biasse, Jean-Fran{\c{c}}ois
+and Robshaw, M. J. B."
+,    editor="Barua, Rana
+and Lange, Tanja"
+,    title="Non-randomness in eSTREAM Candidates Salsa20 and TSC-4"
+,    booktitle="Progress in Cryptology - INDOCRYPT 2006"
+,    year="2006"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="2--16"
+,    abstract="Stream cipher initialisation should ensure that the initial state or keystream is not detectably related to the key and initialisation vector. In this paper we analyse the key/IV setup of the eSTREAM Phase 2 candidates Salsa20 and TSC-4. In the case of Salsa20 we demonstrate a key recovery attack on six rounds and observe non-randomness after seven. For TSC-4, non-randomness over the full eight-round initialisation phase is detected, but would also persist for more rounds."
+,    isbn="978-3-540-49769-1"
+,    doi = {10.1007/11941378_2}
+,    url = {http://www.lix.polytechnique.fr/~biasse/papers/INDOCRYPT2006.pdf}
+}
+
+@InProceedings{ishiguro2011
+,    author="Ishiguro, Tsukasa
+and Kiyomoto, Shinsaku
+and Miyake, Yutaka"
+,    editor="Qing, Sihan
+and Susilo, Willy
+and Wang, Guilin
+and Liu, Dongmei"
+,    title="Latin Dances Revisited: New Analytic Results of Salsa20 and ChaCha"
+,    booktitle="Information and Communications Security"
+,    year="2011"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="255--266"
+,    abstract="In this paper, we propose new attacks on 9-round Salsa20 and 8-round ChaCha. We constructed a distinguisher of double-bit differentials to improve Aumasson's single-bit differential cryptanalysis. We searched for correlations using a PC, and found strong correlations in 9-round Salsa20 and 8-round ChaCha. The complexities of the introduced attacks are 216 in 9-round Salsa20 and 2 in 8-round ChaCha, which are much less than the complexities of an exhaustive key search and existing attacks on those ciphers. The results show that an adversary can distinguish keystream bits from random bits using a few input and output pairs of an initial keys and initial vectors. This method has potential to apply to a wide range of stream ciphers; a double-bit correlation would be found in case that no single-bit correlation is found."
+,    isbn="978-3-642-25243-3"
+,    doi={10.1007/978-3-642-25243-3_21}
+}
+
+@misc{ishiguro2012
+,        author = {Tsukasa Ishiguro}
+,        title = {Modified version of “Latin Dances Revisited: New Analytic Results of Salsa20 and ChaCha”}
+,        howpublished = {Cryptology ePrint Archive, Report 2012/065}
+,        year = {2012}
+,        url = {https://ia.cr/2012/065}
+}
+
+@article{dey2017
+,    title = "Improved analysis for reduced round Salsa and ChaCha"
+,    journal = "Discrete Applied Mathematics"
+,    volume = "227"
+,    pages = "58 - 69"
+,    year = "2017"
+,    issn = "0166-218X"
+,    doi = "10.1016/j.dam.2017.04.034"
+,    author = "Sabyasachi Dey and Santanu Sarkar"
+,    keywords = "Stream cipher, Chacha, Salsa, Probabilistic Neutral Bit"
+,    abstract = "Salsa20 and ChaCha20 are two of the most promising ciphers in recent days. The most significant step in the cryptanalysis of Salsa and ChaCha is the idea of Probabilistic Neutral Bits, which was introduced by Aumasson et al. (FSE 2008). After that, no significant improvement is achieved in the procedure of choosing Probabilistic Neutral Bits. The works in this direction mostly were concerned about forward probabilities. In this paper, we give a new algorithm to construct Probabilistic Neutral Bits. We use this algorithm to improve the existing attacks for reduced rounds of both Salsa and ChaCha. Our attacks on Salsa and Chacha are respectively around 2.27 and 5.39 times faster than the existing works of Choudhuri and Maitra (accepted in FSE 2017)."
+}
+
+@InProceedings{zhenqing2012
+,    author="Shi, Zhenqing
+and Zhang, Bin
+and Feng, Dengguo
+and Wu, Wenling"
+,    editor="Kwon, Taekyoung
+and Lee, Mun-Kyu
+and Kwon, Daesung"
+,    title="Improved Key Recovery Attacks on Reduced-Round Salsa20 and ChaCha"
+,    booktitle="Information Security and Cryptology -- ICISC 2012"
+,    year="2013"
+,    publisher="Springer Berlin Heidelberg"
+,    address="Berlin, Heidelberg"
+,    pages="337--351"
+,    abstract="Salsa20 is a stream cipher designed by Bernstein in 2005 and Salsa20/12 has been selected into the final portfolio of the eSTREAM Project. ChaCha is a variant of Salsa20 with faster diffusion for similar performance. The previous best results on Salsa20 and ChaCha proposed by Aumasson et al. exploits the differential properties combined with the probabilistic neutral bits (PNB). In this paper, we extend their approach by considering a new type of distinguishers, named (column and row) chaining distinguishers. Besides, we exhibit new high probability second-order differential trails not covered by the previous methods, generalize the notion of PNB to probabilistic neutral vectors (PNV) and show that the set of PNV is no smaller than that of PNB. Based on these findings, we present improved key recovery attacks on reduced-round Salsa20 and ChaCha. Both time and data complexities of our attacks are smaller than those of the best former results."
+,    isbn="978-3-642-37682-5"
+,    doi = {10.1007/978-3-642-37682-5_24}
+}
+
+@misc{maitra2015
+,    author = {Subhamoy Maitra and Goutam Paul and Willi Meier}
+,    title = {Salsa20 Cryptanalysis: New Moves and Revisiting Old Styles}
+,    howpublished = {Cryptology ePrint Archive, Report 2015/217}
+,    year = {2015}
+,    url = {https://ia.cr/2015/217}
+}
+
+@inproceedings{tsunoo
+,    author = {Yukiyasu Tsunoo and Teruo Saito and Hiroyasu Kubo and Tomoyasu Suzaki and Hiroki Nakashima}
+,    title = {Truncated differential cryptanalysis of five rounds of Salsa20}
+,    booktitle = {The State of the Art of Stream Ciphers}
+,    year = {2007}
+,    organization = {ECRYPT Network of Excellence}
+,    month = feb
+,    url={http://www.ecrypt.eu.org/stream/papersdir/2007/010.pdf}
+}
+
+@misc{choudhuri2016
+,    author = {Arka Rai Choudhuri and Subhamoy Maitra}
+,    title = {Differential Cryptanalysis of Salsa and ChaCha -- An Evaluation with a Hybrid Model}
+,    howpublished = {Cryptology ePrint Archive, Report 2016/377}
+,    year = {2016}
+,    url = {https://ia.cr/2016/377}
 }
