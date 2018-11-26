@@ -93,7 +93,7 @@ is the set of all adversaries that make at most $q$ queries and take at most $t$
 Our definition is related to the definition of a PRF in \cite{concsym}, but
 because we model the stream cipher $S$ as a pseudorandom function with a very long output,
 we bound the adversary not only in how many queries they make,
-but in how many bits they read in total.
+but also in how many bits they read in total.
 Thus, a query consists of a pair
 $(N, l_q) \in \mathcal{N} \times \NN$ where $0 < l_q \leq l_S$,
 and the response is $S_K(N)[0;l_q]$ or $F(N)[0;l_q]$;
