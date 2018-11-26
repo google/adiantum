@@ -10,6 +10,10 @@
 \begin{document}
 \section{Performance}\label{performance}
 
+Efficient implementations of NH, Poly1305 and ChaCha are available for many
+platforms, as these algorithms are well-suited for implementation with either
+general-purpose scalar instructions or with general-purpose vector instructions
+such as NEON or AVX2.
 In \autoref{performancetable} we
 show performance on an ARM \mbox{Cortex-A7}
 processor in the Snapdragon 400 chipset running at \mbox{1.19 GHz}.  This
@@ -86,10 +90,6 @@ construction to that end to be significantly slower than \mbox{AES-XTS}.
 We conclude that for 4096-byte sectors, Adiantum
 (aka \mbox{Adiantum-XChaCha12-AES}) can perform
 significantly better than an aggressively designed block cipher (\mbox{Speck128/256}) in XTS mode.
-Efficient implementations of NH, Poly1305 and ChaCha are available for many
-platforms, as these algorithms are well-suited for implementation with either
-general-purpose scalar instructions or with general-purpose vector instructions
-such as NEON or AVX2.
 
 \subbib
 \end{document}
