@@ -18,7 +18,7 @@ cryptographically useful way, and stream ciphers are the fastest options for mod
 $\epsilon$-$\Delta$Us
 are typically much faster than stream ciphers, and so the hash-XOR-hash structure emerges as
 the best option for performance. This structure also has the advantage that it naturally handles
-blocks in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
+messages in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
 to handle the case where the large-block size is not
 a multiple of the block size of the underlying primitive.
 
@@ -26,7 +26,7 @@ a multiple of the block size of the underlying primitive.
 \cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
 a simple attack with two plaintexts and one ciphertext distinguishes it. A single block cipher call
 in the narrow part of the unbalanced network suffices to frustrate this attack; the
-larger the block, the smaller the relative cost of this call. If the plaintext is exactly $n$ bits
+larger the message, the smaller the relative cost of this call. If the plaintext is exactly $n$ bits
 long, the stream cipher is not used, and the construction becomes
 $C = E_{K_E}(P \boxplus H_{K_H}(T, \lambda)) \boxminus H_{K_H}(T, \lambda)$
 as per Subsection 3.1 of \cite{tweakable}.
@@ -41,14 +41,14 @@ operating systems can usually perform writes asynchronously in the background.
 It's unusual for a construction to require more than two distinct building blocks.
 More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
 (eg using CTR mode~\cite{ctr})
-as well as using it directly on the narrow side of the block.
+as well as using it directly on the narrow side of the message.
 Using XChaCha12 in place of a block cipher affords a significant increase in performance;
 however it cannot easily be substituted in the narrow side of the cipher.
 \cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
 and a stream cipher, and build a hash-XOR-hash SPRP
 with a construction that uses a four-round Feistel network over the non-bulk side of the data
 broken into two halves. However if we were to build this using XChaCha12,
-such a construction would require four extra invocations of ChaCha per block, which would be
+such a construction would require four extra invocations of ChaCha per message, which would be
 a much greater cost than one block cipher invocation.
 
 \parintro{KDM security}
@@ -78,8 +78,8 @@ We therefore feel confident selecting the 12-round variant as giving
 good confidence in security while minimizing the cost to users.
 
 \parintro{Hash function}
-Since the $\epsilon$-$\Delta$U is run twice over the bulk of the block, its speed is especially
-crucial for large blocks. One of the fastest such functions in software is NH, and
+Since the $\epsilon$-$\Delta$U is run twice over the bulk of the message, its speed is especially
+crucial for large messages. One of the fastest such functions in software is NH, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
 combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size
 used for NH means that we can use a simple, portable implementation of Poly1305 without a great
@@ -89,9 +89,9 @@ are not constant-time, and a constant-time implementation would be significantly
 slower.
 
 \parintro{Key agility}
-For the 4KiB blocks of disk encryption,
+For the 4KiB messages of disk encryption,
 the ~1KiB NH key size has only a small impact on key agility. Applications
-that need high key agility even on small blocks may instead use HPolyC, which
+that need high key agility even on small messages may instead use HPolyC, which
 uses Poly1305 directly. For this a vectorized Poly1305 implementation is important.  The main
 cost of a new HPolyC key is a single XChaCha12 invocation to generate subkeys.
 ChaCha12 has no key schedule

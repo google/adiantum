@@ -50,7 +50,7 @@ SPC mode~\cite{bd99} extends this to an SPRP.
 a tweakable, variable-length, length-preserving SPRP,
 and defines CMC mode, a two-pass mode with a quadratic security bound.
 EME mode~\cite{eme} is similar but parallelizable, while
-EME* mode~\cite{emestar} extends EME mode to handle blocks that are not a multiple of the block
+EME* mode~\cite{emestar} extends EME mode to handle messages that are not a multiple of the block
 cipher size. PEP~\cite{pep}, TET~\cite{tet}, and HEH~\cite{heh} have a mixing layer either side of
 an ECB layer.
 
@@ -79,7 +79,7 @@ outperform block ciphers in cycles per byte, especially with constant-time imple
 Similarly, absent specific processor support, hash functions such as NH~\cite{umac2} and
 Poly1305 hash~\cite{poly1305} will be much faster
 than a $\GF(2^{128})$ polynomial hash. Since these are the operations that act on the bulk of
-the data in a disk-sector-sized block, a hash-XOR-hash
+the data in a disk-sector-sized message, a hash-XOR-hash
 mode of operation relying on them should achieve
 much improved performance on such platforms.
 
@@ -105,7 +105,7 @@ Without special cases or extra setup, Adiantum handles:
 \end{itemize}
 
 We also describe HPolyC, which does not use NH.
-HPolyC is 30\% slower on large blocks, but simpler and much more key agile.
+HPolyC is 30\% slower on large messages, but simpler and much more key agile.
 
 \subbib
 \end{document}
