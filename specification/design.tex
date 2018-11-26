@@ -18,9 +18,9 @@ cryptographically useful way, and stream ciphers are the fastest options for mod
 $\epsilon$-$\Delta$Us
 are typically much faster than stream ciphers, and so the hash-XOR-hash structure emerges as
 the best option for performance. This structure also has the advantage that it naturally handles
-messages in non-round sizes; many large-block modes need extra wrinkles akin to ciphertext stealing
-to handle the case where the large-block size is not
-a multiple of the block size of the underlying primitive.
+messages in non-round sizes; many VIL modes need extra wrinkles akin to ciphertext stealing
+to handle the case where the message is not
+a multiple of the block size of the underlying block cipher.
 
 \parintro{Block cipher}
 \cite{luby-rackoff} observes that a three-round Feistel network cannot by itself be a secure SPRP;
@@ -37,8 +37,8 @@ For disk encryption, decryption performance matters most:
 reads are more frequent than writes, and reads generally affect user-perceived latency, while
 operating systems can usually perform writes asynchronously in the background.
 
-\parintro{Building blocks}
-It's unusual for a construction to require more than two distinct building blocks.
+\parintro{Components}
+It's unusual for a construction to require more than two distinct primitive components.
 More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
 (eg using CTR mode~\cite{ctr})
 as well as using it directly on the narrow side of the message.
@@ -113,7 +113,7 @@ NH, Poly1305 and ChaCha12 are highly parallelizable.
 The stream cipher and second hash stages can also be run in combination for a total
 of two passes over the bulk of the data, unlike a mode such as HEH~\cite{heh}
 which requires at least three.
-We put the ``special'' block on the right so that in typical uses the bulk encryption has
+We put the ``special'' part on the right so that in typical uses the bulk encryption has
 the best alignment for fast operations.
 
 \parintro{Naming}
