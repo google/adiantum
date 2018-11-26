@@ -65,9 +65,8 @@ product of message size and cpb.
         \toprule
         Algorithm & Source & Notes \\
     \midrule
-    ChaCha & Linux v4.17 & \texttt{chacha20-neon-core.S}, modified to support
-        ChaCha8 and ChaCha12; also applied optimizations from \texttt{cryptodev}
-        commit a1b22a5f45fe8841 \\
+    ChaCha & Linux v4.20-rc1 & \texttt{chacha20-neon-core.S}, modified to support
+        ChaCha8 and ChaCha12 \\
     Poly1305 & OpenSSL 1.1.0h & \texttt{poly1305-armv4.S}, modified to
         precompute key powers just once per key \\
     \mbox{AES} & Linux v4.17 & \texttt{aes-cipher-core.S}, modified to prefetch
