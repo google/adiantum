@@ -40,8 +40,7 @@ operating systems can usually perform writes asynchronously in the background.
 \parintro{Components}
 It's unusual for a construction to require more than two distinct primitive components.
 More commonly, a hash-XOR-hash mode uses the block cipher to build a stream cipher
-(eg using CTR mode~\cite{ctr})
-as well as using it directly on the narrow side of the message.
+(eg using CTR mode~\cite{ctr}) and also uses it directly on the narrow side of the message.
 Using XChaCha12 in place of a block cipher affords a significant increase in performance;
 however it cannot easily be substituted in the narrow side of the cipher.
 \cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
