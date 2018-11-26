@@ -81,8 +81,8 @@ good confidence in security while minimizing the cost to users.
 Since the $\epsilon$-$\Delta$U is run twice over the bulk of the message, its speed is especially
 crucial for large messages. One of the fastest such functions in software is NH, and
 it's also appealingly simple; however as discussed in~\autoref{nh} it generally has to be
-combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB block size
-used for NH means that we can use a simple, portable implementation of Poly1305 without a great
+combined with a second hashing stage, and for this purpose we use Poly1305. The 1KiB input size
+we specify for NH means that a simple, portable implementation of Poly1305 can be used without a great
 cost in speed.  We considered using UHASH (as defined for UMAC~\cite{rfc4418}) rather than our
 custom combination of NH and Poly1305; however, available UHASH implementations
 are not constant-time, and a constant-time implementation would be significantly
