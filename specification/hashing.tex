@@ -37,7 +37,7 @@ $\ZZ/2^{128}\ZZ$, so we define
 \cite{poly1305} proves in Theorem 3.3 that this function is $\epsilon$-$\Delta$U; for any
 $g \in \bin^{128}$ and any distinct messages $M, M'$ where $\abs{M}, \abs{M'} \leq l$:
 \begin{displaymath}
-    \probsub{K \sample{\bin^{128}}}{\Polydjb_{K}(M') \boxminus \Polydjb_{K}(M) = g} \leq 2^{-103}\ceil{l/128}
+    \probsub{K \sample{\bin^{128}}}{\Polydjb_{K}(M) \boxminus \Polydjb_{K}(M') = g} \leq 2^{-103}\ceil{l/128}
 \end{displaymath}
 In that paper this function is used to build a MAC based on AES, while in
 RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
