@@ -43,7 +43,7 @@ More commonly, a hash-XOR-hash mode uses the block cipher to build a stream ciph
 (eg using CTR mode~\cite{ctr}) and also uses it directly on the narrow side of the message.
 Using XChaCha12 in place of a block cipher affords a significant increase in performance;
 however it cannot easily be substituted in the narrow side of the cipher.
-\cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$AXU function
+\cite{sarkar1,sarkar2,sarkar3,sarkar4} use only an $\epsilon$-$\Delta$U function
 and a stream cipher, and build a hash-XOR-hash SPRP
 with a construction that uses a four-round Feistel network over the non-bulk side of the data
 broken into two halves. However if we were to build this using XChaCha12,
