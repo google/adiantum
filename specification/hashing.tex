@@ -17,26 +17,28 @@ $\abs{T} \leq l_T$, $\abs{P}, \abs{C} \leq l_M$
 then the bounds on queries to $H$ will be $\abs{T} \leq l_T$, $\abs{L} \leq l_L = l_M - n$.
 
 \subsection{Poly1305}
-Both Adiantum and HPolyC use the polynomial hash function
-$\Polydjb: \bin^{128} \times \bin^* \rightarrow \bin^{128}$:
+Both Adiantum and HPolyC make use of the polynomial hash function $\Polydjb$:
 \begin{align*}
-    \operatorname{PolyP}(h, \lambda) \defeq{}& 0 \\
-    \operatorname{PolyP}(h, M_1||M_2) \defeq{}& h(\operatorname{PolyP}(h, M_1) + \intify(M_2 \Concat 1))  \bmod 2^{130}-5 \\
-    &\textrm{where} \ 128 \ \textrm{divides} \  |M_1|, 0 < |M_2| \leq 128 \\
+    \operatorname{PolyP} :{}& \ZZ \times \bin^{*} \rightarrow \ZZ \\
+    \operatorname{PolyP}(k, \lambda) \defeq{}& 0 \\
+    \operatorname{PolyP}(k, M_1 \Concat M_2) \defeq{}& k(\operatorname{PolyP}(k, M_1) + \intify(M_2 \Concat 1))  \bmod 2^{130}-5 \\
+    &\textrm{where} \ 128 \ \textrm{divides} \  \abs{M_1}, 0 < \abs{M_2} \leq 128 \\
     \operatorname{PolyMask} \defeq{}&  1^{28} \Concat 0^6 \Concat 1^{26} \Concat 0^6 \Concat 1^{26} \Concat 0^6 \Concat 1^{26} \Concat 0^{4} \\
-    \Polydjb_{K_H}(M) \defeq{}& \fromint_{128}(\operatorname{PolyP}(\intify(K_H \land \operatorname{PolyMask}),  M)) \\
+    \Polydjb :{}& \bin^{128} \times \bin^* \rightarrow \bin^{128} \\
+    \Polydjb_{K}(M) \defeq{}& \fromint_{128}(\operatorname{PolyP}(\intify(K \land \operatorname{PolyMask}),  M)) \\
 \end{align*}
 where $\land$ denotes bitwise AND. The output group for which the $\epsilon$-$\Delta$U property applies is
 $\ZZ/2^{128}\ZZ$, so we define
-
 \begin{align*}
     x \boxplus y &\defeq \fromint_{128}(\intify(x) + \intify(y)) \\
     x \boxminus y &\defeq \fromint_{128}(\intify(x) - \intify(y)) \\
 \end{align*}
 
-\cite{poly1305} proves in Theorem 3.3 that this function is $\epsilon$-$\Delta$U: for any
-$g \in \bin^{128}$ and any distinct messages $M, M'$ where $\abs{M}, \abs{M'} \leq l$,
-$\probsub{K_H \sample{\bin^{128}}}{H_{K_H}(M') \boxminus H_{K_H}(M) = g} \leq 2^{-103}\ceil{l/128}$.
+\cite{poly1305} proves in Theorem 3.3 that this function is $\epsilon$-$\Delta$U; for any
+$g \in \bin^{128}$ and any distinct messages $M, M'$ where $\abs{M}, \abs{M'} \leq l$:
+\begin{displaymath}
+    \probsub{K \sample{\bin^{128}}}{\Polydjb_{K}(M') \boxminus \Polydjb_{K}(M) = g} \leq 2^{-103}\ceil{l/128}
+\end{displaymath}
 In that paper this function is used to build a MAC based on AES, while in
 RFC 7539~\cite{RFC7539} it's used to build an AEAD mode based on ChaCha20.
 Since 22 bits of the 128-bit key are zeroed before use, every key is equivalent to
