@@ -28,10 +28,10 @@ class AES(cipher.Blockcipher):
 
     def encrypt(self, pt, key):
         assert len(key) == self.lengths()['key']
-        a = Crypto.Cipher.AES.new(key)
+        a = Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_ECB)
         return a.encrypt(pt)
 
     def decrypt(self, ct, key):
         assert len(key) == self.lengths()['key']
-        a = Crypto.Cipher.AES.new(key)
+        a = Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_ECB)
         return a.decrypt(ct)
