@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument('--adb', default='adb')
     parser.add_argument('--build-dir', type=pathlib.Path,
         default=(root / 'build'))
-    parser.add_argument('--build-name', default='android')
+    parser.add_argument('--build-name', default='android-arm')
     parser.add_argument('--meson', default='meson')
     parser.add_argument('--meson-arg', action='append', default=[])
     return parser.parse_args()
@@ -37,7 +37,8 @@ def main():
         binaries[k] = args.toolchain_prefix + v
 
     config = configparser.ConfigParser()
-    config.read(wd / "android.xcompile")
+    xcompile_file = args.build_name + '.xcompile'
+    config.read(wd / xcompile_file)
     if not config.has_section('binaries'):
         config.add_section('binaries')
     for k, v in binaries.items():
