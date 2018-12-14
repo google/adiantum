@@ -61,6 +61,7 @@ endif
 if host_machine.cpu_family() == 'aarch64'
     src += [
         'src/aarch64/nh-neon-core.S',
+        '../third_party/linux-kernel/aarch64/chacha-neon-core.S',
     ]
 endif
 if host_machine.cpu_family() == 'x86_64'

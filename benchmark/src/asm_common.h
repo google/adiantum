@@ -24,6 +24,11 @@
 #define ENDPROC(name)
 #endif
 
-#define __LINUX_ARM_ARCH__	7
+#ifdef __arm__
+#  define __LINUX_ARM_ARCH__	7
+#endif
 
-#define MAX_L1_CACHE_SHIFT	7
+#if defined(__arm__) || defined(__aarch64__)
+#  define MAX_L1_CACHE_SHIFT	7
+#  define adr_l	adr
+#endif
