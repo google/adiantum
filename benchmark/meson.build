@@ -65,8 +65,8 @@ if host_machine.cpu_family() == 'aarch64'
 endif
 if host_machine.cpu_family() == 'x86_64'
     src += [
-        'src/x86_64/nh-avx2-asm.S',
-        'src/x86_64/nh-sse2-asm.S'
+        'src/x86_64/nh-avx2-x86_64.S',
+        'src/x86_64/nh-sse2-x86_64.S',
     ]
 endif
 cipherbench = executable('cipherbench', src,

@@ -12,16 +12,6 @@
 
 #include "../asm_common.h"
 
-#include "../nh.h"	// for NH_* parameters
-
-// check assumptions
-.if NH_PAIR_STRIDE != 2
-	.error "Unsupported NH_PAIR_STRIDE"
-.endif
-.if NH_NUM_PASSES != 4
-	.error "Unsupported NH_NUM_PASSES"
-.endif
-
 	.text
 	.fpu		neon
 
@@ -84,7 +74,7 @@
  * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
  *		u8 hash[NH_HASH_BYTES])
  *
- * Assumes message_len % 16 == 0.
+ * It's guaranteed that message_len % 16 == 0.
  */
 ENTRY(nh_neon)
 
