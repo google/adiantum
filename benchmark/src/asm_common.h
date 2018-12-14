@@ -32,3 +32,13 @@
 #  define MAX_L1_CACHE_SHIFT	7
 #  define adr_l	adr
 #endif
+
+#ifdef __x86_64__
+.macro FRAME_BEGIN
+	push %rbp
+	mov %rsp, %rbp
+.endm
+.macro FRAME_END
+	pop %rbp
+.endm
+#endif

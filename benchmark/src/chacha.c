@@ -284,7 +284,80 @@ static void hchacha_simd(const u32 state[16], u32 out[8], int nrounds)
 	hchacha_block_neon(state, out, nrounds);
 }
 
-#endif /* __aarch64__ */
+#elif defined(__x86_64__) && defined(__SSSE3__)
+
+asmlinkage void chacha_block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
+				       unsigned int len, int nrounds);
+asmlinkage void chacha_4block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
+					unsigned int len, int nrounds);
+asmlinkage void hchacha_block_ssse3(const u32 *state, u32 *out, int nrounds);
+
+asmlinkage void chacha_2block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
+				       unsigned int len, int nrounds);
+asmlinkage void chacha_4block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
+				       unsigned int len, int nrounds);
+asmlinkage void chacha_8block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
+				       unsigned int len, int nrounds);
+
+asmlinkage void chacha_2block_xor_avx512vl(u32 *state, u8 *dst, const u8 *src,
+					   unsigned int len, int nrounds);
+asmlinkage void chacha_4block_xor_avx512vl(u32 *state, u8 *dst, const u8 *src,
+					   unsigned int len, int nrounds);
+asmlinkage void chacha_8block_xor_avx512vl(u32 *state, u8 *dst, const u8 *src,
+					   unsigned int len, int nrounds);
+
+static void chacha_simd(const struct chacha_ctx *ctx, u8 *dst, const u8 *src,
+			unsigned int bytes, const u8 *iv)
+{
+	const int nrounds = ctx->nrounds;
+	u32 state[16] __attribute__((aligned(16)));
+
+	chacha_init_state(state, ctx, iv);
+
+#ifdef __AVX512VL__
+#define SIMD_IMPL_NAME "AVX-512VL"
+	while (bytes >= 8 * CHACHA_BLOCK_SIZE) {
+		chacha_8block_xor_avx512vl(state, dst, src, bytes, nrounds);
+		chacha_advance(state, &dst, &src, &bytes, 8);
+	}
+	if (bytes > 4 * CHACHA_BLOCK_SIZE)
+		chacha_8block_xor_avx512vl(state, dst, src, bytes, nrounds);
+	else if (bytes > 2 * CHACHA_BLOCK_SIZE)
+		chacha_4block_xor_avx512vl(state, dst, src, bytes, nrounds);
+	else if (bytes)
+		chacha_2block_xor_avx512vl(state, dst, src, bytes, nrounds);
+#elif defined(__AVX2__)
+#define SIMD_IMPL_NAME "AVX2"
+	while (bytes >= 8 * CHACHA_BLOCK_SIZE) {
+		chacha_8block_xor_avx2(state, dst, src, bytes, nrounds);
+		chacha_advance(state, &dst, &src, &bytes, 8);
+	}
+	if (bytes > 4 * CHACHA_BLOCK_SIZE)
+		chacha_8block_xor_avx2(state, dst, src, bytes, nrounds);
+	else if (bytes > 2 * CHACHA_BLOCK_SIZE)
+		chacha_4block_xor_avx2(state, dst, src, bytes, nrounds);
+	else if (bytes > CHACHA_BLOCK_SIZE)
+		chacha_2block_xor_avx2(state, dst, src, bytes, nrounds);
+	else if (bytes)
+		chacha_block_xor_ssse3(state, dst, src, bytes, nrounds);
+#else
+#define SIMD_IMPL_NAME "SSSE3"
+	while (bytes >= 4 * CHACHA_BLOCK_SIZE) {
+		chacha_4block_xor_ssse3(state, dst, src, bytes, nrounds);
+		chacha_advance(state, &dst, &src, &bytes, 4);
+	}
+	if (bytes > CHACHA_BLOCK_SIZE)
+		chacha_4block_xor_ssse3(state, dst, src, bytes, nrounds);
+	else if (bytes)
+		chacha_block_xor_ssse3(state, dst, src, bytes, nrounds);
+#endif
+}
+
+static void hchacha_simd(const u32 state[16], u32 out[8], int nrounds)
+{
+	hchacha_block_ssse3(state, out, nrounds);
+}
+#endif /* __x86_64__ */
 
 /* ChaCha stream cipher */
 void chacha(const struct chacha_ctx *ctx, u8 *dst, const u8 *src,
