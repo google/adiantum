@@ -19,13 +19,16 @@ def parse_args():
     parser.add_argument('--adb', default='adb')
     parser.add_argument('--build-dir', type=pathlib.Path,
         default=(root / 'build'))
-    parser.add_argument('--build-name', default='android-arm')
+    parser.add_argument('--build-type', default='android-arm')
+    parser.add_argument('--build-name')
     parser.add_argument('--meson', default='meson')
     parser.add_argument('--meson-arg', action='append', default=[])
     return parser.parse_args()
 
 def main():
     args = parse_args()
+    if args.build_name is None:
+        args.build_name = args.build_type
 
     binaries = {
         'exe_wrapper': [str((wd / 'adb-exe-wrapper').resolve()), args.adb],
@@ -36,22 +39,23 @@ def main():
     for k, v in kvs.items():
         binaries[k] = args.toolchain_prefix + v
 
+    config_start = wd / f"{args.build_type}.xcompile"
     config = configparser.ConfigParser()
-    xcompile_file = args.build_name + '.xcompile'
-    config.read(wd / xcompile_file)
+    if len(config.read([config_start])) != 1:
+        raise Exception(f"Invalid architecture file {config_start}")
     if not config.has_section('binaries'):
         config.add_section('binaries')
     for k, v in binaries.items():
         config['binaries'][k] = repr(v)
 
     args.build_dir.mkdir(parents = True, exist_ok = True)
-    config_out = args.build_dir / (args.build_name + '.xcompile')
+    config_out = args.build_dir / f'{args.build_name}.xcompile'
     with config_out.open('w') as f:
         config.write(f)
     subprocess.run([args.meson,
         str(args.build_dir / args.build_name),
-	str(root),
-	'--cross-file', str(config_out)] + args.meson_arg)
+        str(root),
+        '--cross-file', str(config_out)] + args.meson_arg)
 
 if __name__ == '__main__':
     main()

@@ -51,7 +51,7 @@ CPUs are at maximum frequency. This test applies only to ARM-based devices.
 * `./android-tools/setup-build --toolchain-prefix=$ANDROID_TOOLCHAIN/bin/arm-linux-androideabi-`
     * if `adb` is not in the `$PATH` then add the `--adb=/path/to/adb` argument
     * similarly with `--meson`
-    * For an ARM64 build, add `--build-name=android-aarch64` and use
+    * For an ARM64 build, add `--build-type=android-aarch64` and use
       `--toolchain-prefix=$ANDROID_TOOLCHAIN/bin/aarch64-linux-android-`.
 * Run the benchmarks: `ninja -C build/android-arm output4096`
     * For an ARM64 build use `build/android-aarch64`, likewise below
@@ -70,7 +70,7 @@ representative of the Linux patches, set up the build with the "kernelish" optio
 ./android-tools/setup-build \
     --toolchain-prefix=$ANDROID_TOOLCHAIN/bin/arm-linux-androideabi- \
     --build-name=kernelish \
-    --meson-arg=-kernelish=true
+    --meson-arg=-Dkernelish=true
 ninja -C build/kernelish output4096
 ```
 
