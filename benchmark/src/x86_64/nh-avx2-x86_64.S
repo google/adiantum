@@ -1,5 +1,5 @@
 /*
- * NH - ε-almost-universal hash function, AVX2 accelerated version
+ * NH - ε-almost-universal hash function, x86_64 AVX2 accelerated
  *
  * Copyright (C) 2018 Google LLC
  *
@@ -11,16 +11,6 @@
  */
 
 #include "../asm_common.h"
-
-#include "../nh.h"	// for NH_* parameters
-
-// check assumptions
-.if NH_PAIR_STRIDE != 2
-	.error "Unsupported NH_PAIR_STRIDE"
-.endif
-.if NH_NUM_PASSES != 4
-	.error "Unsupported NH_NUM_PASSES"
-.endif
 
 #define		PASS0_SUMS	%ymm0
 #define		PASS1_SUMS	%ymm1
@@ -80,7 +70,7 @@
  * void nh_avx2(const u32 *key, const u8 *message, size_t message_len,
  *		u8 hash[NH_HASH_BYTES])
  *
- * Assumes message_len % 16 == 0.
+ * It's guaranteed that message_len % 16 == 0.
  */
 ENTRY(nh_avx2)
 
@@ -162,9 +152,9 @@ ENTRY(nh_avx2)
 	vperm2i128	$0x31, T2, T0, T0		// T0 = (0C 1C 2C 3C)
 	vperm2i128	$0x31, T3, T1, T1		// T1 = (0D 1D 2D 3D)
 
-	vpaddq		T1, T0, T0
 	vpaddq		T5, T4, T4
+	vpaddq		T1, T0, T0
 	vpaddq		T4, T0, T0
-	vmovdqu		T0, (%rcx)
+	vmovdqu		T0, (HASH)
 	ret
 ENDPROC(nh_avx2)

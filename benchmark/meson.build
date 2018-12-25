@@ -61,12 +61,16 @@ endif
 if host_machine.cpu_family() == 'aarch64'
     src += [
         'src/aarch64/nh-neon-core.S',
+        '../third_party/linux-kernel/aarch64/chacha-neon-core.S',
     ]
 endif
 if host_machine.cpu_family() == 'x86_64'
     src += [
-        'src/x86_64/nh-avx2-asm.S',
-        'src/x86_64/nh-sse2-asm.S'
+        'src/x86_64/nh-avx2-x86_64.S',
+        'src/x86_64/nh-sse2-x86_64.S',
+        '../third_party/linux-kernel/x86_64/chacha-avx2-x86_64.S',
+        '../third_party/linux-kernel/x86_64/chacha-avx512vl-x86_64.S',
+        '../third_party/linux-kernel/x86_64/chacha-ssse3-x86_64.S',
     ]
 endif
 cipherbench = executable('cipherbench', src,

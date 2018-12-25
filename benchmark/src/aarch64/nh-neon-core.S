@@ -12,16 +12,6 @@
 
 #include "../asm_common.h"
 
-#include "../nh.h"	// for NH_* parameters
-
-// check assumptions
-.if NH_PAIR_STRIDE != 2
-	.error "Unsupported NH_PAIR_STRIDE"
-.endif
-.if NH_NUM_PASSES != 4
-	.error "Unsupported NH_NUM_PASSES"
-.endif
-
 	KEY		.req	x0
 	MESSAGE		.req	x1
 	MESSAGE_LEN	.req	x2
@@ -59,10 +49,10 @@
 	add		T3.4s, T3.4s, \k3\().4s
 
 	// Multiply 32x32 => 64 and accumulate
-	mov             T4.d[0], T0.d[1]
-	mov             T5.d[0], T1.d[1]
-	mov             T6.d[0], T2.d[1]
-	mov             T7.d[0], T3.d[1]
+	mov		T4.d[0], T0.d[1]
+	mov		T5.d[0], T1.d[1]
+	mov		T6.d[0], T2.d[1]
+	mov		T7.d[0], T3.d[1]
 	umlal		PASS0_SUMS.2d, T0.2s, T4.2s
 	umlal		PASS1_SUMS.2d, T1.2s, T5.2s
 	umlal		PASS2_SUMS.2d, T2.2s, T6.2s
@@ -73,7 +63,7 @@
  * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
  *		u8 hash[NH_HASH_BYTES])
  *
- * Assumes message_len % 16 == 0.
+ * It's guaranteed that message_len % 16 == 0.
  */
 ENTRY(nh_neon)
 

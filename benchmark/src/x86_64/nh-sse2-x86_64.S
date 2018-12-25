@@ -1,5 +1,5 @@
 /*
- * NH - ε-almost-universal hash function, SSE2 accelerated version
+ * NH - ε-almost-universal hash function, x86_64 SSE2 accelerated
  *
  * Copyright (C) 2018 Google LLC
  *
@@ -11,16 +11,6 @@
  */
 
 #include "../asm_common.h"
-
-#include "../nh.h"	// for NH_* parameters
-
-// check assumptions
-.if NH_PAIR_STRIDE != 2
-	.error "Unsupported NH_PAIR_STRIDE"
-.endif
-.if NH_NUM_PASSES != 4
-	.error "Unsupported NH_NUM_PASSES"
-.endif
 
 #define		PASS0_SUMS	%xmm0
 #define		PASS1_SUMS	%xmm1
@@ -82,7 +72,7 @@
  * void nh_sse2(const u32 *key, const u8 *message, size_t message_len,
  *		u8 hash[NH_HASH_BYTES])
  *
- * Assumes message_len % 16 == 0.
+ * It's guaranteed that message_len % 16 == 0.
  */
 ENTRY(nh_sse2)
 
