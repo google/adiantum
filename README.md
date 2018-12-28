@@ -13,14 +13,14 @@ the ciphertext, revealing more to the attacker than necessary.
 
 Adiantum uses a fast hash (NH + Poly1305) and a fast stream cipher (XChaCha12)
 to build a construction which encrypts an entire sector at a time. On an ARM
-Cortex-A7 processor, Adiantum decrypts 4096-byte messages at 11 cycles per byte,
+Cortex-A7 processor, Adiantum decrypts 4096-byte messages at 10.6 cycles per byte,
 over five times faster than AES-256-XTS. It is a "super pseudorandom
 permutation" over the whole sector, which means that any change to the plaintext
 of the sector results in an unrecognizably different ciphertext sector and vice
 versa.
 
-Adiantum is published as [ePrint report
-2018/720](https://eprint.iacr.org/2018/720). We also document HPolyC, our first
+Adiantum appears in
+[IACR Transactions on Symmetric Cryptology, Volume 2018, Issue 4](https://tosc.iacr.org/index.php/ToSC/article/view/7360). We also document HPolyC, our first
 such proposal, which is slower on large messages but simpler and more key agile
 for small messages.
 
