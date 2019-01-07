@@ -10,10 +10,13 @@
 %!TeX spellcheck = en-US
 
 \RequirePackage{etex}
-\documentclass[journal=tosc,final,floatrow]{iacrtrans}
+\documentclass[journal=tosc,preprint,floatrow]{iacrtrans}
+\usepackage[none]{hyphenat}
 \usepackage{etoolbox}
 \newtoggle{iacr}
 \toggletrue{iacr}
+
+\tolerance=9999
 
 \author{Paul~Crowley \and Eric~Biggers}
 \institute{Google LLC \\ \email[paulcrowley@google.com,ebiggers@google.com]{{paulcrowley,ebiggers}@google.com}}
