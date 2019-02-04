@@ -7,14 +7,38 @@ This is the software we used to generate the benchmarks in our paper.
 The following build instructions are written for users of Ubuntu and other
 Debian-derived Linux systems; adjust as needed for your own platform.
 
-* Install [Ninja](https://ninja-build.org/): `apt-get install ninja-build`
-* Install [Python 3](https://www.python.org/): `apt-get install python3`
-* Optionally, create a Python 3 [virtual environment](https://docs.python.org/3/library/venv.html)
-  so you don't have to install globally:
-    * `python3 -m venv venv`
-    * `. ./venv/bin/activate`
-* Install [Meson](https://mesonbuild.com/): `pip install meson`
-* Unpack this repository and `cd` into it
+### Preliminaries
+
+1. Install [Ninja](https://ninja-build.org/):
+
+       sudo apt-get install ninja-build
+
+2. Install [Python](https://www.python.org/) version 3.6 or higher.
+
+   If your Linux distribution provides this, simply install it:
+
+       sudo apt-get install python3
+
+   Otherwise (e.g. if your distro's `python3` is an older version such as 3.5),
+   compile and install Python 3.6 yourself, then create a Python 3 [virtual
+   environment](https://docs.python.org/3/library/venv.html).  For example:
+
+       sudo apt-get install libz-dev libssl-dev
+       wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tar.xz
+       tar xJf Python-3.6.7.tar.xz
+       cd Python-3.6.7
+       ./configure --prefix=$HOME/usr --enable-optimizations
+       make -j$(getconf _NPROCESSORS_ONLN) install
+       ~/usr/bin/python3.6 -m venv ~/python3.6-venv
+
+       # Then run the following each time you need to set up the build environment.
+       . ~/python3.6-venv/bin/activate
+
+3. Install [Meson](https://mesonbuild.com/).
+
+       pip install meson
+
+4. Clone this repository and `cd` into the `benchmark` directory.
 
 ### Building and running on your host machine
 
@@ -45,7 +69,7 @@ CPUs are at maximum frequency. This test applies only to ARM-based devices.
     * You'll need to do this every time the device reboots.
     * If this fails, it may mean your device is not rooted
 * Install the [Android NDK](https://developer.android.com/ndk/)
-* Set up a  a [standalone toolchain](https://developer.android.com/ndk/guides/standalone_toolchain)
+* Set up a [standalone toolchain](https://developer.android.com/ndk/guides/standalone_toolchain)
 * `export ANDROID_TOOLCHAIN=/path/to/android/toolchain`
 * Clone and cd into this repository
 * `./android-tools/setup-build --toolchain-prefix=$ANDROID_TOOLCHAIN/bin/arm-linux-androideabi-`
