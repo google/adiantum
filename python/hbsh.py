@@ -79,8 +79,8 @@ class HBSH(cipher.Blockcipher):
         return pl + pr
 
     def test_input_lengths(self):
-       v = self.lengths()
-       for tlen in 0, 12, 17:
-            for mlen in 16, 31, 128:
+        v = self.lengths()
+        for tlen in 0, 17, 32:
+            for mlen in 16, 31, 128, 512, 1536, 4096:
                 for m in "plaintext", "ciphertext":
                     yield {**v, "tweak": tlen, m: mlen}

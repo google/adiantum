@@ -29,9 +29,3 @@ class Adiantum(hbsh.HBSH):
             b"".join(self._nh.nh(self._nh_key, msg[i:i + il['messagemax']])
                 for i in range(0, len(msg), il['messagemax'])))
         return ht + hm
-
-    def test_input_lengths(self):
-        for tlen in 0, 12, 17, 32:
-            for mlen in 16, 31, 128, 512:
-                for m in "plaintext", "ciphertext":
-                    yield {"key": 32, "tweak": tlen, m: mlen}

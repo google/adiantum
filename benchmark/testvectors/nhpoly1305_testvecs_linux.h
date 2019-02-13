@@ -284,8 +284,8 @@ static const struct hash_testvec nhpoly1305_tv_template[] = {
 		.psize	= 16,
 		.digest	= "\x04\xbf\x7f\x6a\xce\x72\xea\x6a"
 			  "\x79\xdb\xb0\xc9\x60\xf6\x12\xcc",
-		.np	= 4,
-		.tap	= { 4, 6, 1, 5 },
+		.np	= 5,
+		.tap	= { 11, 1, 1, 1, 2 },
 	}, {
 		.key	= "\x65\x4d\xe3\xf8\xd2\x4c\xac\x28"
 			  "\x68\xf5\xb3\x81\x71\x4b\xa1\xfa"
@@ -555,8 +555,8 @@ static const struct hash_testvec nhpoly1305_tv_template[] = {
 		.psize	= 1024,
 		.digest	= "\x64\x3a\xbc\xc3\x3f\x74\x40\x51"
 			  "\x6e\x56\x01\x1a\x51\xec\x36\xde",
-		.np	= 6,
-		.tap	= { 267, 187, 35, 45, 353, 137 },
+		.np	= 7,
+		.tap	= { 2, 340, 164, 121, 221, 41, 135 },
 	}, {
 		.key	= "\x1b\x82\x2e\x1b\x17\x23\xb9\x6d"
 			  "\xdc\x9c\xda\x99\x07\xe3\x5f\xd8"
@@ -828,8 +828,8 @@ static const struct hash_testvec nhpoly1305_tv_template[] = {
 		.psize	= 1040,
 		.digest	= "\xb5\xb9\x08\xb3\x24\x3e\x03\xf0"
 			  "\xd6\x0b\x57\xbc\x0a\x6d\x89\x59",
-		.np	= 2,
-		.tap	= { 29, 1011 },
+		.np	= 3,
+		.tap	= { 129, 538, 373 },
 	}, {
 		.key	= "\xf6\x34\x42\x71\x35\x52\x8b\x58"
 			  "\x02\x3a\x8e\x4a\x8d\x41\x13\xe9"
@@ -1227,8 +1227,8 @@ static const struct hash_testvec nhpoly1305_tv_template[] = {
 		.psize	= 2048,
 		.digest	= "\x37\x90\x92\xc2\xeb\x01\x87\xd9"
 			  "\x95\xc7\x91\xc3\x17\x8b\x38\x52",
-		.np	= 2,
-		.tap	= { 1474, 574 },
+		.np	= 3,
+		.tap	= { 1163, 716, 169 },
 	}
 };
 
