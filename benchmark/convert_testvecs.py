@@ -71,22 +71,6 @@ def write_linux_testvecs(f, struct, cipher_name, convert, entries):
     write_in_groups(f, "\t{\n", "\t}, {\n", "\t}", "", convert, entries)
     f.write('\n};\n\n')
 
-def partition_int(length, parts):
-    """Randomly generate parts integers >0 that sum to length"""
-    splits = random.sample(range(1, length), parts -1)
-    splits.sort()
-    return [b - a for a, b in zip([0] + splits, splits + [length])]
-
-def write_scatterlist_splits(f, length, allow_also_not_np):
-    if length < 2:
-        return
-    splits = partition_int(length, random.randrange(2, 1 + min(length, 8)))
-    if allow_also_not_np:
-        write_linux_testvec_field(f, "also_non_np", 1)
-    write_linux_testvec_field(f, "np", len(splits))
-    taplist = ', '.join(str(split) for split in splits)
-    write_linux_testvec_field(f, "tap", f"{{ {taplist} }}")
-
 def write_linux_cipher_testvec(f, vec):
     """Format a cipher test vector for Linux's crypto tests."""
     write_linux_testvec_hexfield(f, "key", vec['input']['key'])
@@ -96,7 +80,6 @@ def write_linux_cipher_testvec(f, vec):
     write_linux_testvec_hexfield(f, "ctext", vec['ciphertext'])
     length = len(vec['plaintext'])
     write_linux_testvec_field(f, "len", length)
-    write_scatterlist_splits(f, length, True)
 
 def write_linux_hash_testvec(f, vec):
     """Format a hash test vector for Linux's crypto tests."""
@@ -106,7 +89,6 @@ def write_linux_hash_testvec(f, vec):
     length = len(vec['input']['message'])
     write_linux_testvec_field(f, "psize", length)
     write_linux_testvec_hexfield(f, "digest", vec['hash'])
-    write_scatterlist_splits(f, length, False)
 
 def sample_adiantum_testvecs(all_vecs):
     """Select some Adiantum test vectors to include in Linux's crypto tests."""
@@ -158,7 +140,7 @@ def hbsh_linux(variant):
     with target.open("w") as f:
         for nrounds in [12, 20]:
             write_linux_testvecs(f, "cipher_testvec",
-                f'hbsh_xchacha{nrounds}_aes_nhpoly1305',
+                f'{variant.lower()}_xchacha{nrounds}_aes',
                 write_linux_cipher_testvec,
                 sample_adiantum_testvecs(hpc_vectors(variant, nrounds)))
 
