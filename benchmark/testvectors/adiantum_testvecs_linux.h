@@ -1,4 +1,4 @@
-static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] = {
+static const struct cipher_testvec adiantum_xchacha12_aes_tv_template[] = {
 	{
 		.key	= "\x9e\xeb\xb2\x49\x3c\x1c\xf5\xf4"
 			  "\x6a\x99\xc2\xc4\xdf\xb1\xf4\xdd"
@@ -14,9 +14,6 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 		.ctext	= "\x6d\x32\x86\x18\x67\x86\x0f\x3f"
 			  "\x96\x7c\x9d\x28\x0d\x53\xec\x9f",
 		.len	= 16,
-		.also_non_np	= 1,
-		.np	= 8,
-		.tap	= { 1, 4, 2, 1, 1, 4, 2, 1 },
 	}, {
 		.key	= "\x36\x2b\x57\x97\xf8\x5d\xcd\x99"
 			  "\x5f\x1a\x5a\x44\x1d\x92\x0f\x27"
@@ -36,9 +33,6 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 			  "\x46\x63\xe7\x0c\x7d\x87\xe8\x4e"
 			  "\xc9\x18\x7b\xbe\x18\x60\x50",
 		.len	= 31,
-		.also_non_np	= 1,
-		.np	= 5,
-		.tap	= { 10, 16, 1, 3, 1 },
 	}, {
 		.key	= "\xa5\x28\x24\x34\x1a\x3c\xd8\xf7"
 			  "\x05\x91\x8f\xee\x85\x1f\x35\x7f"
@@ -82,9 +76,6 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 			  "\x74\xa6\xaa\xa3\xac\xdc\xc2\xf5"
 			  "\x8d\xde\x34\x86\x78\x60\x75\x8d",
 		.len	= 128,
-		.also_non_np	= 1,
-		.np	= 5,
-		.tap	= { 46, 29, 40, 2, 11 },
 	}, {
 		.key	= "\xd3\x81\x72\x18\x23\xff\x6f\x4a"
 			  "\x25\x74\x29\x0d\x51\x8a\x0e\x13"
@@ -224,9 +215,6 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 			  "\x21\xb0\x21\x52\xba\xa7\x37\xaa"
 			  "\xcc\xbf\x95\xa8\xf4\xd0\x91\xf6",
 		.len	= 512,
-		.also_non_np	= 1,
-		.np	= 3,
-		.tap	= { 72, 187, 253 },
 	}, {
 		.key	= "\xeb\xe5\x11\x3a\x72\xeb\x10\xbe"
 			  "\x70\xcf\xe3\xea\xc2\x74\xa4\x48"
@@ -622,9 +610,6 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 			  "\x8a\x33\xdd\x8a\x06\x23\x06\x0b"
 			  "\x7f\x70\xbe\x7e\xa1\x80\xbc\x7a",
 		.len	= 1536,
-		.also_non_np	= 1,
-		.np	= 4,
-		.tap	= { 195, 92, 980, 269 },
 	}, {
 		.key	= "\x60\xd5\x36\xb0\x8e\x5d\x0e\x5f"
 			  "\x70\x47\x8c\xea\x87\x30\x1d\x58"
@@ -1660,13 +1645,10 @@ static const struct cipher_testvec hbsh_xchacha12_aes_nhpoly1305_tv_template[] =
 			  "\x60\x1f\x88\xae\xbf\x14\x2d\x05"
 			  "\x4c\x60\x85\x8a\x45\xac\x0f\xc2",
 		.len	= 4096,
-		.also_non_np	= 1,
-		.np	= 8,
-		.tap	= { 1027, 1155, 707, 430, 408, 299, 18, 52 },
 	}
 };
 
-static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] = {
+static const struct cipher_testvec adiantum_xchacha20_aes_tv_template[] = {
 	{
 		.key	= "\x9e\xeb\xb2\x49\x3c\x1c\xf5\xf4"
 			  "\x6a\x99\xc2\xc4\xdf\xb1\xf4\xdd"
@@ -1682,9 +1664,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 		.ctext	= "\xf6\x78\x97\xd6\xaa\x94\x01\x27"
 			  "\x2e\x4d\x83\xe0\x6e\x64\x9a\xdf",
 		.len	= 16,
-		.also_non_np	= 1,
-		.np	= 6,
-		.tap	= { 2, 1, 2, 7, 3, 1 },
 	}, {
 		.key	= "\x36\x2b\x57\x97\xf8\x5d\xcd\x99"
 			  "\x5f\x1a\x5a\x44\x1d\x92\x0f\x27"
@@ -1704,9 +1683,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 			  "\x57\x72\xb5\xfd\xb5\x5d\xb8\x28"
 			  "\x0c\x04\x91\x14\x91\xe9\x37",
 		.len	= 31,
-		.also_non_np	= 1,
-		.np	= 8,
-		.tap	= { 4, 7, 1, 2, 2, 2, 4, 9 },
 	}, {
 		.key	= "\xa5\x28\x24\x34\x1a\x3c\xd8\xf7"
 			  "\x05\x91\x8f\xee\x85\x1f\x35\x7f"
@@ -1750,9 +1726,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 			  "\x29\x62\x0d\xb2\xf6\x3c\x58\x57"
 			  "\xc1\xd5\x5a\xbb\xd6\xa6\x2a\xe5",
 		.len	= 128,
-		.also_non_np	= 1,
-		.np	= 4,
-		.tap	= { 79, 3, 35, 11 },
 	}, {
 		.key	= "\xd3\x81\x72\x18\x23\xff\x6f\x4a"
 			  "\x25\x74\x29\x0d\x51\x8a\x0e\x13"
@@ -1892,9 +1865,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 			  "\xb8\x78\xd2\xa3\xc6\xf3\x79\x9c"
 			  "\xc7\x27\xe1\x6a\x29\xad\xa4\x03",
 		.len	= 512,
-		.also_non_np	= 1,
-		.np	= 3,
-		.tap	= { 283, 212, 17 },
 	}, {
 		.key	= "\xeb\xe5\x11\x3a\x72\xeb\x10\xbe"
 			  "\x70\xcf\xe3\xea\xc2\x74\xa4\x48"
@@ -2290,9 +2260,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 			  "\xd6\x10\x91\xbe\x5e\x58\x73\xbe"
 			  "\x77\xb8\xb7\x98\xc7\x7e\x78\x9a",
 		.len	= 1536,
-		.also_non_np	= 1,
-		.np	= 5,
-		.tap	= { 128, 406, 373, 161, 468 },
 	}, {
 		.key	= "\x60\xd5\x36\xb0\x8e\x5d\x0e\x5f"
 			  "\x70\x47\x8c\xea\x87\x30\x1d\x58"
@@ -3328,9 +3295,6 @@ static const struct cipher_testvec hbsh_xchacha20_aes_nhpoly1305_tv_template[] =
 			  "\xe9\xe1\xa0\xfe\xb2\xc3\x80\x77"
 			  "\x20\x05\xe4\x9b\x47\x3b\xb2\xbd",
 		.len	= 4096,
-		.also_non_np	= 1,
-		.np	= 8,
-		.tap	= { 58, 325, 1865, 700, 494, 310, 11, 333 },
 	}
 };
 

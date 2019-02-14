@@ -45,11 +45,12 @@ class NHPoly1305(Hash):
         munit = il['unit']
         mmax = il['messagemax']
         del v["output"]
-        for mlen in 0, munit, mmax, mmax + munit, 2 * mmax:
+        for mlen in 0, munit, munit + 3, mmax, mmax + munit, 2 * mmax:
             yield {**v, "message": mlen}
 
     def hash(self, key, message):
         mmax = self._nh.lengths()['messagemax']
+        message += b'\0' * (-len(message) % self._nh.lengths()['unit'])
         nh_hashes = b"".join(self._nh.nh(key[16:], message[i:i + mmax])
                              for i in range(0, len(message), mmax))
         return self._poly1305.mac(nh_hashes, b"", key[:16])
