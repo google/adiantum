@@ -1,0 +1,148 @@
+#
+# Copyright 2021 Google LLC
+#
+# Use of this source code is governed by an MIT-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/MIT.
+#
+
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+env:
+  CRYPTOBENCH_DEPENDENCIES: python3 meson ninja-build
+
+jobs:
+  test-python:
+    name: Test python code
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-crypto
+    - name: Test python code
+      run: |
+        ./python/run_tests check
+
+  test-cryptobench-x86_64:
+    name: Build and run benchmark tool (x86_64)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        meson build/host --werror
+        ninja -C build/host
+    - name: Run benchmark tool
+      run: |
+        ./benchmark/build/host/cipherbench --ntries=1
+
+  test-cryptobench-qemu-arm:
+    name: Build and run benchmark tool (qemu-arm)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES \
+                qemu-user binutils-arm-linux-gnueabi gcc-arm-linux-gnueabi
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        ./cross-tools/setup-build --build-type=qemu-arm -- --werror
+        ninja -C build/qemu-arm
+    - name: Run benchmark tool
+      run: |
+        qemu-arm -L /usr/arm-linux-gnueabi \
+               ./benchmark/build/qemu-arm/cipherbench --ntries=1
+
+  test-cryptobench-qemu-aarch64:
+    name: Build and run benchmark tool (qemu-aarch64)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES \
+                qemu-user binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        ./cross-tools/setup-build --build-type=qemu-aarch64 -- --werror
+        ninja -C build/qemu-aarch64
+    - name: Run benchmark tool
+      run: |
+        qemu-aarch64 -L /usr/aarch64-linux-gnu \
+               ./benchmark/build/qemu-aarch64/cipherbench --ntries=1
+
+  test-cryptobench-valgrind:
+    name: Build and run benchmark tool (x86_64, valgrind enabled)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES valgrind
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        meson build/host --werror
+        ninja -C build/host
+    - name: Run benchmark tool
+      run: |
+        valgrind --error-exitcode=100 --leak-check=full \
+                --errors-for-leak-kinds=all \
+                ./benchmark/build/host/cipherbench --ntries=1
+
+  test-cryptobench-ubsan:
+    name: Build and run benchmark tool (x86_64, UBSAN enabled)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES clang
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        CC=clang CFLAGS="-fsanitize=undefined -fno-sanitize-recover=undefined" \
+                meson build/host --werror
+        ninja -C build/host
+    - name: Run benchmark tool
+      run: |
+        ./benchmark/build/host/cipherbench --ntries=1
+
+  test-cryptobench-asan:
+    name: Build and run benchmark tool (x86_64, ASAN enabled)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $CRYPTOBENCH_DEPENDENCIES clang
+    - name: Build benchmark tool
+      run: |
+        cd benchmark
+        CC=clang CFLAGS="-fsanitize=address -fno-sanitize-recover=address" \
+                meson build/host --werror
+        ninja -C build/host
+    - name: Run benchmark tool
+      run: |
+        ./benchmark/build/host/cipherbench --ntries=1
