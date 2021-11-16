@@ -4,7 +4,11 @@
 # license that can be found in the LICENSE file or at
 # https://opensource.org/licenses/MIT.
 
-project('cipherbench', 'c')
+project('cipherbench', 'c',
+        default_options: [
+            'optimization=2',
+            'warning_level=1'
+        ])
 
 conf_data = configuration_data()
 conf_data.set10('KERNELISH', get_option('kernelish'))
@@ -17,7 +21,7 @@ include_dirs = [
     include_directories('testvectors'),
     include_directories('../third_party/linux-kernel')
 ]
-add_project_arguments('-O2', '-Wall', '-Wno-pointer-sign', '-fno-strict-aliasing', language : 'c')
+add_project_arguments('-Wno-pointer-sign', '-fno-strict-aliasing', language : 'c')
 
 src = [
     'src/aes.c',
