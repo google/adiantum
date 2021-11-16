@@ -8,11 +8,10 @@
 
 [host_machine]
 system='linux'
-cpu_family='aarch64'
-cpu='aarch64'
+cpu_family='arm'
+cpu='armv7'
 endian='little'
 
 [properties]
-c_args = ['-fPIE']
-c_link_args = ['-pie']
+c_args = ['-mfloat-abi=soft']
 needs_exe_wrapper = true

@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# Copyright 2018 Google LLC
+#
+# Use of this source code is governed by an MIT-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/MIT.
+
+"""
+This is a wrapper around 'meson setup' which selects the appropriate meson
+cross-file and adds additional settings to it if needed.
+"""
+
+import argparse
+import configparser
+import pathlib
+import subprocess
+import sys
+
+wd = pathlib.Path(__file__).parent
+root = wd.resolve().parent
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--build-type', required=True)
+    parser.add_argument('--build-name')
+    parser.add_argument('--build-dir', type=pathlib.Path,
+                        default=(root / 'build'))
+    parser.add_argument('--ndk-dir', type=pathlib.Path)
+    parser.add_argument('--adb', default='adb')
+    parser.add_argument('--meson', default='meson')
+    parser.add_argument('meson_arg', nargs='*')
+    return parser.parse_args()
+
+
+def get_ndk_host_dir_name():
+    if sys.platform.startswith('linux'):
+        return 'linux-x86_64'
+    if sys.platform.startswith('darwin'):
+        return 'darwin-x86_64'
+    if sys.platform.startswith('win32'):
+        return 'windows-x86_64'
+    raise Exception(f'Unknown build platform: {sys.platform}')
+
+
+def get_ndk_compiler_name(args):
+    if args.build_type == 'android-arm':
+        return 'armv7a-linux-androideabi26-clang'
+    if args.build_type == 'android-aarch64':
+        return 'aarch64-linux-android26-clang'
+    raise Exception(f'Unknown android build type: {args.build_type}')
+
+
+def get_cross_file(args):
+
+    config_in = wd / f'{args.build_type}.xcompile'
+
+    if not args.build_type.startswith('android'):
+        return config_in
+
+    if not args.ndk_dir:
+        raise Exception('Must specify --ndk-dir for android build types')
+
+    toolchains_dir = args.ndk_dir / 'toolchains' / 'llvm' / 'prebuilt' / \
+                     get_ndk_host_dir_name() / 'bin'
+
+    binaries = {
+        'exe_wrapper': [str((wd / 'adb-exe-wrapper').resolve()), args.adb],
+        'c': str(toolchains_dir / get_ndk_compiler_name(args)),
+        'ar': str(toolchains_dir / 'llvm-ar'),
+        'strip': str(toolchains_dir / 'llvm-strip'),
+    }
+
+    config = configparser.ConfigParser()
+    if len(config.read([config_in])) != 1:
+        raise Exception(f'Invalid cross-file {config_in}')
+
+    if not config.has_section('binaries'):
+        config.add_section('binaries')
+    for k, v in binaries.items():
+        config['binaries'][k] = repr(v)
+
+    config_out = args.build_dir / f'{args.build_name}.xcompile'
+    with config_out.open('w') as f:
+        config.write(f)
+
+    return config_out
+
+
+def main():
+    args = parse_args()
+    if args.build_name is None:
+        args.build_name = args.build_type
+
+    args.build_dir.mkdir(parents=True, exist_ok=True)
+
+    cross_file = get_cross_file(args)
+
+    subprocess.run([args.meson, 'setup',
+                    str(args.build_dir / args.build_name),
+                    str(root),
+                    '--cross-file', str(cross_file)] + args.meson_arg,
+                   check=True)
+
+
+if __name__ == '__main__':
+    main()
