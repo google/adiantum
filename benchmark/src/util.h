@@ -46,6 +46,10 @@ typedef uint64_t u64;
 #  define __cold	__attribute__((cold))
 #endif
 
+#ifndef __maybe_unused
+#  define __maybe_unused __attribute__((unused))
+#endif
+
 #define ARRAY_SIZE(A)	(sizeof(A) / sizeof((A)[0]))
 
 #define BUILD_BUG_ON(condition)	((void)sizeof(char[1 - 2*!!(condition)]))
