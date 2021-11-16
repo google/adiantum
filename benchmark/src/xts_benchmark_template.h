@@ -8,12 +8,12 @@
 {
 	char xts_algname[strlen(ALGNAME) + 5];
 	const size_t bufsize = g_params.bufsize;
-	u8 *orig = malloc(bufsize);
-	u8 *ctext = malloc(bufsize);
+	u8 *orig = calloc(1, bufsize);
+	u8 *ctext = calloc(1, bufsize);
 #ifdef XTS_ENCRYPT_SIMD
-	u8 *ctext_simd = malloc(bufsize);
+	u8 *ctext_simd = calloc(1, bufsize);
 #endif
-	u8 *ptext = malloc(bufsize);
+	u8 *ptext = calloc(1, bufsize);
 	u8 block_orig[BLOCK_BYTES];
 	u8 block[BLOCK_BYTES];
 	u8 key[2 * KEY_BYTES];

@@ -9,36 +9,12 @@ Debian-derived Linux systems; adjust as needed for your own platform.
 
 ### Preliminaries
 
-1. Install [Ninja](https://ninja-build.org/):
+1. Install [Python](https://www.python.org/) version 3.6 or higher,
+   [Meson](https://mesonbuild.com/), and [Ninja](https://ninja-build.org/):
 
-       sudo apt-get install ninja-build
+       sudo apt-get install python3 meson ninja-build
 
-2. Install [Python](https://www.python.org/) version 3.6 or higher.
-
-   If your Linux distribution provides this, simply install it:
-
-       sudo apt-get install python3
-
-   Otherwise (e.g. if your distro's `python3` is an older version such as 3.5),
-   compile and install Python 3.6 yourself, then create a Python 3 [virtual
-   environment](https://docs.python.org/3/library/venv.html).  For example:
-
-       sudo apt-get install libz-dev libssl-dev
-       wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tar.xz
-       tar xJf Python-3.6.7.tar.xz
-       cd Python-3.6.7
-       ./configure --prefix=$HOME/usr --enable-optimizations
-       make -j$(getconf _NPROCESSORS_ONLN) install
-       ~/usr/bin/python3.6 -m venv ~/python3.6-venv
-
-       # Then run the following each time you need to set up the build environment.
-       . ~/python3.6-venv/bin/activate
-
-3. Install [Meson](https://mesonbuild.com/).
-
-       pip install meson
-
-4. Clone this repository and `cd` into the `benchmark` directory.
+2. Clone this repository and `cd` into the `benchmark` directory.
 
 ### Building and running on your host machine
 
@@ -47,39 +23,62 @@ good preliminary test, but the results it produces aren't currently very
 meaningful since most algorithms don't have x86-optimized implementations
 included in the benchmark suite yet.
 
-* Set up the build directory: `meson build/host`
-* Run the benchmarks: `ninja -C build/host output4096`
-* Look at the output: `less build/host/output4096`
+1. Set up the build directory:
 
-Note that for consistent results, the benchmark suite temporarily sets all CPUs
-to their maximum frequency.  The code which does this assumes a Linux-based
-system (e.g. Android) and requires root privileges.  On other systems, or as a
-non-root user, you'll see warnings about being unable to set the CPU frequency.
-You can ignore these if you don't need precise results on your host machine.
+       meson build/host
 
-### Building and running on Android
+2. Build the benchmark tool:
 
-Ensure you get host builds working first.
+       ninja -C build/host
 
-You will need a rooted Android device for this; otherwise we can't ensure the
-CPUs are at maximum frequency. This test applies only to ARM-based devices.
+3. Run the benchmark tool:
 
-* Install the [Android SDK Platform Tools](https://developer.android.com/studio/releases/platform-tools).
-* Restart the adb daemon in root mode: `adb root`
-    * You'll need to do this every time the device reboots.
-    * If this fails, it may mean your device is not rooted
-* Install the [Android NDK](https://developer.android.com/ndk/)
-* Set up a [standalone toolchain](https://developer.android.com/ndk/guides/standalone_toolchain)
-* `export ANDROID_TOOLCHAIN=/path/to/android/toolchain`
-* Clone and cd into this repository
-* `./android-tools/setup-build --toolchain-prefix=$ANDROID_TOOLCHAIN/bin/arm-linux-androideabi-`
-    * if `adb` is not in the `$PATH` then add the `--adb=/path/to/adb` argument
-    * similarly with `--meson`
-    * For an ARM64 build, add `--build-type=android-aarch64` and use
-      `--toolchain-prefix=$ANDROID_TOOLCHAIN/bin/aarch64-linux-android-`.
-* Run the benchmarks: `ninja -C build/android-arm output4096`
-    * For an ARM64 build use `build/android-aarch64`, likewise below
-* Look at the output: `less build/android-arm/output4096`
+       ./build/host/cipherbench
+
+### Building and running on Android (arm)
+
+This will test the 32-bit ARM assembly code and the generic code.
+
+1. Download the [Android NDK](https://developer.android.com/ndk/downloads).
+
+2. Connect an Android device and get `adb` access.
+
+3. If the device is rooted, run `adb root` to restart `adb` with root
+   privileges.  This isn't required, but it will give more accurate results.
+
+4. Set up the build directory, providing the path to your NDK directory:
+
+       ./cross-tools/setup-build --build-type=android-arm --ndk-dir=/path/to/ndk/dir
+
+5. Build the benchmark tool:
+
+       ninja -C build/android-arm
+
+6. Run the benchmark tool:
+
+       cross-tools/adb-exe-wrapper adb ./build/android-arm/cipherbench
+
+### Building and running on Android (aarch64)
+
+Some algorithms have aarch64 (64-bit ARM) assembly code.  To build and run the
+benchmark tool on Android on aarch64, follow the directions for arm above, but
+replace all occurrences of "android-arm" with "android-aarch64".
+
+### Tips and tricks
+
+By default, the benchmarks are run using 4096-byte messages and are repeated 5
+times for each algorithm, with the fastest speed being chosen.  These parameters
+can be configured via the `--bufsize` and `--ntries` options.
+
+To prevent CPU frequency scaling from causing inconsistent results, the
+benchmark tool tries to temporarily set all CPUs to their maximum frequency.
+The code which does this assumes a Linux-based system (e.g. Android) and
+requires root privileges.  On other systems, or as a non-root user, you'll see
+warnings about being unable to set the CPU frequency.  You can ignore these if
+you don't need precise results.
+
+Instead of manually running the tool, you may instead pass one of the predefined
+run targets to the `ninja` command, e.g. `ninja -C build/host output4096`.
 
 ### Alternative implementations for Linux kernel
 
@@ -88,14 +87,12 @@ speed. However, in some cases the Linux kernel patches for Adiantum make
 slightly different tradeoffs, considering concerns such as code size and power
 consumption, and the additional overhead to using SIMD instructions in
 kernel-mode when compared to userspace. To measure speed in a way more
-representative of the Linux patches, set up the build with the "kernelish" option:
+representative of the Linux patches, set up the build with the "kernelish"
+option, for example:
 
 ```sh
-./android-tools/setup-build \
-    --toolchain-prefix=$ANDROID_TOOLCHAIN/bin/arm-linux-androideabi- \
-    --build-name=kernelish \
-    --meson-arg=-Dkernelish=true
-ninja -C build/kernelish output4096
+./cross-tools/setup-build --build-type=android-arm \
+    --ndk-dir=/path/to/ndk/dir -- -Dkernelish=true
 ```
 
 ## File layout
@@ -107,10 +104,5 @@ ninja -C build/kernelish output4096
 * `testvectors/`: Test vectors for Adiantum and HPolyC as C header files
 * `../third_party/`: dependencies under the GPLv2 license, not MIT.
 * `meson_options.txt`, `meson.build`: Meson build control files.
+* `cross-tools/`: Cross compilation support files
 * `convert_testvecs.py`: converts test vectors from JSON to C header form
-* `android-tools/setup-build`: Set up Android cross-compilation and
-execution
-* `android-tools/adb-exe-wrapper`: copies binaries to the Android device and
-* runs them there
-* `android-tools/android.xcompile`: Settings for Android cross-compilation,
-read by `setup-build`

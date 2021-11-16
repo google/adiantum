@@ -156,8 +156,9 @@ static void chacha_generic(const struct chacha_ctx *ctx, u8 *dst, const u8 *src,
 	}
 }
 
-static inline void chacha_advance(u32 state[16], u8 **dst_p, const u8 **src_p,
-				  unsigned int *bytes_p, unsigned int blocks)
+static inline void __maybe_unused
+chacha_advance(u32 state[16], u8 **dst_p, const u8 **src_p,
+	       unsigned int *bytes_p, unsigned int blocks)
 {
 	state[12] += blocks;
 	*dst_p += blocks * CHACHA_BLOCK_SIZE;

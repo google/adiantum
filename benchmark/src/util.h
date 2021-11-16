@@ -46,6 +46,10 @@ typedef uint64_t u64;
 #  define __cold	__attribute__((cold))
 #endif
 
+#ifndef __maybe_unused
+#  define __maybe_unused __attribute__((unused))
+#endif
+
 #define ARRAY_SIZE(A)	(sizeof(A) / sizeof((A)[0]))
 
 #define BUILD_BUG_ON(condition)	((void)sizeof(char[1 - 2*!!(condition)]))
@@ -146,32 +150,32 @@ static inline void put_unaligned_be64(u64 v, void *p)
 
 static inline u16 rol16(u16 word, unsigned int shift)
 {
-	return (word << shift) | (word >> (16 - shift));
+	return (word << shift) | (word >> (-shift & 15));
 }
 
 static inline u16 ror16(u16 word, unsigned int shift)
 {
-	return (word >> shift) | (word << (16 - shift));
+	return (word >> shift) | (word << (-shift & 15));
 }
 
 static inline u32 rol32(u32 word, unsigned int shift)
 {
-	return (word << shift) | (word >> (32 - shift));
+	return (word << shift) | (word >> (-shift & 31));
 }
 
 static inline u32 ror32(u32 word, unsigned int shift)
 {
-	return (word >> shift) | (word << (32 - shift));
+	return (word >> shift) | (word << (-shift & 31));
 }
 
 static inline u64 rol64(u64 word, unsigned int shift)
 {
-	return (word << shift) | (word >> (64 - shift));
+	return (word << shift) | (word >> (-shift & 63));
 }
 
 static inline u64 ror64(u64 word, unsigned int shift)
 {
-	return (word >> shift) | (word << (64 - shift));
+	return (word >> shift) | (word << (-shift & 63));
 }
 
 static inline u64 now(void)

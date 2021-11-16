@@ -4,7 +4,11 @@
 # license that can be found in the LICENSE file or at
 # https://opensource.org/licenses/MIT.
 
-project('cipherbench', 'c')
+project('cipherbench', 'c',
+        default_options: [
+            'optimization=2',
+            'warning_level=1'
+        ])
 
 conf_data = configuration_data()
 conf_data.set10('KERNELISH', get_option('kernelish'))
@@ -17,7 +21,8 @@ include_dirs = [
     include_directories('testvectors'),
     include_directories('../third_party/linux-kernel')
 ]
-add_project_arguments('-O2', '-Wall', '-Wno-pointer-sign', '-fno-strict-aliasing', language : 'c')
+add_project_arguments('-Wno-pointer-sign', '-fno-strict-aliasing', '-fwrapv',
+                      language : 'c')
 
 src = [
     'src/aes.c',
@@ -79,10 +84,10 @@ benchmark('benchmark', cipherbench)
 ciphers = ['ChaCha', 'Poly1305', 'NH', 'HPolyC', 'Adiantum', 'AES', 'Speck', 'NOEKEON', 'XTEA']
 check4096 = custom_target('check4096',
     command: [cipherbench, '--bufsize=4096'] + ciphers,
-    output: 'check4096', capture: 'true')
+    output: 'check4096', capture: true)
 output4096 = custom_target('output4096',
     command: [cipherbench, '--bufsize=4096', '--ntries=25'] + ciphers,
-    output: 'output4096', capture: 'true')
+    output: 'output4096', capture: true)
 output512 = custom_target('output512',
     command: [cipherbench, '--bufsize=512', '--ntries=25'] + ciphers,
-    output: 'output512', capture: 'true')
+    output: 'output512', capture: true)

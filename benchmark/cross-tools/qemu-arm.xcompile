@@ -1,6 +1,4 @@
-# This is incomplete - setup-build reads it and adds the 'binaries' stanza.
-
-# Copyright 2018 Google LLC
+# Copyright 2021 Google LLC
 #
 # Use of this source code is governed by an MIT-style
 # license that can be found in the LICENSE file or at
@@ -13,6 +11,11 @@ cpu='armv7'
 endian='little'
 
 [properties]
-c_args = ['-fPIE', '-mfloat-abi=soft']
-c_link_args = ['-pie']
 needs_exe_wrapper = true
+c_args = ['-march=armv7-a', '-mfloat-abi=soft']
+
+[binaries]
+exe_wrapper = ['qemu-arm', '-L', '/usr/arm-linux-gnueabi']
+c = 'arm-linux-gnueabi-gcc'
+cpp = 'arm-linux-gnueabi-cpp'
+strip = 'arm-linux-gnueabi-strip'

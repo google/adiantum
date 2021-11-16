@@ -1,0 +1,16 @@
+# This is incomplete - setup-build reads it and adds the 'binaries' stanza.
+
+# Copyright 2018 Google LLC
+#
+# Use of this source code is governed by an MIT-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/MIT.
+
+[host_machine]
+system='linux'
+cpu_family='aarch64'
+cpu='aarch64'
+endian='little'
+
+[properties]
+needs_exe_wrapper = true
