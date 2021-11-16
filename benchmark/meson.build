@@ -21,7 +21,8 @@ include_dirs = [
     include_directories('testvectors'),
     include_directories('../third_party/linux-kernel')
 ]
-add_project_arguments('-Wno-pointer-sign', '-fno-strict-aliasing', language : 'c')
+add_project_arguments('-Wno-pointer-sign', '-fno-strict-aliasing', '-fwrapv',
+                      language : 'c')
 
 src = [
     'src/aes.c',
