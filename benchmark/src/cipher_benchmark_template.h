@@ -7,12 +7,12 @@
  */
 {
 	const size_t bufsize = g_params.bufsize;
-	u8 *orig = malloc(bufsize);
-	u8 *ctext = malloc(bufsize);
+	u8 *orig = calloc(1, bufsize);
+	u8 *ctext = calloc(1, bufsize);
 #ifdef ENCRYPT_SIMD
-	u8 *ctext_simd = malloc(bufsize);
+	u8 *ctext_simd = calloc(1, bufsize);
 #endif
-	u8 *ptext = malloc(bufsize);
+	u8 *ptext = calloc(1, bufsize);
 	u8 key[KEY_BYTES];
 	u8 orig_iv[IV_BYTES];
 	u8 iv[IV_BYTES];
