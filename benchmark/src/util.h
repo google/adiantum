@@ -77,19 +77,15 @@ __cold __noreturn void assertion_failed(const char *expr,
 
 #ifdef __CHECKER__
 #define __force		__attribute__((force))
-#define __bitwise__	__attribute__((bitwise))
 #else
 #define __force
-#define __bitwise__
 #endif
 
-#if !defined(__linux__)
-
-typedef u32 __bitwise__ __le32;
-typedef u64 __bitwise__ __le64;
-typedef u32 __bitwise__ __be32;
-typedef u64 __bitwise__ __be64;
-
+#ifndef __linux__
+typedef u32 __le32;
+typedef u64 __le64;
+typedef u32 __be32;
+typedef u64 __be64;
 #endif
 
 #define cpu_to_le32(v)	((__force __le32)(u32)(v))
