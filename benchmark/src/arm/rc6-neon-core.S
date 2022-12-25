@@ -229,13 +229,17 @@
 
 .macro _rc6_xts_crypt	decrypting
 	push		{r4-r9}
-	mov		r9, sp
 
 	/*
 	 * The first four parameters were passed in registers r0-r3.  Load the
 	 * additional parameter, which was passed on the stack.
 	 */
 	ldr		TWEAK, [sp, #24]
+
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
+	mov		r9, sp
 
 	mov		ONE, #1
 	mov		THIRTY_ONE, #31
@@ -403,6 +407,7 @@
 	bne		.Lnext_128bytes_\@
 
 	mov		sp, r9
+	vldmia		sp!, {q4-q7}
 	pop		{r4-r9}
 	bx		lr
 .endm

@@ -442,6 +442,7 @@ M0:	.quad		0x02060a0e03070b0f, 0x0004080c0105090d
 	 * void aesbs_convert_key(u8 out[], u32 const rk[], int rounds)
 	 */
 ENTRY(aesbs_convert_key)
+	vstmdb		sp!, {q4-q7}		// Save callee-saved NEON registers
 	vld1.32		{q7}, [r1]!		// load round 0 key
 	vld1.32		{q15}, [r1]!		// load round 1 key
 
@@ -485,6 +486,7 @@ ENTRY(aesbs_convert_key)
 	vmov.i8		q7, #0x63		// compose .L63
 	veor		q15, q15, q7
 	vst1.8		{q15}, [r0, :128]
+	vldmia		sp!, {q4-q7}
 	bx		lr
 ENDPROC(aesbs_convert_key)
 
@@ -960,8 +962,9 @@ ENDPROC(__xts_prepare8)
 
 	.macro		__xts_crypt, do8, o0, o1, o2, o3, o4, o5, o6, o7
 	push		{r4-r8, lr}
-	mov		r5, sp			// preserve sp
 	ldrd		r6, r7, [sp, #24]	// get blocks and iv args
+	vstmdb		sp!, {q4-q7}		// Save callee-saved NEON registers
+	mov		r5, sp			// preserve sp
 	sub		ip, sp, #128		// make room for 8x tweak
 	bic		ip, ip, #0xf		// align sp to 16 bytes
 	mov		sp, ip
@@ -1013,6 +1016,7 @@ ENDPROC(__xts_prepare8)
 	bgt		99b
 
 	mov		sp, r5
+	vldmia		sp!, {q4-q7}	// Restore callee-saved NEON registers
 	pop		{r4-r8, pc}
 	.endm
 

@@ -221,7 +221,6 @@
  */
 .macro _speck_xts_crypt	n, decrypting
 	push		{r4-r7}
-	mov		r7, sp
 
 	/*
 	 * The first four parameters were passed in registers r0-r3.  Load the
@@ -229,6 +228,11 @@
 	 */
 	ldr		NBYTES, [sp, #16]
 	ldr		TWEAK, [sp, #20]
+
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
+	mov		r7, sp
 
 	/*
 	 * If decrypting, modify the ROUND_KEYS parameter to point to the last
@@ -430,6 +434,7 @@
 .endif
 
 	mov		sp, r7
+	vldmia		sp!, {q4-q7}
 	pop		{r4-r7}
 	bx		lr
 .endm

@@ -78,6 +78,9 @@
  */
 ENTRY(nh_neon)
 
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
 	vld1.32		{K0,K1}, [KEY]!
 	  vmov.u64	PASS0_SUMS, #0
 	  vmov.u64	PASS1_SUMS, #0
@@ -115,5 +118,6 @@ ENTRY(nh_neon)
 	vadd.u64	T1_L, PASS2_SUM_A, PASS2_SUM_B
 	vadd.u64	T1_H, PASS3_SUM_A, PASS3_SUM_B
 	vst1.8		{T0-T1}, [HASH]
+	vldmia		sp!, {q4-q7}
 	bx		lr
 ENDPROC(nh_neon)

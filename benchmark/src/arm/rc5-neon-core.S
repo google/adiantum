@@ -262,7 +262,6 @@
  */
 .macro _rc5_xts_crypt	n, decrypting
 	push		{r4-r9}
-	mov		r9, sp
 
 	/*
 	 * The first four parameters were passed in registers r0-r3.  Load the
@@ -270,6 +269,11 @@
 	 */
 	ldr		NBYTES, [sp, #24]
 	ldr		TWEAK, [sp, #28]
+
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
+	mov		r9, sp
 
 	mov		CONST_N_MINUS_1, #(\n - 1)
 	mov		CONST_N, #\n
@@ -460,6 +464,7 @@
 	bne		.Lnext_128bytes_\@
 
 	mov		sp, r9
+	vldmia		sp!, {q4-q7}
 	pop		{r4-r9}
 	bx		lr
 .endm
