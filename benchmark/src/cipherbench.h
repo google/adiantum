@@ -23,8 +23,6 @@ void test_rc6(void);
 void test_speck(void);
 void test_xtea(void);
 
-void do_insn_timing(void);
-
 struct cipherbench_params {
 	int bufsize;
 	int ntries;
