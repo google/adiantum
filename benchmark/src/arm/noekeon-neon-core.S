@@ -269,13 +269,17 @@
 
 .macro _noekeon_xts_crypt	decrypting
 	push		{r4-r5}
-	mov		r5, sp
 
 	/*
 	 * The first four parameters were passed in registers r0-r3.  Load the
 	 * additional parameter, which was passed on the stack.
 	 */
 	ldr		TWEAK, [sp, #8]
+
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
+	mov		r5, sp
 
 	// Load the key
 	vld1.32		{K}, [KEY]
@@ -456,6 +460,7 @@
 	bne		.Lnext_128bytes_\@
 
 	mov		sp, r5
+	vldmia		sp!, {q4-q7}
 	pop		{r4-r5}
 	bx		lr
 .endm

@@ -546,6 +546,9 @@ ENTRY(chacha_block_xor_neon)
 	// r2: 1 data block input, i
 	// r3: nrounds
 
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
+
 	// x0..3 = s0..3
 	add		ip, r0, #0x20
 	vld1.32		{q0-q1}, [r0]
@@ -582,6 +585,7 @@ ENTRY(chacha_block_xor_neon)
 	vst1.8		{q0-q1}, [r1]
 	vst1.8		{q2-q3}, [ip]
 
+	vldmia		sp!, {q4-q7}
 	bx		lr
 ENDPROC(chacha_block_xor_neon)
 
@@ -591,6 +595,7 @@ ENDPROC(chacha_block_xor_neon)
 
 	.align		5
 ENTRY(chacha_4block_xor_neon)
+	vstmdb		sp!, {q4-q7}		// Save callee-saved NEON registers
 	push		{r4-r5}
 	mov		r4, sp			// preserve the stack pointer
 	sub		ip, sp, #0x20		// allocate a 32 byte buffer
@@ -746,10 +751,14 @@ ENTRY(chacha_4block_xor_neon)
 	vst1.8		{q0-q1}, [r1]
 
 	pop		{r4-r5}
+	vldmia		sp!, {q4-q7}
 	bx		lr
 ENDPROC(chacha_4block_xor_neon)
 
 ENTRY(chacha_perm_neon)
+	// Save the callee-saved NEON registers that are used.
+	vstmdb		sp!, {q4-q5}
+
 	// r0: Input state matrix, s
 	// r1: nrounds
 	add		ip, r0, #0x20
@@ -762,6 +771,7 @@ ENTRY(chacha_perm_neon)
 	vst1.8		{q0-q1}, [r0]!
 	vst1.8		{q2-q3}, [r0]
 
+	vldmia		sp!, {q4-q5}
 	bx		lr
 ENDPROC(chacha_perm_neon)
 
@@ -782,6 +792,8 @@ ENDPROC(chacha_perm_neon)
  * r3 = nrounds
  */
 .macro _chacha_mem_crypt_4block_neon	decrypting
+	// Save the callee-saved NEON registers.
+	vstmdb		sp!, {q4-q7}
 
 	// 32-byte align the stack
 	push		{r4}
@@ -991,6 +1003,7 @@ ENDPROC(chacha_perm_neon)
 
 	mov		sp, r4
 	pop		{r4}
+	vldmia		sp!, {q4-q7}
 	bx		lr
 .endm
 
