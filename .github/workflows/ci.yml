@@ -22,7 +22,7 @@ jobs:
     name: Test python code
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -35,7 +35,7 @@ jobs:
     name: Build and run benchmark tool (x86_64)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -53,7 +53,7 @@ jobs:
     name: Build and run benchmark tool (qemu-arm)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -73,7 +73,7 @@ jobs:
     name: Build and run benchmark tool (qemu-aarch64)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -93,7 +93,7 @@ jobs:
     name: Build and run benchmark tool (x86_64, valgrind enabled)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -113,7 +113,7 @@ jobs:
     name: Build and run benchmark tool (x86_64, UBSAN enabled)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -132,7 +132,7 @@ jobs:
     name: Build and run benchmark tool (x86_64, ASAN enabled)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
